@@ -4,9 +4,9 @@ import LogoES from '@/components/logo-es';
 
 export default function About() {
     const team = [
-        { name: 'Team Member 1', role: 'Frontend Developer', color: 'from-blue-500 to-indigo-600', icon: 'fa-solid fa-laptop-code' },
-        { name: 'Team Member 2', role: 'Backend Developer', color: 'from-emerald-500 to-teal-600', icon: 'fa-solid fa-server' },
-        { name: 'Team Member 3', role: 'AI Developer', color: 'from-purple-500 to-pink-600', icon: 'fa-solid fa-brain' },
+        { name: 'Munazza', role: 'Frontend Developer', color: 'from-blue-500 to-indigo-600', icon: 'fa-solid fa-laptop-code' },
+        { name: 'Aniqa', role: 'Backend Developer', color: 'from-emerald-500 to-teal-600', icon: 'fa-solid fa-server' },
+        { name: 'Anum', role: 'AI Developer', color: 'from-purple-500 to-pink-600', icon: 'fa-solid fa-brain' },
     ];
 
     return (
