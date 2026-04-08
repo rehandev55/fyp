@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+pypdf
+pdfplumber
+langchain
+langchain-openai
+langchain-pinecone
+openai
+pinecone
+python-dotenv
+tiktoken
+pydantic
+httpx
