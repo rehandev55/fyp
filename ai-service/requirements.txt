@@ -11,3 +11,7 @@ python-dotenv
 tiktoken
 pydantic
 httpx
+pytesseract
+pdf2image
+pillow
+google-cloud-vision
