@@ -17,7 +17,7 @@ CHUNKS_DIR      = Path("data/chunks")
 EMBEDDING_MODEL = "text-embedding-3-small"  # 1536 dimensions, cheap and fast
 BATCH_SIZE      = 100   # upload to pinecone in batches of 100
 LOG_FILE        = Path("data/embedding_log.txt")
-EMBEDDING_DIMENSIONS = 1024  # match your pinecone index
+
 # ── clients ───────────────────────────────────────────────────────────────────
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 pc            = Pinecone(api_key=PINECONE_API_KEY)
@@ -57,8 +57,7 @@ def get_embedding(text: str) -> list[float]:
     """Get embedding vector from OpenAI for one chunk."""
     response = openai_client.embeddings.create(
         input = text,
-        model = EMBEDDING_MODEL,
-        dimensions = 1024  
+        model = EMBEDDING_MODEL
     )
     return response.data[0].embedding
 

@@ -162,12 +162,23 @@ def main():
     print(f"Found {len(json_files)} extracted book(s).")
 
     total_chunks = 0
+    skipped      = 0
+
     for json_path in json_files:
+        # skip if already chunked
+        out_name = json_path.stem + ".jsonl"
+        if (CHUNKS_DIR / out_name).exists():
+            print(f"SKIPPING (already chunked): {json_path.name}")
+            skipped += 1
+            continue
+
         count = process_book(json_path)
         total_chunks += count
 
     print(f"\n{'='*50}")
-    print(f"ALL DONE. Total chunks created: {total_chunks}")
+    print(f"ALL DONE.")
+    print(f"Skipped:       {skipped} (already chunked)")
+    print(f"Newly chunked: {total_chunks} chunks created")
     print(f"Chunks saved in: {CHUNKS_DIR}")
 
 
