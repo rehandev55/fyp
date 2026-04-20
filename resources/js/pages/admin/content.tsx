@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminLayout from '@/layouts/admin-layout';
+import axios from "axios";
 
 interface ContentItem {
     id: number;
@@ -33,7 +34,7 @@ const initialContent: ContentItem[] = [
 const contentTypes = ['Book', 'Key Book', 'Past Paper', 'Notes', 'Solved Paper', 'Worksheet'];
 
 function Content() {
-    const [content, setContent] = useState<ContentItem[]>(initialContent);
+    const [content, setContent] = useState<ContentItem[]>([]);
     const [showUpload, setShowUpload] = useState(false);
     const [filterType, setFilterType] = useState('');
     const [search, setSearch] = useState('');
@@ -42,14 +43,98 @@ function Content() {
     const [form, setForm] = useState({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
 
     const filtered = content.filter((c) => (!filterType || c.type === filterType) && (!search || c.title.toLowerCase().includes(search.toLowerCase())));
+    const [uploadProgress, setUploadProgress] = useState(0);   //use state for upload progress
 
-    const handleUpload = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!form.title) return;
-        setContent((prev) => [{ id: Date.now(), ...form, date: new Date().toISOString().split('T')[0], downloads: 0, size: '0 KB' }, ...prev]);
-        setForm({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
+    // const handleUpload = (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!form.title) return;
+    //     setContent((prev) => [{ id: Date.now(), ...form, date: new Date().toISOString().split('T')[0], downloads: 0, size: '0 KB' }, ...prev]);
+    //     setForm({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
+    //     setShowUpload(false);
+    // };
+// const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+//     e.preventDefault();
+
+//     if (!file) {
+//         alert("Select a file first");
+//         return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append("title", form.title);
+//     formData.append("type", form.type);
+//     formData.append("board", form.board);
+//     formData.append("class_level", form.classLevel);
+//     formData.append("subject", form.subject);
+//     formData.append("file", file);
+
+//     try {
+//         const res = await fetch("https://fyp_backend.test/api/content", {
+//             method: "POST",
+//             body: formData,
+//         });
+
+//         const data = await res.json();
+//         console.log("UPLOAD RESPONSE:", data);
+
+//         if (!res.ok) {
+//             alert("Upload failed");
+//             return;
+//         }
+
+//         fetchContent();
+//         setShowUpload(false);
+
+//     } catch (err) {
+//         console.error(err);
+//         alert("Server error");
+//     }
+// };
+
+const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("type", form.type);
+    formData.append("board", form.board);
+    formData.append("class_level", form.classLevel);
+    formData.append("subject", form.subject);
+    formData.append("file", file);
+
+    try {
+        const res = await axios.post(
+            "https://fyp_backend.test/api/content",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percent = Math.round(
+                        (progressEvent.loaded * 100) / (progressEvent.total || 1)
+                    );
+                    setUploadProgress(percent);
+                },
+            }
+        );
+
+        console.log(res.data); // 👈 VERY IMPORTANT
+
+        // success reset
+        setUploadProgress(0);
         setShowUpload(false);
-    };
+        fetchContent();
+
+    } catch (err: any) {
+        console.error("UPLOAD ERROR:", err.response?.data || err.message);
+
+        // ❗ reset even on error
+        setUploadProgress(0);
+    }
+};
 
     const openEdit = (c: ContentItem) => {
         setEditForm({ ...c });
@@ -59,10 +144,17 @@ function Content() {
         setContent((prev) => prev.map((c) => (c.id === editForm.id ? { ...editForm } : c)));
         setModal(null);
     };
-    const deleteContent = (id: number) => {
-        setContent((prev) => prev.filter((c) => c.id !== id));
-        setModal(null);
-    };
+    // const deleteContent = (id: number) => {
+    //     setContent((prev) => prev.filter((c) => c.id !== id));
+    //     setModal(null);
+    // };
+    const deleteContent = async (id: number) => {
+    await fetch(`https://fyp_backend.test/api/content/${id}`, {
+        method: "DELETE",
+    });
+
+    fetchContent();
+};
 
     const sel =
         'w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white transition';
@@ -82,7 +174,7 @@ function Content() {
         'Solved Paper': 'fa-solid fa-check-double',
         Worksheet: 'fa-solid fa-file-pen',
     };
-
+const [file, setFile] = useState<File | null>(null);
     const totalDownloads = content.reduce((a, c) => a + c.downloads, 0);
     const downloadsByType = contentTypes
         .map((t) => ({
@@ -90,6 +182,23 @@ function Content() {
             downloads: content.filter((c) => c.type === t).reduce((a, c) => a + c.downloads, 0),
         }))
         .filter((d) => d.downloads > 0);
+
+
+        useEffect(() => {
+    fetchContent();
+}, []);
+
+const fetchContent = async () => {
+    const res = await fetch("https://fyp_backend.test/api/content");
+    const data = await res.json();
+
+
+    setContent(data.data);
+};
+
+const downloadFile = (id: number) => {
+    window.open(`https://fyp_backend.test/api/content/download/${id}`);
+};
 
     return (
         <div className="space-y-6">
@@ -202,11 +311,27 @@ function Content() {
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">File</label>
-                            <div className="border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl p-8 text-center hover:border-[#7C3AED] transition cursor-pointer">
+                            {/* <div className="border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl p-8 text-center hover:border-[#7C3AED] transition cursor-pointer">
                                 <i className="fa-solid fa-cloud-arrow-up text-3xl text-gray-300 dark:text-gray-600 mb-3" />
                                 <p className="text-sm text-gray-500 dark:text-gray-400">Click to upload or drag & drop</p>
                                 <p className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX up to 50MB</p>
-                            </div>
+                            </div> */}
+                            {uploadProgress > 0 && (
+    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+        <div
+            className="bg-[#7C3AED] h-2 rounded-full transition-all"
+            style={{ width: `${uploadProgress}%` }}
+        ></div>
+        <p className="text-xs text-gray-500 mt-1 text-right">
+            {uploadProgress}%
+        </p>
+    </div>
+)}
+                            <input
+    type="file"
+    onChange={(e) => setFile(e.target.files?.[0] || null)}
+/>
+
                         </div>
                         <div className="flex gap-3 pt-2">
                             <button
@@ -219,7 +344,9 @@ function Content() {
                             <button
                                 type="submit"
                                 disabled={!form.title}
-                                className="flex-1 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl hover:shadow-lg disabled:opacity-40 transition text-sm font-semibold"
+                                className="flex-1 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl
+hover:shadow-lg active:scale-95 active:brightness-90
+disabled:opacity-40 transition-all duration-150 text-sm font-semibold"
                             >
                                 Upload
                             </button>
@@ -301,6 +428,9 @@ function Content() {
                             >
                                 <i className="fa-solid fa-trash-can text-xs" />
                             </button>
+                            <button onClick={() => downloadFile(c.id)}>
+    Download
+</button>
                         </div>
                     </div>
                 ))}

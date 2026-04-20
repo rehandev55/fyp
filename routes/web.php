@@ -35,4 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
+// Route::get('/apitest', function () {
+//     return response()->json(['web' => 'hit']);
+// });
