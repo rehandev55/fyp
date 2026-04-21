@@ -11,19 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('contents', function (Blueprint $table) {
-            Schema::create('contents', function (Blueprint $table) {
-                $table->id();
-                $table->string('title');
-                $table->string('type');
-                $table->string('board');
-                $table->string('class_level');
-                $table->string('subject');
-                $table->string('file_path'); // file storage
-                $table->string('file_size')->nullable();
-                $table->integer('downloads')->default(0);
-                $table->timestamps();
-            });
+            $table->id();
+            $table->string('title');
+            $table->string('type');
+            $table->string('board');
+            $table->string('class_level');
+            $table->string('subject');
+            $table->string('file_path'); // file storage
+            $table->string('file_size')->nullable();
+            $table->integer('downloads')->default(0);
+            $table->timestamps();
         });
     }
 

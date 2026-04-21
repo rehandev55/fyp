@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AIControllers\AIController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,3 +26,9 @@ Route::prefix('content')->group(function () {
     Route::get('/download/{id}', [ContentController::class, 'download']);
     Route::delete('/{id}', [ContentController::class, 'destroy']);
 });
+
+Route::get('/users', [UserController::class, 'index']);
+Route::delete('/users/{id}', [UserController::class, 'destroy']);
+Route::put('/users/{id}', [UserController::class, 'update']);
+Route::patch('/users/toggle/{id}', [UserController::class, 'toggleStatus']);
+Route::put('/content/{id}', [ContentController::class, 'update']);

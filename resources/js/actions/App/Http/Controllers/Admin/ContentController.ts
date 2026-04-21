@@ -314,6 +314,90 @@ destroy.delete = (args: { id: string | number } | [id: string | number ] | strin
     
     destroy.form = destroyForm
 /**
+* @see \App\Http\Controllers\Admin\ContentController::update
+ * @see app/Http/Controllers/Admin/ContentController.php:80
+ * @route '/api/content/{id}'
+ */
+export const update = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+
+update.definition = {
+    methods: ["put"],
+    url: '/api/content/{id}',
+} satisfies RouteDefinition<["put"]>
+
+/**
+* @see \App\Http\Controllers\Admin\ContentController::update
+ * @see app/Http/Controllers/Admin/ContentController.php:80
+ * @route '/api/content/{id}'
+ */
+update.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { id: args }
+    }
+
+    
+    if (Array.isArray(args)) {
+        args = {
+                    id: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        id: args.id,
+                }
+
+    return update.definition.url
+            .replace('{id}', parsedArgs.id.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Admin\ContentController::update
+ * @see app/Http/Controllers/Admin/ContentController.php:80
+ * @route '/api/content/{id}'
+ */
+update.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: update.url(args, options),
+    method: 'put',
+})
+
+    /**
+* @see \App\Http\Controllers\Admin\ContentController::update
+ * @see app/Http/Controllers/Admin/ContentController.php:80
+ * @route '/api/content/{id}'
+ */
+    const updateForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: update.url(args, {
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'PUT',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\Admin\ContentController::update
+ * @see app/Http/Controllers/Admin/ContentController.php:80
+ * @route '/api/content/{id}'
+ */
+        updateForm.put = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: update.url(args, {
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'PUT',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    update.form = updateForm
+/**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
  * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
@@ -395,5 +479,6 @@ ContentController.store = store
 ContentController.index = index
 ContentController.download = download
 ContentController.destroy = destroy
+ContentController.update = update
 
 export default ContentController

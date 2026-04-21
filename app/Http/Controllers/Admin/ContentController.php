@@ -23,7 +23,7 @@ class ContentController extends Controller
             'board' => 'required',
             'class_level' => 'required',
             'subject' => 'required',
-            'file' => 'required|file|max:51200'
+            'file' => 'required|file|max:102400'
         ]);
 
         $file = $request->file('file');
@@ -76,5 +76,21 @@ class ContentController extends Controller
         $content->delete();
 
         return response()->json(['success' => true]);
+    }
+    public function update(Request $request, $id)
+    {
+        $content = Content::findOrFail($id);
+
+        $content->update([
+            'title' => $request->title,
+            'type' => $request->type,
+            'board' => $request->board,
+            'class_level' => $request->class_level,
+            'subject' => $request->subject,
+        ]);
+
+        return response()->json([
+            'data' => $content
+        ]);
     }
 }

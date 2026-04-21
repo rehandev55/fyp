@@ -31,4 +31,10 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+    // protected $fillable = [
+    //     'name',
+    //     'email',
+    //     'password',
+    //     'status'
+    // ];
 }

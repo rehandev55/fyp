@@ -45,52 +45,6 @@ function Content() {
     const filtered = content.filter((c) => (!filterType || c.type === filterType) && (!search || c.title.toLowerCase().includes(search.toLowerCase())));
     const [uploadProgress, setUploadProgress] = useState(0);   //use state for upload progress
 
-    // const handleUpload = (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     if (!form.title) return;
-    //     setContent((prev) => [{ id: Date.now(), ...form, date: new Date().toISOString().split('T')[0], downloads: 0, size: '0 KB' }, ...prev]);
-    //     setForm({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
-    //     setShowUpload(false);
-    // };
-// const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-
-//     if (!file) {
-//         alert("Select a file first");
-//         return;
-//     }
-
-//     const formData = new FormData();
-//     formData.append("title", form.title);
-//     formData.append("type", form.type);
-//     formData.append("board", form.board);
-//     formData.append("class_level", form.classLevel);
-//     formData.append("subject", form.subject);
-//     formData.append("file", file);
-
-//     try {
-//         const res = await fetch("https://fyp_backend.test/api/content", {
-//             method: "POST",
-//             body: formData,
-//         });
-
-//         const data = await res.json();
-//         console.log("UPLOAD RESPONSE:", data);
-
-//         if (!res.ok) {
-//             alert("Upload failed");
-//             return;
-//         }
-
-//         fetchContent();
-//         setShowUpload(false);
-
-//     } catch (err) {
-//         console.error(err);
-//         alert("Server error");
-//     }
-// };
-
 const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -140,20 +94,59 @@ const handleUpload = async (e: React.FormEvent) => {
         setEditForm({ ...c });
         setModal({ type: 'edit', item: c });
     };
-    const saveEdit = () => {
-        setContent((prev) => prev.map((c) => (c.id === editForm.id ? { ...editForm } : c)));
-        setModal(null);
-    };
-    // const deleteContent = (id: number) => {
-    //     setContent((prev) => prev.filter((c) => c.id !== id));
+    // const saveEdit = () => {
+    //     setContent((prev) => prev.map((c) => (c.id === editForm.id ? { ...editForm } : c)));
     //     setModal(null);
     // };
-    const deleteContent = async (id: number) => {
-    await fetch(`https://fyp_backend.test/api/content/${id}`, {
-        method: "DELETE",
-    });
+    const saveEdit = async () => {
+    try {
+        await fetch(`https://fyp_backend.test/api/content/${editForm.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: editForm.title,
+                type: editForm.type,
+                board: editForm.board,
+                class_level: editForm.classLevel,
+                subject: editForm.subject,
+            }),
+        });
 
-    fetchContent();
+        // keep your UI update (so it feels instant)
+        setContent((prev) =>
+            prev.map((c) => (c.id === editForm.id ? { ...editForm } : c))
+        );
+
+        setModal(null);
+
+    } catch (err) {
+        console.error("Edit failed:", err);
+    }
+};
+
+//     const deleteContent = async (id: number) => {
+//     await fetch(`https://fyp_backend.test/api/content/${id}`, {
+//         method: "DELETE",
+//     });
+
+//     fetchContent();
+// };
+const deleteContent = async (id: number) => {
+    try {
+        await fetch(`https://fyp_backend.test/api/content/${id}`, {
+            method: "DELETE",
+        });
+
+        // update UI
+        setContent((prev) => prev.filter((c) => c.id !== id));
+
+        setModal(null);
+
+    } catch (err) {
+        console.error("Delete failed:", err);
+    }
 };
 
     const sel =
@@ -311,11 +304,7 @@ const downloadFile = (id: number) => {
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">File</label>
-                            {/* <div className="border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl p-8 text-center hover:border-[#7C3AED] transition cursor-pointer">
-                                <i className="fa-solid fa-cloud-arrow-up text-3xl text-gray-300 dark:text-gray-600 mb-3" />
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Click to upload or drag & drop</p>
-                                <p className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX up to 50MB</p>
-                            </div> */}
+
                             {uploadProgress > 0 && (
     <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
         <div
@@ -327,10 +316,22 @@ const downloadFile = (id: number) => {
         </p>
     </div>
 )}
-                            <input
+                            {/* <input
     type="file"
     onChange={(e) => setFile(e.target.files?.[0] || null)}
-/>
+/> */}
+<label className="w-full cursor-pointer">
+    <div className="w-full bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg active:scale-95 transition">
+        <i className="fa-solid fa-upload text-xs" />
+        {file ? file.name : "Choose File"}
+    </div>
+
+    <input
+        type="file"
+        className="hidden"
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
+    />
+</label>
 
                         </div>
                         <div className="flex gap-3 pt-2">
