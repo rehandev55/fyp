@@ -31,4 +31,6 @@ Route::get('/users', [UserController::class, 'index']);
 Route::delete('/users/{id}', [UserController::class, 'destroy']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::patch('/users/toggle/{id}', [UserController::class, 'toggleStatus']);
+
 Route::put('/content/{id}', [ContentController::class, 'update']);
+Route::get('/content', [ContentController::class, 'index']);
