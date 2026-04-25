@@ -3,30 +3,32 @@
 namespace App\Http\Controllers\AIControllers;
 
 use App\Http\Controllers\Controller;
+use App\Services\AIService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-
 
 class AIController extends Controller
 {
-    //
-    private $baseUrl = "http://localhost:8001";
+    public function __construct(private AIService $ai) {}
 
     public function chat(Request $request)
     {
-        $response = Http::post($this->baseUrl . '/chat', $request->all());
-        return response()->json($response->json());
+        $reply = $this->ai->chat(
+            $request->input('question', $request->input('message', '')),
+            $request->input('board', ''),
+            $request->input('class_level', ''),
+            $request->input('subject', ''),
+        );
+
+        return response()->json(['reply' => $reply]);
     }
 
     public function generateQuiz(Request $request)
     {
-        $response = Http::post($this->baseUrl . '/quiz/generate', $request->all());
-        return response()->json($response->json());
+        return response()->json($this->ai->generateQuiz($request->all()));
     }
 
     public function evaluateQuiz(Request $request)
     {
-        $response = Http::post($this->baseUrl . '/quiz/evaluate', $request->all());
-        return response()->json($response->json());
+        return response()->json($this->ai->evaluateQuiz($request->all()));
     }
 }

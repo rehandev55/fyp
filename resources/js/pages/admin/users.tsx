@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/layouts/admin-layout';
+import { api } from '@/lib/api';
 
 interface User {
     id: number;
@@ -19,19 +20,19 @@ interface Modal {
     user: User;
 }
 
-// const initialUsers: User[] = [
-//     { id: 1, name: 'Ahmed Khan', email: 'ahmed@example.com', classLevel: '10', board: 'Federal Board', subject: 'Physics', status: 'Active', quizzes: 24, score: 78, joined: '2026-03-15' },
-//     { id: 2, name: 'Sara Ali', email: 'sara@example.com', classLevel: '9', board: 'AJK Board', subject: 'Biology', status: 'Active', quizzes: 18, score: 85, joined: '2026-03-20' },
-//     { id: 3, name: 'Hassan Raza', email: 'hassan@example.com', classLevel: '12', board: 'Federal Board', subject: 'Mathematics', status: 'Blocked', quizzes: 5, score: 42, joined: '2026-02-10' },
-//     { id: 4, name: 'Ayesha Noor', email: 'ayesha@example.com', classLevel: '11', board: 'Federal Board', subject: 'Chemistry', status: 'Active', quizzes: 31, score: 91, joined: '2026-01-25' },
-//     { id: 5, name: 'Usman Tariq', email: 'usman@example.com', classLevel: '10', board: 'AJK Board', subject: 'English', status: 'Active', quizzes: 12, score: 67, joined: '2026-03-28' },
-//     { id: 6, name: 'Fatima Zahra', email: 'fatima@example.com', classLevel: '9', board: 'Federal Board', subject: 'Physics', status: 'Inactive', quizzes: 0, score: 0, joined: '2026-04-01' },
-//     { id: 7, name: 'Bilal Ahmed', email: 'bilal@example.com', classLevel: '10', board: 'Federal Board', subject: 'Biology', status: 'Active', quizzes: 45, score: 88, joined: '2025-12-05' },
-//     { id: 8, name: 'Zainab Malik', email: 'zainab@example.com', classLevel: '11', board: 'AJK Board', subject: 'Chemistry', status: 'Active', quizzes: 22, score: 73, joined: '2026-02-18' },
-// ];
+const initialUsers: User[] = [
+    { id: 1, name: 'Ahmed Khan', email: 'ahmed@example.com', classLevel: '10', board: 'Federal Board', subject: 'Physics', status: 'Active', quizzes: 24, score: 78, joined: '2026-03-15' },
+    { id: 2, name: 'Sara Ali', email: 'sara@example.com', classLevel: '9', board: 'AJK Board', subject: 'Biology', status: 'Active', quizzes: 18, score: 85, joined: '2026-03-20' },
+    { id: 3, name: 'Hassan Raza', email: 'hassan@example.com', classLevel: '12', board: 'Federal Board', subject: 'Mathematics', status: 'Blocked', quizzes: 5, score: 42, joined: '2026-02-10' },
+    { id: 4, name: 'Ayesha Noor', email: 'ayesha@example.com', classLevel: '11', board: 'Federal Board', subject: 'Chemistry', status: 'Active', quizzes: 31, score: 91, joined: '2026-01-25' },
+    { id: 5, name: 'Usman Tariq', email: 'usman@example.com', classLevel: '10', board: 'AJK Board', subject: 'English', status: 'Active', quizzes: 12, score: 67, joined: '2026-03-28' },
+    { id: 6, name: 'Fatima Zahra', email: 'fatima@example.com', classLevel: '9', board: 'Federal Board', subject: 'Physics', status: 'Inactive', quizzes: 0, score: 0, joined: '2026-04-01' },
+    { id: 7, name: 'Bilal Ahmed', email: 'bilal@example.com', classLevel: '10', board: 'Federal Board', subject: 'Biology', status: 'Active', quizzes: 45, score: 88, joined: '2025-12-05' },
+    { id: 8, name: 'Zainab Malik', email: 'zainab@example.com', classLevel: '11', board: 'AJK Board', subject: 'Chemistry', status: 'Active', quizzes: 22, score: 73, joined: '2026-02-18' },
+];
 
 function Users() {
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<User[]>(initialUsers);
     const [search, setSearch] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
     const [filterClass, setFilterClass] = useState('');
@@ -45,76 +46,60 @@ function Users() {
             (!filterClass || u.classLevel === filterClass),
     );
 
-    // const toggleStatus = (id: number) => {
-    //     setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: u.status === 'Active' ? 'Blocked' : 'Active' } : u)));
-    // };
     const toggleStatus = async (id: number) => {
-    try {
-        const res = await fetch(`https://fyp_backend.test/api/users/toggle/${id}`, {
-            method: "PATCH"
-        });
+        try {
+            const res = await api(`/users/toggle/${id}`, {
+                method: "PATCH",
+            });
 
-        const updated = await res.json();
+            const updated = await res.json();
 
-        setUsers((prev) =>
-            prev.map((u) => (u.id === id ? updated.data : u))
-        );
-    } catch (err) {
-        console.error("Status update failed:", err);
-    }
-};
+            setUsers((prev) =>
+                prev.map((u) => (u.id === id ? updated.data : u))
+            );
+        } catch (err) {
+            console.error("Status update failed:", err);
+        }
+    };
 
     const openEdit = (u: User) => {
         setEditForm({ ...u });
         setModal({ type: 'edit', user: u });
     };
-    // const saveEdit = () => {
-    //     setUsers((prev) => prev.map((u) => (u.id === editForm.id ? { ...editForm } : u)));
-    //     setModal(null);
-    // };
+    const saveEdit = async () => {
+        try {
+            await api(`/users/${editForm.id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    name: editForm.name,
+                    email: editForm.email,
+                }),
+            });
 
-  const saveEdit = async () => {
-    try {
-        await fetch(`https://fyp_backend.test/api/users/${editForm.id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: editForm.name,
-                email: editForm.email,
-            }),
-        });
+            setUsers((prev) =>
+                prev.map((u) =>
+                    u.id === editForm.id ? { ...u, ...editForm } : u
+                )
+            );
 
-        // keep UI data as it is (fake fields stay)
-        setUsers((prev) =>
-            prev.map((u) =>
-                u.id === editForm.id ? { ...u, ...editForm } : u
-            )
-        );
+            setModal(null);
+        } catch (err) {
+            console.error("Update failed:", err);
+        }
+    };
 
-        setModal(null);
-    } catch (err) {
-        console.error("Update failed:", err);
-    }
-};
-
-    // const deleteUser = (id: number) => {
-    //     setUsers((prev) => prev.filter((u) => u.id !== id));
-    //     setModal(null);
-    // };
     const deleteUser = async (id: number) => {
-    try {
-        await fetch(`https://fyp_backend.test/api/users/${id}`, {
-            method: "DELETE"
-        });
+        try {
+            await api(`/users/${id}`, {
+                method: "DELETE",
+            });
 
-        setUsers((prev) => prev.filter((u) => u.id !== id));
-        setModal(null);
-    } catch (err) {
-        console.error("Delete failed:", err);
-    }
-};
+            setUsers((prev) => prev.filter((u) => u.id !== id));
+            setModal(null);
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
+    };
 
     const sel =
         'border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent bg-white dark:bg-gray-700 dark:text-white transition';
@@ -126,19 +111,20 @@ function Users() {
     const avgScore = Math.round(users.reduce((a, u) => a + u.score, 0) / users.length);
 
     useEffect(() => {
-    fetchUsers();
-}, []);
+        fetchUsers();
+    }, []);
 
-const fetchUsers = async () => {
-    try {
-        const res = await fetch("https://fyp_backend.test/api/users");
-        const data = await res.json();
+    const fetchUsers = async () => {
+        try {
+            const res = await api('/users');
+            const data = await res.json();
 
-        setUsers(data.data); // Laravel API response
-    } catch (err) {
-        console.error("Error fetching users:", err);
-    }
-};
+            setUsers(data.data);
+        } catch (err) {
+            console.error("Error fetching users:", err);
+        }
+    };
+
 
     return (
         <div className="space-y-6">

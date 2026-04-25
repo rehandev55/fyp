@@ -1,3 +1,4 @@
+import Api from './Api'
 import AIControllers from './AIControllers'
 import Admin from './Admin'
 import DashboardController from './DashboardController'
@@ -10,7 +11,8 @@ import ProfileController from './ProfileController'
 import AboutController from './AboutController'
 import Settings from './Settings'
 const Controllers = {
-    AIControllers: Object.assign(AIControllers, AIControllers),
+    Api: Object.assign(Api, Api),
+AIControllers: Object.assign(AIControllers, AIControllers),
 Admin: Object.assign(Admin, Admin),
 DashboardController: Object.assign(DashboardController, DashboardController),
 SelectionController: Object.assign(SelectionController, SelectionController),

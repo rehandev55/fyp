@@ -25,7 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('practice', PracticeController::class)->name('practice');
     Route::get('resources', ResourceController::class)->name('resources');
     Route::get('progress', ProgressController::class)->name('progress');
-    Route::get('profile', ProfileController::class)->name('profile');
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.preferences');
     Route::get('about', AboutController::class)->name('about');
 
     Route::prefix('admin')->name('admin.')->group(function () {
@@ -35,7 +36,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__ . '/settings.php';
-// Route::get('/apitest', function () {
-//     return response()->json(['web' => 'hit']);
-// });
+require __DIR__.'/settings.php';

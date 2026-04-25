@@ -9,7 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('board')->nullable();
+            $table->string('class_level')->nullable();
+            $table->string('subject')->nullable();
+        });
+    }
 
     /**
      * Reverse the migrations.
@@ -17,13 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
-        });
-    }
-    public function up()
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('status')->default('Active');
+            $table->dropColumn(['board', 'class_level', 'subject']);
         });
     }
 };

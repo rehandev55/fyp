@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::chat
- * @see app/Http/Controllers/AIControllers/AIController.php:15
+ * @see app/Http/Controllers/AIControllers/AIController.php:13
  * @route '/api/chat'
  */
 export const chat = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ chat.definition = {
 
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::chat
- * @see app/Http/Controllers/AIControllers/AIController.php:15
+ * @see app/Http/Controllers/AIControllers/AIController.php:13
  * @route '/api/chat'
  */
 chat.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ chat.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::chat
- * @see app/Http/Controllers/AIControllers/AIController.php:15
+ * @see app/Http/Controllers/AIControllers/AIController.php:13
  * @route '/api/chat'
  */
 chat.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ chat.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\AIControllers\AIController::chat
- * @see app/Http/Controllers/AIControllers/AIController.php:15
+ * @see app/Http/Controllers/AIControllers/AIController.php:13
  * @route '/api/chat'
  */
     const chatForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ chat.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\AIControllers\AIController::chat
- * @see app/Http/Controllers/AIControllers/AIController.php:15
+ * @see app/Http/Controllers/AIControllers/AIController.php:13
  * @route '/api/chat'
  */
         chatForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ chat.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     chat.form = chatForm
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::generateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:21
+ * @see app/Http/Controllers/AIControllers/AIController.php:25
  * @route '/api/quiz/generate'
  */
 export const generateQuiz = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -71,7 +71,7 @@ generateQuiz.definition = {
 
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::generateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:21
+ * @see app/Http/Controllers/AIControllers/AIController.php:25
  * @route '/api/quiz/generate'
  */
 generateQuiz.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ generateQuiz.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::generateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:21
+ * @see app/Http/Controllers/AIControllers/AIController.php:25
  * @route '/api/quiz/generate'
  */
 generateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -90,7 +90,7 @@ generateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\AIControllers\AIController::generateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:21
+ * @see app/Http/Controllers/AIControllers/AIController.php:25
  * @route '/api/quiz/generate'
  */
     const generateQuizForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -100,7 +100,7 @@ generateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\AIControllers\AIController::generateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:21
+ * @see app/Http/Controllers/AIControllers/AIController.php:25
  * @route '/api/quiz/generate'
  */
         generateQuizForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -111,7 +111,7 @@ generateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     generateQuiz.form = generateQuizForm
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:27
+ * @see app/Http/Controllers/AIControllers/AIController.php:30
  * @route '/api/quiz/evaluate'
  */
 export const evaluateQuiz = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -126,7 +126,7 @@ evaluateQuiz.definition = {
 
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:27
+ * @see app/Http/Controllers/AIControllers/AIController.php:30
  * @route '/api/quiz/evaluate'
  */
 evaluateQuiz.url = (options?: RouteQueryOptions) => {
@@ -135,7 +135,7 @@ evaluateQuiz.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:27
+ * @see app/Http/Controllers/AIControllers/AIController.php:30
  * @route '/api/quiz/evaluate'
  */
 evaluateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -145,7 +145,7 @@ evaluateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:27
+ * @see app/Http/Controllers/AIControllers/AIController.php:30
  * @route '/api/quiz/evaluate'
  */
     const evaluateQuizForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -155,7 +155,7 @@ evaluateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:27
+ * @see app/Http/Controllers/AIControllers/AIController.php:30
  * @route '/api/quiz/evaluate'
  */
         evaluateQuizForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

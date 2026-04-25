@@ -1,5 +1,4 @@
 import { Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import {
     AreaChart,
     Area,
@@ -15,7 +14,6 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import AdminLayout from '@/layouts/admin-layout';
-
 
 const userGrowth = [
     { month: 'Oct', users: 420 },
@@ -44,110 +42,27 @@ const subjectDistribution = [
     { name: 'English', value: 142, color: '#EF4444' },
 ];
 
-function Dashboard() {
-    const [users, setUsers] = useState<any[]>([]);
-    const [content, setContent] = useState<any[]>([]);
-
-    const userGrowth = Object.values(
-    (users || []).reduce((acc: any, u: any) => {
-        if (!u.created_at) return acc;
-
-        const date = new Date(u.created_at);
-        const month = date.toLocaleString('default', { month: 'short' });
-
-        if (!acc[month]) {
-            acc[month] = { month, users: 0 };
-        }
-
-        acc[month].users += 1;
-
-        return acc;
-    }, {})
-);
-const subjectDistribution = Object.values(
-    (content || []).reduce((acc: any, c: any) => {
-        if (!c.subject) return acc;
-
-        if (!acc[c.subject]) {
-            acc[c.subject] = {
-                name: c.subject,
-                value: 0
-            };
-        }
-
-        acc[c.subject].value += 1;
-
-        return acc;
-    }, {})
-);
-const COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444'];
-
-    const stats = [
-    {
-        label: 'Total Users',
-        value: users?.length || 0,
-        change: '',
-        up: true,
-        icon: 'fa-solid fa-users',
-        color: 'from-blue-500 to-indigo-600'
-    },
-    {
-        label: 'Resources',
-        value: content?.length || 0,
-        change: '',
-        up: true,
-        icon: 'fa-solid fa-book',
-        color: 'from-purple-500 to-pink-600'
-    },
-    {
-        label: 'Downloads',
-        value: (content || []).reduce((a, c) => a + (c.downloads || 0), 0),
-        change: '',
-        up: true,
-        icon: 'fa-solid fa-download',
-        color: 'from-emerald-500 to-teal-600'
-    },
-    {
-        label: 'Active Today',
-        value: users?.length || 0,
-        change: '',
-        up: true,
-        icon: 'fa-solid fa-user-check',
-        color: 'from-orange-500 to-amber-600'
-    },
+const recentUsers = [
+    { name: 'Ahmed Khan', email: 'ahmed@example.com', class: '10', board: 'Federal Board', status: 'Active', joined: '2 hours ago' },
+    { name: 'Sara Ali', email: 'sara@example.com', class: '9', board: 'AJK Board', status: 'Active', joined: '5 hours ago' },
+    { name: 'Hassan Raza', email: 'hassan@example.com', class: '12', board: 'Federal Board', status: 'Inactive', joined: '1 day ago' },
+    { name: 'Ayesha Noor', email: 'ayesha@example.com', class: '11', board: 'Federal Board', status: 'Active', joined: '2 days ago' },
+    { name: 'Usman Tariq', email: 'usman@example.com', class: '10', board: 'AJK Board', status: 'Active', joined: '3 days ago' },
 ];
 
-    useEffect(() => {
-    fetchUsers();
-    fetchContent();
-}, []);
-const fetchUsers = async () => {
-    try {
-        const res = await fetch("https://fyp_backend.test/api/users");
+const recentContent = [
+    { title: 'Physics Past Papers 2025', type: 'Past Paper', downloads: 87, date: '2 days ago' },
+    { title: 'Chemistry Notes Ch 1-5', type: 'Notes', downloads: 134, date: '3 days ago' },
+    { title: 'Math Key Book Class 10', type: 'Key Book', downloads: 211, date: '5 days ago' },
+];
 
-        if (!res.ok) throw new Error("Users API failed");
-
-        const data = await res.json();
-        setUsers(data.data || []);
-    } catch (err) {
-        console.error("Users fetch error:", err);
-        setUsers([]); // prevents crash
-    }
-};
-
-const fetchContent = async () => {
-    try {
-        const res = await fetch("https://fyp_backend.test/api/content");
-
-        if (!res.ok) throw new Error("Content API failed");
-
-        const data = await res.json();
-        setContent(data.data || []);
-    } catch (err) {
-        console.error("Content fetch error:", err);
-        setContent([]); // prevents crash
-    }
-};
+function Dashboard() {
+    const stats = [
+        { label: 'Total Users', value: '1,247', change: '+12%', up: true, icon: 'fa-solid fa-users', color: 'from-blue-500 to-indigo-600' },
+        { label: 'Active Today', value: '843', change: '+8%', up: true, icon: 'fa-solid fa-user-check', color: 'from-emerald-500 to-teal-600' },
+        { label: 'Resources', value: '156', change: '+23', up: true, icon: 'fa-solid fa-book', color: 'from-purple-500 to-pink-600' },
+        { label: 'Quizzes Today', value: '342', change: '-5%', up: false, icon: 'fa-solid fa-clipboard-check', color: 'from-orange-500 to-amber-600' },
+    ];
 
     return (
         <div className="space-y-8">
@@ -231,22 +146,18 @@ const fetchContent = async () => {
                     </h3>
                     <ResponsiveContainer width="100%" height={200}>
                         <PieChart>
-                            <Pie data={subjectDistribution} dataKey="value">
-    {subjectDistribution.map((entry, i) => (
-        <Cell key={i} fill={COLORS[i % COLORS.length]} />
-    ))}
-</Pie>
+                            <Pie data={subjectDistribution} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value">
+                                {subjectDistribution.map((entry, i) => (
+                                    <Cell key={i} fill={entry.color} />
+                                ))}
+                            </Pie>
                             <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', fontSize: '12px' }} />
                         </PieChart>
                     </ResponsiveContainer>
                     <div className="grid grid-cols-2 gap-2 mt-2">
-                        {subjectDistribution.map((s: any, index: number) => (
+                        {subjectDistribution.map((s) => (
                             <div key={s.name} className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                                {/* <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} /> */}
-                                <span
-    className="w-2.5 h-2.5 rounded-full"
-    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-/>
+                                <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }} />
                                 {s.name}
                             </div>
                         ))}
@@ -263,30 +174,23 @@ const fetchContent = async () => {
                         </Link>
                     </div>
                     <div className="space-y-3">
-                        {content.slice(0, 5).map((c: any) => (
-    <div key={c.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-
-        <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-            <i className="fa-solid fa-file-lines text-[#2563EB]" />
-        </div>
-
-        <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-800 dark:text-white truncate">
-                {c.title}
-            </p>
-            <p className="text-xs text-gray-400 mt-0.5">
-                {c.type} — {c.created_at ? new Date(c.created_at).toLocaleDateString() : ''}
-            </p>
-        </div>
-
-        <div className="text-right">
-            <p className="text-sm font-semibold text-gray-800 dark:text-white">
-                {c.downloads || 0}
-            </p>
-            <p className="text-[10px] text-gray-400">downloads</p>
-        </div>
-    </div>
-))}
+                        {recentContent.map((c, i) => (
+                            <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                                <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i className="fa-solid fa-file-lines text-[#2563EB]" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{c.title}</p>
+                                    <p className="text-xs text-gray-400 mt-0.5">
+                                        {c.type} — {c.date}
+                                    </p>
+                                </div>
+                                <div className="text-right flex-shrink-0">
+                                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{c.downloads}</p>
+                                    <p className="text-[10px] text-gray-400">downloads</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -312,34 +216,31 @@ const fetchContent = async () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
-                                {users.slice(0, 5).map((u: any) => (
-    <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
-        <td className="px-5 py-4">
-            <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                    {u.name?.charAt(0)}
-                </div>
-                <div>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white">{u.name}</p>
-                    <p className="text-xs text-gray-400">{u.email}</p>
-                </div>
-            </div>
-        </td>
-
-        <td className="px-5 py-4 text-sm text-gray-500">—</td>
-        <td className="px-5 py-4 text-sm text-gray-500">—</td>
-
-        <td className="px-5 py-4">
-            <span className="text-xs px-2 py-1 bg-green-100 text-green-600 rounded">
-                Active
-            </span>
-        </td>
-
-        <td className="px-5 py-4 text-sm text-gray-400">
-            {u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}
-        </td>
-    </tr>
-))}
+                                {recentUsers.map((u, i) => (
+                                    <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                                        <td className="px-5 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                                                    {u.name.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-medium text-gray-800 dark:text-white">{u.name}</p>
+                                                    <p className="text-xs text-gray-400">{u.email}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden sm:table-cell">Class {u.class}</td>
+                                        <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden md:table-cell">{u.board}</td>
+                                        <td className="px-5 py-4">
+                                            <span
+                                                className={`text-xs px-2.5 py-1 rounded-full font-semibold ${u.status === 'Active' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}
+                                            >
+                                                {u.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-5 py-4 text-sm text-gray-400 hidden sm:table-cell">{u.joined}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

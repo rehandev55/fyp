@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
 import StudentLayout from '@/layouts/student-layout';
 
 interface User {
@@ -7,9 +7,29 @@ interface User {
     email: string;
     role?: string;
     subject?: string;
-    classLevel?: string;
+    class_level?: string;
     board?: string;
 }
+
+const boards = [
+    { value: 'federal', label: 'Federal Board' },
+    { value: 'ajk', label: 'AJK Board' },
+];
+
+const classes = [
+    { value: 'class_9', label: 'Class 9' },
+    { value: 'class_10', label: 'Class 10' },
+    { value: 'class_11', label: 'Class 11' },
+    { value: 'class_12', label: 'Class 12' },
+];
+
+const subjects = [
+    { value: 'physics', label: 'Physics' },
+    { value: 'chemistry', label: 'Chemistry' },
+    { value: 'biology', label: 'Biology' },
+    { value: 'mathematics', label: 'Mathematics' },
+    { value: 'english', label: 'English' },
+];
 
 export default function Profile() {
     const { auth } = usePage<{ auth: { user: User } }>().props;
@@ -18,8 +38,9 @@ export default function Profile() {
     const [form, setForm] = useState({
         name: user?.name || '',
         email: user?.email || '',
-        classLevel: user?.classLevel || '',
+        class_level: user?.class_level || '',
         board: user?.board || '',
+        subject: user?.subject || '',
     });
     const [message, setMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -27,8 +48,18 @@ export default function Profile() {
 
     const handleUpdate = (e: React.FormEvent) => {
         e.preventDefault();
-        setMessage('Profile updated successfully!');
-        setTimeout(() => setMessage(''), 3000);
+        router.put('/profile', {
+            name: form.name,
+            board: form.board,
+            class_level: form.class_level,
+            subject: form.subject,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setMessage('Profile updated successfully!');
+                setTimeout(() => setMessage(''), 3000);
+            },
+        });
     };
 
     const handlePasswordChange = (e: React.FormEvent) => {
@@ -78,19 +109,25 @@ export default function Profile() {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Class</label>
-                                <select value={form.classLevel} onChange={(e) => setForm({ ...form, classLevel: e.target.value })} className={inp}>
+                                <select value={form.class_level} onChange={(e) => setForm({ ...form, class_level: e.target.value })} className={inp}>
                                     <option value="">Select</option>
-                                    {['9', '10', '11', '12'].map((c) => <option key={c} value={c}>Class {c}</option>)}
+                                    {classes.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Board</label>
                                 <select value={form.board} onChange={(e) => setForm({ ...form, board: e.target.value })} className={inp}>
                                     <option value="">Select</option>
-                                    <option value="Federal Board">Federal Board</option>
-                                    <option value="AJK Board">AJK Board</option>
+                                    {boards.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
                                 </select>
                             </div>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Subject</label>
+                            <select value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className={inp}>
+                                <option value="">Select</option>
+                                {subjects.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                            </select>
                         </div>
                         <button type="submit" className="w-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white py-3 rounded-xl hover:shadow-lg transition text-sm font-semibold">Update Profile</button>
                     </form>

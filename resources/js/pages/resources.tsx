@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import StudentLayout from '@/layouts/student-layout';
 import ResourceCard from '@/components/resource-card';
@@ -20,47 +20,25 @@ interface Resource {
     class_level: string;
     subject: string;
     file_path: string;
+    file_size: string | null;
     downloads: number;
 }
 
-
 export default function Resources() {
+    const { auth, resources } = usePage<{ auth: { user: User }; resources: Resource[] }>().props;
 
-    const { auth } = usePage<{ auth: { user: User } }>().props;
-    const user = auth.user;
-
-    const [resources, setResources] = useState<Resource[]>([]);
-    const [board, setBoard] = useState(user?.board || '');
-    const [classLevel, setClassLevel] = useState(user?.classLevel || '');
+    const [board, setBoard] = useState('');
+    const [classLevel, setClassLevel] = useState('');
     const [subject, setSubject] = useState('');
+
     const filtered = resources.filter(
-    (r) =>
-        (!board || r.board === board) &&
-        (!classLevel || r.class_level === classLevel) &&
-        (!subject || r.subject === subject)
-);
-    // const filtered = allResources.filter((r) => (!board || r.board === board) && (!classLevel || r.classLevel === classLevel) && (!subject || r.subject === subject));
+        (r) =>
+            (!board || r.board === board) &&
+            (!classLevel || r.class_level === classLevel) &&
+            (!subject || r.subject === subject),
+    );
+
     const sel = 'border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white dark:bg-gray-700 dark:text-white hover:border-blue-300 transition';
-
-    useEffect(() => {
-    fetchResources();
-}, []);
-
-const fetchResources = async () => {
-    try {
-        const res = await fetch("https://fyp_backend.test/api/content");
-        const data = await res.json();
-
-        setResources(data.data); // Laravel response
-    } catch (err) {
-        console.error("Fetch error:", err);
-    }
-};
-const onDownload = (id: number) => {      //download
-    window.open(`https://fyp_backend.test/api/content/download/${id}`);
-};
-
-
 
     return (
         <>
@@ -93,19 +71,19 @@ const onDownload = (id: number) => {      //download
                 </div>
                 {filtered.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {/* {filtered.map((r, i) => <ResourceCard key={i} {...r} />)} */}
                         {filtered.map((r) => (
-    <ResourceCard
-        key={r.id}
-        title={r.title}
-        description={`${r.type} • ${r.subject}`}
-        board={r.board}
-        classLevel={r.class_level}
-        subject={r.subject}
-        downloads={r.downloads}
-        onDownload={() => onDownload(r.id)}
-    />
-))}
+                            <ResourceCard
+                                key={r.id}
+                                id={r.id}
+                                title={r.title}
+                                type={r.type}
+                                subject={r.subject}
+                                classLevel={r.class_level}
+                                board={r.board}
+                                fileSize={r.file_size ?? undefined}
+                                downloads={r.downloads}
+                            />
+                        ))}
                     </div>
                 ) : (
                     <div className="text-center py-16">
@@ -114,7 +92,6 @@ const onDownload = (id: number) => {      //download
                     </div>
                 )}
             </div>
-
         </>
     );
 }

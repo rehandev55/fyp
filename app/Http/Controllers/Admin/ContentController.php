@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\Board;
+use App\Enums\ClassLevel;
+use App\Enums\Subject;
 use App\Http\Controllers\Controller;
-use Inertia\Response;
+use App\Models\Content;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Content;
+use Illuminate\Validation\Rule;
+use Inertia\Response;
 
 class ContentController extends Controller
 {
@@ -14,16 +18,17 @@ class ContentController extends Controller
     {
         return inertia('admin/content');
     }
+
     // 1. Upload Content (Admin)
     public function store(Request $request)
     {
         $request->validate([
             'title' => 'required',
             'type' => 'required',
-            'board' => 'required',
-            'class_level' => 'required',
-            'subject' => 'required',
-            'file' => 'required|file|max:102400'
+            'board' => ['required', Rule::enum(Board::class)],
+            'class_level' => ['required', Rule::enum(ClassLevel::class)],
+            'subject' => ['required', Rule::enum(Subject::class)],
+            'file' => 'required|file|max:102400',
         ]);
 
         $file = $request->file('file');
@@ -41,7 +46,7 @@ class ContentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $content
+            'data' => $content,
         ]);
     }
 
@@ -52,7 +57,7 @@ class ContentController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
@@ -62,7 +67,7 @@ class ContentController extends Controller
         $content = Content::findOrFail($id);
         $content->increment('downloads');
 
-        $filePath = storage_path('app/public/' . $content->file_path);
+        $filePath = storage_path('app/public/'.$content->file_path);
 
         return response()->download($filePath);
     }
@@ -77,6 +82,7 @@ class ContentController extends Controller
 
         return response()->json(['success' => true]);
     }
+
     public function update(Request $request, $id)
     {
         $content = Content::findOrFail($id);
@@ -90,7 +96,7 @@ class ContentController extends Controller
         ]);
 
         return response()->json([
-            'data' => $content
+            'data' => $content,
         ]);
     }
 }

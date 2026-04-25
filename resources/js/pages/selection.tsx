@@ -7,11 +7,29 @@ interface User {
     email: string;
     role?: string;
     subject?: string;
-    classLevel?: string;
+    class_level?: string;
     board?: string;
 }
 
-const subjects = ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'];
+const boards = [
+    { value: 'federal', label: 'Federal Board' },
+    { value: 'ajk', label: 'AJK Board' },
+];
+
+const classes = [
+    { value: 'class_9', label: 'Class 9' },
+    { value: 'class_10', label: 'Class 10' },
+    { value: 'class_11', label: 'Class 11' },
+    { value: 'class_12', label: 'Class 12' },
+];
+
+const subjects = [
+    { value: 'physics', label: 'Physics' },
+    { value: 'chemistry', label: 'Chemistry' },
+    { value: 'biology', label: 'Biology' },
+    { value: 'mathematics', label: 'Mathematics' },
+    { value: 'english', label: 'English' },
+];
 
 export default function Selection() {
     const { auth } = usePage<{ auth: { user: User } }>().props;
@@ -19,8 +37,10 @@ export default function Selection() {
 
     const [forSibling, setForSibling] = useState(false);
     const [board, setBoard] = useState(user?.board || '');
-    const [classLevel, setClassLevel] = useState(user?.classLevel || '');
+    const [classLevel, setClassLevel] = useState(user?.class_level || '');
     const [subject, setSubject] = useState(user?.subject || '');
+
+    const classLabel = classes.find(c => c.value === user?.class_level)?.label || user?.class_level;
 
     const handleSiblingToggle = () => {
         if (!forSibling) {
@@ -29,7 +49,7 @@ export default function Selection() {
             setSubject('');
         } else {
             setBoard(user?.board || '');
-            setClassLevel(user?.classLevel || '');
+            setClassLevel(user?.class_level || '');
             setSubject(user?.subject || '');
         }
         setForSibling(!forSibling);
@@ -37,7 +57,7 @@ export default function Selection() {
 
     const handleStartLearning = () => {
         if (board && classLevel && subject) {
-            router.visit('/aichat');
+            router.visit(`/aichat?board=${encodeURIComponent(board)}&class_level=${encodeURIComponent(classLevel)}&subject=${encodeURIComponent(subject)}`);
         }
     };
 
@@ -56,14 +76,14 @@ export default function Selection() {
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
-                    {user?.board && user?.classLevel && (
+                    {user?.board && user?.class_level && (
                         <div className="mb-6 p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <i className="fa-solid fa-users text-[#2563EB]" />
                                     <div>
                                         <p className="text-sm font-semibold text-gray-800 dark:text-white">
-                                            {forSibling ? 'Browsing for someone else' : `Using your profile (Class ${user.classLevel})`}
+                                            {forSibling ? 'Browsing for someone else' : `Using your profile (${classLabel})`}
                                         </p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                             {forSibling ? 'Select different board & class below' : 'Want to explore for a sibling?'}
@@ -85,22 +105,21 @@ export default function Selection() {
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Board</label>
                             <select value={board} onChange={(e) => setBoard(e.target.value)} className={sel}>
                                 <option value="">Select Board</option>
-                                <option value="Federal Board">Federal Board</option>
-                                <option value="AJK Board">AJK Board</option>
+                                {boards.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
                             </select>
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Class</label>
                             <select value={classLevel} onChange={(e) => { setClassLevel(e.target.value); setSubject(''); }} className={sel}>
                                 <option value="">Select Class</option>
-                                {['9', '10', '11', '12'].map((c) => <option key={c} value={c}>Class {c}</option>)}
+                                {classes.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
                             </select>
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Subject</label>
                             <select value={subject} onChange={(e) => setSubject(e.target.value)} disabled={!classLevel} className={`${sel} disabled:opacity-50 disabled:cursor-not-allowed`}>
                                 <option value="">Select Subject</option>
-                                {subjects.map((s) => <option key={s} value={s}>{s}</option>)}
+                                {subjects.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                             </select>
                         </div>
                         <button

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 const ResourceController = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ ResourceController.definition = {
 
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 ResourceController.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ ResourceController.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 ResourceController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ ResourceController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 })
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 ResourceController.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ ResourceController.head = (options?: RouteQueryOptions): RouteDefinition<'head'>
 
     /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
     const ResourceControllerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ ResourceController.head = (options?: RouteQueryOptions): RouteDefinition<'head'>
 
             /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
         ResourceControllerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ ResourceController.head = (options?: RouteQueryOptions): RouteDefinition<'head'>
         })
             /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
         ResourceControllerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

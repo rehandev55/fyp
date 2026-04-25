@@ -602,7 +602,7 @@ practice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     practice.form = practiceForm
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 export const resources = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -617,7 +617,7 @@ resources.definition = {
 
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 resources.url = (options?: RouteQueryOptions) => {
@@ -626,7 +626,7 @@ resources.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 resources.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -635,7 +635,7 @@ resources.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
 resources.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -645,7 +645,7 @@ resources.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
     const resourcesForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -655,7 +655,7 @@ resources.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
         resourcesForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -664,7 +664,7 @@ resources.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\ResourceController::__invoke
- * @see app/Http/Controllers/ResourceController.php:9
+ * @see app/Http/Controllers/ResourceController.php:10
  * @route '/resources'
  */
         resourcesForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -757,8 +757,8 @@ progress.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     
     progress.form = progressForm
 /**
-* @see \App\Http\Controllers\ProfileController::__invoke
- * @see app/Http/Controllers/ProfileController.php:9
+* @see \App\Http\Controllers\ProfileController::profile
+ * @see app/Http/Controllers/ProfileController.php:15
  * @route '/profile'
  */
 export const profile = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -772,8 +772,8 @@ profile.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Http\Controllers\ProfileController::__invoke
- * @see app/Http/Controllers/ProfileController.php:9
+* @see \App\Http\Controllers\ProfileController::profile
+ * @see app/Http/Controllers/ProfileController.php:15
  * @route '/profile'
  */
 profile.url = (options?: RouteQueryOptions) => {
@@ -781,8 +781,8 @@ profile.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \App\Http\Controllers\ProfileController::__invoke
- * @see app/Http/Controllers/ProfileController.php:9
+* @see \App\Http\Controllers\ProfileController::profile
+ * @see app/Http/Controllers/ProfileController.php:15
  * @route '/profile'
  */
 profile.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -790,8 +790,8 @@ profile.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     method: 'get',
 })
 /**
-* @see \App\Http\Controllers\ProfileController::__invoke
- * @see app/Http/Controllers/ProfileController.php:9
+* @see \App\Http\Controllers\ProfileController::profile
+ * @see app/Http/Controllers/ProfileController.php:15
  * @route '/profile'
  */
 profile.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -800,8 +800,8 @@ profile.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
     /**
-* @see \App\Http\Controllers\ProfileController::__invoke
- * @see app/Http/Controllers/ProfileController.php:9
+* @see \App\Http\Controllers\ProfileController::profile
+ * @see app/Http/Controllers/ProfileController.php:15
  * @route '/profile'
  */
     const profileForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -810,8 +810,8 @@ profile.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     })
 
             /**
-* @see \App\Http\Controllers\ProfileController::__invoke
- * @see app/Http/Controllers/ProfileController.php:9
+* @see \App\Http\Controllers\ProfileController::profile
+ * @see app/Http/Controllers/ProfileController.php:15
  * @route '/profile'
  */
         profileForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -819,8 +819,8 @@ profile.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
             method: 'get',
         })
             /**
-* @see \App\Http\Controllers\ProfileController::__invoke
- * @see app/Http/Controllers/ProfileController.php:9
+* @see \App\Http\Controllers\ProfileController::profile
+ * @see app/Http/Controllers/ProfileController.php:15
  * @route '/profile'
  */
         profileForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
