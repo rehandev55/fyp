@@ -31,6 +31,13 @@ export default function Resources() {
     const [classLevel, setClassLevel] = useState('');
     const [subject, setSubject] = useState('');
 
+    const classOptions = [
+    { value: 'class_9', label: 'Class 9' },
+    { value: 'class_10', label: 'Class 10' },
+    { value: 'class_11', label: 'Class 11' },
+    { value: 'class_12', label: 'Class 12' },
+];
+
     const filtered = resources.filter(
         (r) =>
             (!board || r.board === board) &&
@@ -56,16 +63,20 @@ export default function Resources() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <select value={board} onChange={(e) => setBoard(e.target.value)} className={sel}>
                             <option value="">All Boards</option>
-                            <option value="Federal Board">Federal Board</option>
-                            <option value="AJK Board">AJK Board</option>
+                            <option value="federal">Federal Board</option>
+                            <option value="ajk">AJK Board</option>
                         </select>
                         <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)} className={sel}>
                             <option value="">All Classes</option>
-                            {['9', '10', '11', '12'].map((c) => <option key={c} value={c}>Class {c}</option>)}
+                            {classOptions.map((c) => (
+    <option key={c.value} value={c.value}>
+        {c.label}
+    </option>
+))}
                         </select>
                         <select value={subject} onChange={(e) => setSubject(e.target.value)} className={sel}>
                             <option value="">All Subjects</option>
-                            {['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'].map((s) => <option key={s} value={s}>{s}</option>)}
+                            {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
                 </div>
