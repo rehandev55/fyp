@@ -13,34 +13,31 @@ interface User {
 }
 
 interface Resource {
+    id: number;
     title: string;
-    description: string;
+    type: string;
     board: string;
-    classLevel: string;
+    class_level: string;
     subject: string;
+    file_path: string;
+    file_size: string | null;
+    downloads: number;
 }
 
-const allResources: Resource[] = [
-    { title: 'Physics Past Papers 2024', description: 'Complete collection of past board exam papers for Physics with answer keys.', board: 'Federal Board', classLevel: '10', subject: 'Physics' },
-    { title: 'Math Key Book Solutions', description: 'Step-by-step solutions and key book for Mathematics.', board: 'Federal Board', classLevel: '10', subject: 'Mathematics' },
-    { title: 'Biology Chapter Notes', description: 'Comprehensive chapter-wise notes for Biology preparation.', board: 'Federal Board', classLevel: '10', subject: 'Biology' },
-    { title: 'Chemistry Formulas Sheet', description: 'All important chemistry formulas and equations in one place.', board: 'AJK Board', classLevel: '9', subject: 'Chemistry' },
-    { title: 'English Grammar Guide', description: 'Complete grammar reference with examples and board exam tips.', board: 'AJK Board', classLevel: '9', subject: 'English' },
-    { title: 'Physics Solved Numericals', description: '100+ solved numerical problems with detailed steps.', board: 'Federal Board', classLevel: '12', subject: 'Physics' },
-    { title: 'Biology Diagrams Pack', description: 'High-quality labeled diagrams for all Biology chapters.', board: 'Federal Board', classLevel: '11', subject: 'Biology' },
-    { title: 'Math Practice Worksheets', description: 'Topic-wise practice worksheets with increasing difficulty.', board: 'AJK Board', classLevel: '10', subject: 'Mathematics' },
-    { title: 'Chemistry Lab Manual', description: 'Practical lab manual with procedures and viva questions.', board: 'Federal Board', classLevel: '9', subject: 'Chemistry' },
-];
-
 export default function Resources() {
-    const { auth } = usePage<{ auth: { user: User } }>().props;
-    const user = auth.user;
+    const { auth, resources } = usePage<{ auth: { user: User }; resources: Resource[] }>().props;
 
-    const [board, setBoard] = useState(user?.board || '');
-    const [classLevel, setClassLevel] = useState(user?.classLevel || '');
+    const [board, setBoard] = useState('');
+    const [classLevel, setClassLevel] = useState('');
     const [subject, setSubject] = useState('');
 
-    const filtered = allResources.filter((r) => (!board || r.board === board) && (!classLevel || r.classLevel === classLevel) && (!subject || r.subject === subject));
+    const filtered = resources.filter(
+        (r) =>
+            (!board || r.board === board) &&
+            (!classLevel || r.class_level === classLevel) &&
+            (!subject || r.subject === subject),
+    );
+
     const sel = 'border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white dark:bg-gray-700 dark:text-white hover:border-blue-300 transition';
 
     return (
@@ -74,7 +71,19 @@ export default function Resources() {
                 </div>
                 {filtered.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {filtered.map((r, i) => <ResourceCard key={i} {...r} />)}
+                        {filtered.map((r) => (
+                            <ResourceCard
+                                key={r.id}
+                                id={r.id}
+                                title={r.title}
+                                type={r.type}
+                                subject={r.subject}
+                                classLevel={r.class_level}
+                                board={r.board}
+                                fileSize={r.file_size ?? undefined}
+                                downloads={r.downloads}
+                            />
+                        ))}
                     </div>
                 ) : (
                     <div className="text-center py-16">

@@ -2,6 +2,9 @@
 
 namespace App\Concerns;
 
+use App\Enums\Board;
+use App\Enums\ClassLevel;
+use App\Enums\Subject;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 
@@ -17,6 +20,9 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'board' => ['nullable', Rule::enum(Board::class)],
+            'class_level' => ['nullable', Rule::enum(ClassLevel::class)],
+            'subject' => ['nullable', Rule::enum(Subject::class)],
         ];
     }
 

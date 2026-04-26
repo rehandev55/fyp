@@ -12,7 +12,7 @@ const menuItems = [
     { key: 'about', label: 'About Us', icon: 'fa-solid fa-circle-info', href: '/about' },
 ];
 
-function Header({ user, isAdmin }: { user: { name: string; email: string; role?: string }; isAdmin: boolean }) {
+function Header({ user, isAdmin, onLogout }: { user: { name: string; email: string; role?: string }; isAdmin: boolean; onLogout: () => void }) {
     const [open, setOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const { resolvedAppearance, updateAppearance } = useAppearance();
@@ -65,10 +65,10 @@ function Header({ user, isAdmin }: { user: { name: string; email: string; role?:
                                     <i className="fa-solid fa-user text-gray-400 w-4 text-center" />
                                     Profile
                                 </Link>
-                                <Link href="/logout" method="post" as="button" onClick={() => setOpen(false)} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
+                                <button onClick={() => { setOpen(false); onLogout(); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
                                     <i className="fa-solid fa-right-from-bracket w-4 text-center" />
                                     Logout
-                                </Link>
+                                </button>
                             </div>
                         )}
                     </div>
@@ -78,7 +78,7 @@ function Header({ user, isAdmin }: { user: { name: string; email: string; role?:
     );
 }
 
-function Sidebar({ currentPage }: { currentPage: string }) {
+function Sidebar({ currentPage, collapsed, onToggle }: { currentPage: string; collapsed: boolean; onToggle: () => void }) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -87,29 +87,30 @@ function Sidebar({ currentPage }: { currentPage: string }) {
                 <i className={`fa-solid ${open ? 'fa-xmark' : 'fa-bars'} text-xl`} />
             </button>
             {open && <div className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setOpen(false)} />}
-            <aside className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-gray-800 z-40 shadow-xl border-r border-gray-100 dark:border-gray-700 transition-all duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+            <aside className={`fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white dark:bg-gray-800 z-40 shadow-xl border-r border-gray-100 dark:border-gray-700 transition-all duration-300 ${collapsed ? 'md:w-[4.5rem]' : 'md:w-64'} w-64 ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                 <nav className="flex flex-col h-full py-4 overflow-y-auto">
-                    <div className="flex-1 space-y-1 px-4">
+                    <div className="flex-1 space-y-1 px-3">
                         {menuItems.map((item) => (
                             <Link
                                 key={item.key}
                                 href={item.href}
                                 onClick={() => setOpen(false)}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
+                                title={collapsed ? item.label : undefined}
+                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${collapsed ? 'justify-center' : ''}
                                     ${currentPage === item.key
                                         ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white shadow-md shadow-blue-200 dark:shadow-blue-900/30'
                                         : 'text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-[#2563EB]'}`}
                             >
-                                <i className={`${item.icon} w-5 text-center`} />
-                                {item.label}
+                                <i className={`${item.icon} w-5 text-center ${collapsed ? 'text-lg' : ''}`} />
+                                {!collapsed && item.label}
                             </Link>
                         ))}
                     </div>
-                    <div className="px-4 pt-4 border-t border-gray-100 dark:border-gray-700 mx-4">
-                        <Link href="/logout" method="post" as="button" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition">
-                            <i className="fa-solid fa-right-from-bracket w-5 text-center" />
-                            Logout
-                        </Link>
+                    <div className={`hidden md:block pt-4 border-t border-gray-100 dark:border-gray-700 ${collapsed ? 'mx-2 px-2' : 'mx-4 px-4'}`}>
+                        <button onClick={onToggle} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300 transition ${collapsed ? 'justify-center' : ''}`} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+                            <i className={`fa-solid ${collapsed ? 'fa-angles-right' : 'fa-angles-left'} w-5 text-center`} />
+                            {!collapsed && 'Collapse'}
+                        </button>
                     </div>
                 </nav>
             </aside>
@@ -121,16 +122,51 @@ export default function StudentLayout({ children, currentPage = 'dashboard', isC
     const { auth } = usePage<{ auth: { user: { name: string; email: string; role?: string } } }>().props;
     const user = auth.user;
     const isAdmin = user?.role === 'admin';
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('sidebar-collapsed') === 'true';
+        }
+        return false;
+    });
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+    const toggleSidebar = () => {
+        const next = !sidebarCollapsed;
+        setSidebarCollapsed(next);
+        localStorage.setItem('sidebar-collapsed', String(next));
+    };
+
+    const handleLogout = () => router.post('/logout');
 
     return (
         <div className={`bg-[#F0F4F8] dark:bg-gray-900 transition-colors ${isChat ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
-            <Header user={user} isAdmin={isAdmin} />
-            <Sidebar currentPage={currentPage} />
-            <main className={`pt-16 md:pl-64 ${isChat ? 'h-screen overflow-hidden' : ''}`}>
+            <Header user={user} isAdmin={isAdmin} onLogout={() => setShowLogoutConfirm(true)} />
+            <Sidebar currentPage={currentPage} collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+            <main className={`pt-16 transition-all duration-300 ${sidebarCollapsed ? 'md:pl-[4.5rem]' : 'md:pl-64'} ${isChat ? 'h-screen overflow-hidden' : ''}`}>
                 <div className={isChat ? 'h-[calc(100vh-4rem)]' : 'p-5 md:p-8 max-w-7xl mx-auto'}>
                     {children}
                 </div>
             </main>
+
+            {showLogoutConfirm && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 w-full max-w-sm p-6 text-center">
+                        <div className="w-14 h-14 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i className="fa-solid fa-right-from-bracket text-red-500 text-xl" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-1">Logout</h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Are you sure you want to logout?</p>
+                        <div className="flex gap-3">
+                            <button onClick={() => setShowLogoutConfirm(false)} className="flex-1 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-semibold">
+                                Cancel
+                            </button>
+                            <button onClick={handleLogout} className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl transition text-sm font-semibold">
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

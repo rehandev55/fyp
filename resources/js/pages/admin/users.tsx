@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminLayout from '@/layouts/admin-layout';
+import { api } from '@/lib/api';
 
 interface User {
     id: number;
@@ -45,21 +46,59 @@ function Users() {
             (!filterClass || u.classLevel === filterClass),
     );
 
-    const toggleStatus = (id: number) => {
-        setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: u.status === 'Active' ? 'Blocked' : 'Active' } : u)));
+    const toggleStatus = async (id: number) => {
+        try {
+            const res = await api(`/users/toggle/${id}`, {
+                method: "PATCH",
+            });
+
+            const updated = await res.json();
+
+            setUsers((prev) =>
+                prev.map((u) => (u.id === id ? updated.data : u))
+            );
+        } catch (err) {
+            console.error("Status update failed:", err);
+        }
     };
 
     const openEdit = (u: User) => {
         setEditForm({ ...u });
         setModal({ type: 'edit', user: u });
     };
-    const saveEdit = () => {
-        setUsers((prev) => prev.map((u) => (u.id === editForm.id ? { ...editForm } : u)));
-        setModal(null);
+    const saveEdit = async () => {
+        try {
+            await api(`/users/${editForm.id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    name: editForm.name,
+                    email: editForm.email,
+                }),
+            });
+
+            setUsers((prev) =>
+                prev.map((u) =>
+                    u.id === editForm.id ? { ...u, ...editForm } : u
+                )
+            );
+
+            setModal(null);
+        } catch (err) {
+            console.error("Update failed:", err);
+        }
     };
-    const deleteUser = (id: number) => {
-        setUsers((prev) => prev.filter((u) => u.id !== id));
-        setModal(null);
+
+    const deleteUser = async (id: number) => {
+        try {
+            await api(`/users/${id}`, {
+                method: "DELETE",
+            });
+
+            setUsers((prev) => prev.filter((u) => u.id !== id));
+            setModal(null);
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
     };
 
     const sel =
@@ -70,6 +109,22 @@ function Users() {
     const totalActive = users.filter((u) => u.status === 'Active').length;
     const totalBlocked = users.filter((u) => u.status === 'Blocked').length;
     const avgScore = Math.round(users.reduce((a, u) => a + u.score, 0) / users.length);
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    const fetchUsers = async () => {
+        try {
+            const res = await api('/users');
+            const data = await res.json();
+
+            setUsers(data.data);
+        } catch (err) {
+            console.error("Error fetching users:", err);
+        }
+    };
+
 
     return (
         <div className="space-y-6">

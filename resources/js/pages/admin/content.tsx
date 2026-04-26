@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminLayout from '@/layouts/admin-layout';
+import { api } from '@/lib/api';
 
 interface ContentItem {
     id: number;
@@ -43,25 +44,75 @@ function Content() {
 
     const filtered = content.filter((c) => (!filterType || c.type === filterType) && (!search || c.title.toLowerCase().includes(search.toLowerCase())));
 
-    const handleUpload = (e: React.FormEvent) => {
+    const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!form.title) return;
-        setContent((prev) => [{ id: Date.now(), ...form, date: new Date().toISOString().split('T')[0], downloads: 0, size: '0 KB' }, ...prev]);
-        setForm({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
-        setShowUpload(false);
+
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("title", form.title);
+        formData.append("type", form.type);
+        formData.append("board", form.board);
+        formData.append("class_level", form.classLevel);
+        formData.append("subject", form.subject);
+        formData.append("file", file);
+
+        try {
+            const res = await api('/content', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await res.json();
+            console.log(data);
+
+            setUploadProgress(0);
+            setShowUpload(false);
+            fetchContent();
+        } catch (err: any) {
+            console.error("UPLOAD ERROR:", err.message);
+            setUploadProgress(0);
+        }
     };
 
     const openEdit = (c: ContentItem) => {
         setEditForm({ ...c });
         setModal({ type: 'edit', item: c });
     };
-    const saveEdit = () => {
-        setContent((prev) => prev.map((c) => (c.id === editForm.id ? { ...editForm } : c)));
-        setModal(null);
+    const saveEdit = async () => {
+        try {
+            await api(`/content/${editForm.id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    title: editForm.title,
+                    type: editForm.type,
+                    board: editForm.board,
+                    class_level: editForm.classLevel,
+                    subject: editForm.subject,
+                }),
+            });
+
+            setContent((prev) =>
+                prev.map((c) => (c.id === editForm.id ? { ...editForm } : c))
+            );
+
+            setModal(null);
+        } catch (err) {
+            console.error("Edit failed:", err);
+        }
     };
-    const deleteContent = (id: number) => {
-        setContent((prev) => prev.filter((c) => c.id !== id));
-        setModal(null);
+
+    const deleteContent = async (id: number) => {
+        try {
+            await api(`/content/${id}`, {
+                method: "DELETE",
+            });
+
+            setContent((prev) => prev.filter((c) => c.id !== id));
+            setModal(null);
+        } catch (err) {
+            console.error("Delete failed:", err);
+        }
     };
 
     const sel =
@@ -90,6 +141,22 @@ function Content() {
             downloads: content.filter((c) => c.type === t).reduce((a, c) => a + c.downloads, 0),
         }))
         .filter((d) => d.downloads > 0);
+
+    useEffect(() => {
+        fetchContent();
+    }, []);
+
+    const fetchContent = async () => {
+        const res = await api('/content');
+        const data = await res.json();
+
+        setContent(data.data);
+    };
+
+    const downloadFile = (id: number) => {
+        window.open(`/api/content/download/${id}`);
+    };
+
 
     return (
         <div className="space-y-6">
