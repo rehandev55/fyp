@@ -97,11 +97,8 @@ def save_embedded_id(chunk_id: str):
 
 # ── process one jsonl file ────────────────────────────────────────────────────
 def process_file(jsonl_path: Path, index, embedded_ids: set) -> int:
-    """Embed and upload all chunks from one book. Returns count uploaded."""
-
     log(f"Processing: {jsonl_path.name}")
 
-    # load all chunks from file
     chunks = []
     with open(jsonl_path, "r", encoding="utf-8") as f:
         for line in f:
@@ -111,47 +108,49 @@ def process_file(jsonl_path: Path, index, embedded_ids: set) -> int:
 
     log(f"  Total chunks: {len(chunks)}")
 
-    # skip already embedded
     chunks_to_embed = [c for c in chunks if c["chunk_id"] not in embedded_ids]
-    log(f"  Chunks to embed: {len(chunks_to_embed)} (skipping {len(chunks) - len(chunks_to_embed)} already done)")
+    del chunks  # free memory
+
+    log(f"  Chunks to embed: {len(chunks_to_embed)} (skipping {len(chunks_to_embed)})")
 
     if not chunks_to_embed:
         log("  All chunks already embedded. Skipping.")
         return 0
 
-    # embed and collect
-    embedded_chunks = []
+    total_uploaded = 0
+    batch_buffer   = []
+
     for i, chunk in enumerate(chunks_to_embed, start=1):
         try:
             embedding = get_embedding(chunk["text"])
             chunk["embedding"] = embedding
-            embedded_chunks.append(chunk)
-
-            # save progress immediately
+            batch_buffer.append(chunk)
             save_embedded_id(chunk["chunk_id"])
 
             if i % 50 == 0:
                 log(f"  Embedded {i}/{len(chunks_to_embed)}...")
 
-            # small delay to avoid rate limits
+            # upload when batch is full
+            if len(batch_buffer) >= BATCH_SIZE:
+                upload_batch(index, batch_buffer)
+                log(f"  Uploaded batch ({len(batch_buffer)} vectors)")
+                total_uploaded += len(batch_buffer)
+                batch_buffer = []  # clear batch from memory
+                time.sleep(0.5)
+
             time.sleep(0.05)
 
         except Exception as e:
-            log(f"  ERROR embedding chunk {chunk['chunk_id']}: {e}")
+            log(f"  ERROR: {chunk['chunk_id']}: {e}")
             continue
 
-    # upload to pinecone in batches
-    log(f"  Uploading {len(embedded_chunks)} vectors to Pinecone...")
-    for i in range(0, len(embedded_chunks), BATCH_SIZE):
-        batch = embedded_chunks[i:i + BATCH_SIZE]
-        try:
-            upload_batch(index, batch)
-            log(f"  Uploaded batch {i // BATCH_SIZE + 1} ({len(batch)} vectors)")
-            time.sleep(0.5)  # small delay between batches
-        except Exception as e:
-            log(f"  ERROR uploading batch: {e}")
+    # upload remaining
+    if batch_buffer:
+        upload_batch(index, batch_buffer)
+        log(f"  Uploaded final batch ({len(batch_buffer)} vectors)")
+        total_uploaded += len(batch_buffer)
 
-    return len(embedded_chunks)
+    return total_uploaded
 
 # ── main ──────────────────────────────────────────────────────────────────────
 def main():
