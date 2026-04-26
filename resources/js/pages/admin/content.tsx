@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminLayout from '@/layouts/admin-layout';
-import { api } from '@/lib/api';
+import axios from "axios";
 
 interface ContentItem {
     id: number;
@@ -34,86 +34,124 @@ const initialContent: ContentItem[] = [
 const contentTypes = ['Book', 'Key Book', 'Past Paper', 'Notes', 'Solved Paper', 'Worksheet'];
 
 function Content() {
-    const [content, setContent] = useState<ContentItem[]>(initialContent);
+    const [content, setContent] = useState<ContentItem[]>([]);
     const [showUpload, setShowUpload] = useState(false);
     const [filterType, setFilterType] = useState('');
     const [search, setSearch] = useState('');
     const [modal, setModal] = useState<Modal | null>(null);
     const [editForm, setEditForm] = useState<ContentItem>({} as ContentItem);
-    const [form, setForm] = useState({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
+    const [form, setForm] = useState({ title: '', type: 'Book', board: 'federal', classLevel: 'class_10', subject: 'physics' });
 
     const filtered = content.filter((c) => (!filterType || c.type === filterType) && (!search || c.title.toLowerCase().includes(search.toLowerCase())));
+    const [uploadProgress, setUploadProgress] = useState(0);   //use state for upload progress
 
-    const handleUpload = async (e: React.FormEvent) => {
-        e.preventDefault();
+const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        if (!file) return;
+    if (!file) return;
 
-        const formData = new FormData();
-        formData.append("title", form.title);
-        formData.append("type", form.type);
-        formData.append("board", form.board);
-        formData.append("class_level", form.classLevel);
-        formData.append("subject", form.subject);
-        formData.append("file", file);
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("type", form.type);
+    formData.append("board", form.board);
+    formData.append("class_level", form.classLevel);
+    formData.append("subject", form.subject);
+    formData.append("file", file);
 
-        try {
-            const res = await api('/content', {
-                method: 'POST',
-                body: formData,
-            });
+    try {
+        console.log("FORM DATA:", formData);
+        formData.forEach((value, key) => {
+    console.log(key, value);
+});
+        const res = await axios.post(
+            "https://fyp_backend.test/api/content",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percent = Math.round(
+                        (progressEvent.loaded * 100) / (progressEvent.total || 1)
+                    );
+                    setUploadProgress(percent);
+                },
+            }
+        );
 
-            const data = await res.json();
-            console.log(data);
+        console.log(res.data); // 👈 VERY IMPORTANT
 
-            setUploadProgress(0);
-            setShowUpload(false);
-            fetchContent();
-        } catch (err: any) {
-            console.error("UPLOAD ERROR:", err.message);
-            setUploadProgress(0);
-        }
-    };
+        // success reset
+        setUploadProgress(0);
+        setShowUpload(false);
+        fetchContent();
+
+    } catch (err: any) {
+        console.error("UPLOAD ERROR:", err.response?.data || err.message);
+
+        // ❗ reset even on error
+        setUploadProgress(0);
+    }
+};
 
     const openEdit = (c: ContentItem) => {
         setEditForm({ ...c });
         setModal({ type: 'edit', item: c });
     };
+    // const saveEdit = () => {
+    //     setContent((prev) => prev.map((c) => (c.id === editForm.id ? { ...editForm } : c)));
+    //     setModal(null);
+    // };
     const saveEdit = async () => {
-        try {
-            await api(`/content/${editForm.id}`, {
-                method: "PUT",
-                body: JSON.stringify({
-                    title: editForm.title,
-                    type: editForm.type,
-                    board: editForm.board,
-                    class_level: editForm.classLevel,
-                    subject: editForm.subject,
-                }),
-            });
+    try {
+        await fetch(`https://fyp_backend.test/api/content/${editForm.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: editForm.title,
+                type: editForm.type,
+                board: editForm.board,
+                class_level: editForm.classLevel,
+                subject: editForm.subject,
+            }),
+        });
 
-            setContent((prev) =>
-                prev.map((c) => (c.id === editForm.id ? { ...editForm } : c))
-            );
+        // keep your UI update (so it feels instant)
+        setContent((prev) =>
+            prev.map((c) => (c.id === editForm.id ? { ...editForm } : c))
+        );
 
-            setModal(null);
-        } catch (err) {
-            console.error("Edit failed:", err);
-        }
-    };
+        setModal(null);
 
-    const deleteContent = async (id: number) => {
-        try {
-            await api(`/content/${id}`, {
-                method: "DELETE",
-            });
+    } catch (err) {
+        console.error("Edit failed:", err);
+    }
+};
 
-            setContent((prev) => prev.filter((c) => c.id !== id));
-            setModal(null);
-        } catch (err) {
-            console.error("Delete failed:", err);
-        }
-    };
+//     const deleteContent = async (id: number) => {
+//     await fetch(`https://fyp_backend.test/api/content/${id}`, {
+//         method: "DELETE",
+//     });
+
+//     fetchContent();
+// };
+const deleteContent = async (id: number) => {
+    try {
+        await fetch(`https://fyp_backend.test/api/content/${id}`, {
+            method: "DELETE",
+        });
+
+        // update UI
+        setContent((prev) => prev.filter((c) => c.id !== id));
+
+        setModal(null);
+
+    } catch (err) {
+        console.error("Delete failed:", err);
+    }
+};
 
     const sel =
         'w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white transition';
@@ -133,7 +171,7 @@ function Content() {
         'Solved Paper': 'fa-solid fa-check-double',
         Worksheet: 'fa-solid fa-file-pen',
     };
-
+const [file, setFile] = useState<File | null>(null);
     const totalDownloads = content.reduce((a, c) => a + c.downloads, 0);
     const downloadsByType = contentTypes
         .map((t) => ({
@@ -142,21 +180,22 @@ function Content() {
         }))
         .filter((d) => d.downloads > 0);
 
-    useEffect(() => {
-        fetchContent();
-    }, []);
 
-    const fetchContent = async () => {
-        const res = await api('/content');
-        const data = await res.json();
+        useEffect(() => {
+    fetchContent();
+}, []);
 
-        setContent(data.data);
-    };
+const fetchContent = async () => {
+    const res = await fetch("https://fyp_backend.test/api/content");
+    const data = await res.json();
 
-    const downloadFile = (id: number) => {
-        window.open(`/api/content/download/${id}`);
-    };
 
+    setContent(data.data);
+};
+
+const downloadFile = (id: number) => {
+    window.open(`https://fyp_backend.test/api/content/download/${id}`);
+};
 
     return (
         <div className="space-y-6">
@@ -252,8 +291,8 @@ function Content() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Board</label>
                                 <select value={form.board} onChange={(e) => setForm({ ...form, board: e.target.value })} className={sel}>
-                                    <option value="Federal Board">Federal Board</option>
-                                    <option value="AJK Board">AJK Board</option>
+                                    <option value="federal">Federal Board</option>
+                                    <option value="ajk">AJK Board</option>
                                 </select>
                             </div>
                             <div>
@@ -269,11 +308,35 @@ function Content() {
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">File</label>
-                            <div className="border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl p-8 text-center hover:border-[#7C3AED] transition cursor-pointer">
-                                <i className="fa-solid fa-cloud-arrow-up text-3xl text-gray-300 dark:text-gray-600 mb-3" />
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Click to upload or drag & drop</p>
-                                <p className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX up to 50MB</p>
-                            </div>
+
+                            {uploadProgress > 0 && (
+    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+        <div
+            className="bg-[#7C3AED] h-2 rounded-full transition-all"
+            style={{ width: `${uploadProgress}%` }}
+        ></div>
+        <p className="text-xs text-gray-500 mt-1 text-right">
+            {uploadProgress}%
+        </p>
+    </div>
+)}
+                            {/* <input
+    type="file"
+    onChange={(e) => setFile(e.target.files?.[0] || null)}
+/> */}
+<label className="w-full cursor-pointer">
+    <div className="w-full bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg active:scale-95 transition">
+        <i className="fa-solid fa-upload text-xs" />
+        {file ? file.name : "Choose File"}
+    </div>
+
+    <input
+        type="file"
+        className="hidden"
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
+    />
+</label>
+
                         </div>
                         <div className="flex gap-3 pt-2">
                             <button
@@ -286,7 +349,9 @@ function Content() {
                             <button
                                 type="submit"
                                 disabled={!form.title}
-                                className="flex-1 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl hover:shadow-lg disabled:opacity-40 transition text-sm font-semibold"
+                                className="flex-1 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl
+hover:shadow-lg active:scale-95 active:brightness-90
+disabled:opacity-40 transition-all duration-150 text-sm font-semibold"
                             >
                                 Upload
                             </button>
@@ -294,7 +359,7 @@ function Content() {
                     </form>
                 </div>
             )}
-
+console.log("FORM DATA:", form);
             {/* Search + Type Filters */}
             <div className="space-y-4">
                 <div className="relative max-w-md">
@@ -368,6 +433,9 @@ function Content() {
                             >
                                 <i className="fa-solid fa-trash-can text-xs" />
                             </button>
+                            <button onClick={() => downloadFile(c.id)}>
+    Download
+</button>
                         </div>
                     </div>
                 ))}
@@ -450,7 +518,7 @@ function Content() {
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Subject</label>
                                             <select value={editForm.subject} onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })} className={sel}>
-                                                {['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'].map((s) => (
+                                                {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => (
                                                     <option key={s} value={s}>
                                                         {s}
                                                     </option>
@@ -469,7 +537,7 @@ function Content() {
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Class</label>
                                             <select value={editForm.classLevel} onChange={(e) => setEditForm({ ...editForm, classLevel: e.target.value })} className={sel}>
-                                                {['9', '10', '11', '12'].map((c) => (
+                                                {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => (
                                                     <option key={c} value={c}>
                                                         Class {c}
                                                     </option>
