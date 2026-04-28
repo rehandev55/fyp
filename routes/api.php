@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/chat/sessions', [ChatController::class, 'sessions']);
     Route::get('/chat/messages/{id}', [ChatController::class, 'messages']);
     Route::post('/chat/send', [ChatController::class, 'send']);
+
     Route::delete('/chat/{id}', [ChatController::class, 'delete']);
 
     // Content
