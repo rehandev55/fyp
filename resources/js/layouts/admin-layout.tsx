@@ -12,9 +12,20 @@ function AdminHeader({ user }: { user: { name: string; email: string } }) {
     const [open, setOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const { resolvedAppearance, updateAppearance } = useAppearance();
-    const isDark = resolvedAppearance === 'dark';
-    const toggleDark = () => updateAppearance(isDark ? 'light' : 'dark');
+    // const isDark = resolvedAppearance === 'dark';
+    // const toggleDark = () => updateAppearance(isDark ? 'light' : 'dark');
 
+      const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+    setMounted(true);
+}, []);
+
+const isDark = mounted && resolvedAppearance === 'dark';
+
+const toggleDark = () => {
+    updateAppearance(isDark ? 'light' : 'dark');
+};
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(e.target as Node)) setOpen(false);

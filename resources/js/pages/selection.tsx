@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
 import StudentLayout from '@/layouts/student-layout';
+import { useEffect } from 'react';
+import { api } from '@/lib/api';
 
 interface User {
     name: string;
@@ -28,36 +30,94 @@ const subjects = [
     { value: 'chemistry', label: 'Chemistry' },
     { value: 'biology', label: 'Biology' },
     { value: 'mathematics', label: 'Mathematics' },
+    { value: 'computer', label: 'Computer Science' },
     { value: 'english', label: 'English' },
+    { value: 'islamiyat', label: 'Islamiyat' },
+    { value: 'pakistan_studies', label: 'Pakistan Studies' },
 ];
 
 export default function Selection() {
-    const { auth } = usePage<{ auth: { user: User } }>().props;
-    const user = auth.user;
+    console.log("SELECTION COMPONENT RENDERED");
+        const page = usePage();
+console.log("FULL PAGE PROPS:", page.props);
+const { auth } = usePage<{ auth: { user: User } }>().props;
+const user = auth?.user;
+// useEffect(() => {
+//     console.log("USE EFFECT RUNNING");
+//     async function loadUser() {
+//         // 1. Try Inertia user first
+//         if (user) {
+//             setBoard(user.board || '');
+//             setClassLevel(user.class_level || '');
+//             setSubject(user.subject || '');
+//             return;
+//         }
+
+//         // 2. Fallback to API
+//         try {
+//             const res = await api('/user');
+//             const data = await res.json();
+
+//             console.log("USER FROM API:", data);
+
+//             if (data) {
+//                 setBoard(data.board || '');
+//                 setClassLevel(data.class_level || '');
+//                 setSubject(data.subject || '');
+//             }
+//         } catch (err) {
+//             console.error(err);
+//         }
+//     }
+
+//     loadUser();
+// }, [user]);
+useEffect(() => {
+    console.log("USE EFFECT RUNNING");
+    if (user) {
+        setBoard(user.board || '');
+        setClassLevel(user.class_level || '');
+        setSubject(user.subject || '');
+    } else {
+        // fallback API
+        (async () => {
+            try {
+                const res = await api('/user');
+                const data = await res.json();
+
+                setBoard(data.board || '');
+                setClassLevel(data.class_level || '');
+                setSubject(data.subject || '');
+            } catch (err) {
+                console.error(err);
+            }
+        })();
+    }
+}, []);
 
     const [forSibling, setForSibling] = useState(false);
-    const [board, setBoard] = useState(user?.board || '');
-    const [classLevel, setClassLevel] = useState(user?.class_level || '');
-    const [subject, setSubject] = useState(user?.subject || '');
+     const [board, setBoard] = useState(user?.board || '');
+const [classLevel, setClassLevel] = useState(user?.class_level || '');
+const [subject, setSubject] = useState(user?.subject || '');
 
-    const classLabel = classes.find(c => c.value === user?.class_level)?.label || user?.class_level;
+    // const classLabel = classes.find(c => c.value === user?.class_level)?.label || user?.class_level;
+const classLabel = classes.find(c => c.value === classLevel)?.label || classLevel;
 
-    const handleSiblingToggle = () => {
-        if (!forSibling) {
-            setBoard('');
-            setClassLevel('');
-            setSubject('');
-        } else {
-            setBoard(user?.board || '');
-            setClassLevel(user?.class_level || '');
-            setSubject(user?.subject || '');
-        }
-        setForSibling(!forSibling);
-    };
+   const handleSiblingToggle = () => {
+    if (!forSibling) {
+        setBoard('');
+        setClassLevel('');
+        setSubject('');
+    } else {
+        // just leave as is OR keep previous values
+    }
+    setForSibling(!forSibling);
+};
 
     const handleStartLearning = () => {
         if (board && classLevel && subject) {
-            router.visit(`/aichat?board=${encodeURIComponent(board)}&class_level=${encodeURIComponent(classLevel)}&subject=${encodeURIComponent(subject)}`);
+            // router.visit(`/aichat?board=${encodeURIComponent(board)}&class_level=${encodeURIComponent(classLevel)}&subject=${encodeURIComponent(subject)}`);
+            router.visit(`/practice?board=${encodeURIComponent(board)}&class_level=${encodeURIComponent(classLevel)}&subject=${encodeURIComponent(subject)}`);
         }
     };
 
@@ -65,6 +125,7 @@ export default function Selection() {
 
     return (
         <>
+
             <Head title="Select Subject" />
             <div className="max-w-lg mx-auto">
                 <div className="text-center mb-8">
@@ -76,7 +137,7 @@ export default function Selection() {
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
-                    {user?.board && user?.class_level && (
+                    {board && classLevel && (
                         <div className="mb-6 p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">

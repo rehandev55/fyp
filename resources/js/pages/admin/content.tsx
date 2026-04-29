@@ -8,7 +8,7 @@ interface ContentItem {
     title: string;
     type: string;
     board: string;
-    classLevel: string;
+    class_level: string;
     subject: string;
     date: string;
     downloads: number;
@@ -20,16 +20,16 @@ interface Modal {
     item: ContentItem;
 }
 
-const initialContent: ContentItem[] = [
-    { id: 1, title: 'Physics Past Papers 2024', type: 'Past Paper', board: 'Federal Board', classLevel: '10', subject: 'Physics', date: '2026-03-15', downloads: 234, size: '2.4 MB' },
-    { id: 2, title: 'Math Key Book Solutions', type: 'Key Book', board: 'Federal Board', classLevel: '10', subject: 'Mathematics', date: '2026-03-10', downloads: 189, size: '5.1 MB' },
-    { id: 3, title: 'Biology Chapter Notes', type: 'Notes', board: 'Federal Board', classLevel: '10', subject: 'Biology', date: '2026-03-08', downloads: 156, size: '1.8 MB' },
-    { id: 4, title: 'Chemistry Formulas Sheet', type: 'Notes', board: 'AJK Board', classLevel: '9', subject: 'Chemistry', date: '2026-02-25', downloads: 312, size: '890 KB' },
-    { id: 5, title: 'English Grammar Guide', type: 'Book', board: 'AJK Board', classLevel: '9', subject: 'English', date: '2026-02-20', downloads: 98, size: '3.2 MB' },
-    { id: 6, title: 'Physics Solved Numericals', type: 'Solved Paper', board: 'Federal Board', classLevel: '12', subject: 'Physics', date: '2026-01-15', downloads: 445, size: '4.7 MB' },
-    { id: 7, title: 'Bio Diagrams Pack', type: 'Notes', board: 'Federal Board', classLevel: '11', subject: 'Biology', date: '2026-01-08', downloads: 267, size: '12.3 MB' },
-    { id: 8, title: 'Math Worksheets Set A', type: 'Worksheet', board: 'AJK Board', classLevel: '10', subject: 'Mathematics', date: '2025-12-20', downloads: 178, size: '1.5 MB' },
-];
+// const initialContent: ContentItem[] = [
+//     { id: 1, title: 'Physics Past Papers 2024', type: 'Past Paper', board: 'Federal Board', class_level: '10', subject: 'Physics', date: '2026-03-15', downloads: 234, size: '2.4 MB' },
+//     { id: 2, title: 'Math Key Book Solutions', type: 'Key Book', board: 'Federal Board', class_level: '10', subject: 'Mathematics', date: '2026-03-10', downloads: 189, size: '5.1 MB' },
+//     { id: 3, title: 'Biology Chapter Notes', type: 'Notes', board: 'Federal Board', class_level: '10', subject: 'Biology', date: '2026-03-08', downloads: 156, size: '1.8 MB' },
+//     { id: 4, title: 'Chemistry Formulas Sheet', type: 'Notes', board: 'AJK Board', class_level: '9', subject: 'Chemistry', date: '2026-02-25', downloads: 312, size: '890 KB' },
+//     { id: 5, title: 'English Grammar Guide', type: 'Book', board: 'AJK Board', class_level: '9', subject: 'English', date: '2026-02-20', downloads: 98, size: '3.2 MB' },
+//     { id: 6, title: 'Physics Solved Numericals', type: 'Solved Paper', board: 'Federal Board', class_level: '12', subject: 'Physics', date: '2026-01-15', downloads: 445, size: '4.7 MB' },
+//     { id: 7, title: 'Bio Diagrams Pack', type: 'Notes', board: 'Federal Board', class_level: '11', subject: 'Biology', date: '2026-01-08', downloads: 267, size: '12.3 MB' },
+//     { id: 8, title: 'Math Worksheets Set A', type: 'Worksheet', board: 'AJK Board', class_level: '10', subject: 'Mathematics', date: '2025-12-20', downloads: 178, size: '1.5 MB' },
+// ];
 
 const contentTypes = ['Book', 'Key Book', 'Past Paper', 'Notes', 'Solved Paper', 'Worksheet'];
 
@@ -40,7 +40,7 @@ function Content() {
     const [search, setSearch] = useState('');
     const [modal, setModal] = useState<Modal | null>(null);
     const [editForm, setEditForm] = useState<ContentItem>({} as ContentItem);
-    const [form, setForm] = useState({ title: '', type: 'Book', board: 'federal', classLevel: 'class_10', subject: 'physics' });
+    const [form, setForm] = useState({ title: '', type: 'Book', board: 'federal', class_level: 'class_10', subject: 'physics' });
 
     const filtered = content.filter((c) => (!filterType || c.type === filterType) && (!search || c.title.toLowerCase().includes(search.toLowerCase())));
     const [uploadProgress, setUploadProgress] = useState(0);   //use state for upload progress
@@ -54,7 +54,7 @@ const handleUpload = async (e: React.FormEvent) => {
     formData.append("title", form.title);
     formData.append("type", form.type);
     formData.append("board", form.board);
-    formData.append("class_level", form.classLevel);
+    formData.append("class_level", form.class_level);
     formData.append("subject", form.subject);
     formData.append("file", file);
 
@@ -98,10 +98,7 @@ const handleUpload = async (e: React.FormEvent) => {
         setEditForm({ ...c });
         setModal({ type: 'edit', item: c });
     };
-    // const saveEdit = () => {
-    //     setContent((prev) => prev.map((c) => (c.id === editForm.id ? { ...editForm } : c)));
-    //     setModal(null);
-    // };
+
     const saveEdit = async () => {
     try {
         await fetch(`https://fyp_backend.test/api/content/${editForm.id}`, {
@@ -113,7 +110,7 @@ const handleUpload = async (e: React.FormEvent) => {
                 title: editForm.title,
                 type: editForm.type,
                 board: editForm.board,
-                class_level: editForm.classLevel,
+                class_level: editForm.class_level,
                 subject: editForm.subject,
             }),
         });
@@ -130,13 +127,6 @@ const handleUpload = async (e: React.FormEvent) => {
     }
 };
 
-//     const deleteContent = async (id: number) => {
-//     await fetch(`https://fyp_backend.test/api/content/${id}`, {
-//         method: "DELETE",
-//     });
-
-//     fetchContent();
-// };
 const deleteContent = async (id: number) => {
     try {
         await fetch(`https://fyp_backend.test/api/content/${id}`, {
@@ -279,7 +269,7 @@ const downloadFile = (id: number) => {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Subject</label>
                                 <select value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className={sel}>
-                                    {['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'].map((s) => (
+                                    {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => (
                                         <option key={s} value={s}>
                                             {s}
                                         </option>
@@ -297,13 +287,17 @@ const downloadFile = (id: number) => {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Class</label>
-                                <select value={form.classLevel} onChange={(e) => setForm({ ...form, classLevel: e.target.value })} className={sel}>
-                                    {['9', '10', '11', '12'].map((c) => (
-                                        <option key={c} value={c}>
-                                            Class {c}
-                                        </option>
-                                    ))}
-                                </select>
+                                <select
+    value={form.class_level}
+    onChange={(e) => setForm({ ...form, class_level: e.target.value })}
+    className={sel}
+>
+    {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => (
+        <option key={c} value={c}>
+            Class {c.split('_')[1]}
+        </option>
+    ))}
+</select>
                             </div>
                         </div>
                         <div>
@@ -359,7 +353,6 @@ disabled:opacity-40 transition-all duration-150 text-sm font-semibold"
                     </form>
                 </div>
             )}
-console.log("FORM DATA:", form);
             {/* Search + Type Filters */}
             <div className="space-y-4">
                 <div className="relative max-w-md">
@@ -401,9 +394,10 @@ console.log("FORM DATA:", form);
                         <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-gray-800 dark:text-white text-sm truncate">{c.title}</h4>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
+
                                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColors[c.type]}`}>{c.type}</span>
                                 <span className="text-xs text-gray-400">{c.subject}</span>
-                                <span className="text-xs text-gray-400">Class {c.classLevel}</span>
+                                <span className="text-xs text-gray-400">{c.class_level}</span>
                                 <span className="text-xs text-gray-400">{c.size}</span>
                             </div>
                         </div>
@@ -468,7 +462,7 @@ console.log("FORM DATA:", form);
                                 <div className="space-y-3 text-sm">
                                     {[
                                         { l: 'Subject', v: modal.item.subject, i: 'fa-solid fa-book' },
-                                        { l: 'Class', v: `Class ${modal.item.classLevel}`, i: 'fa-solid fa-graduation-cap' },
+                                        { l: 'Class', v: `Class ${modal.item.class_level}`, i: 'fa-solid fa-graduation-cap' },
                                         { l: 'Board', v: modal.item.board, i: 'fa-solid fa-building-columns' },
                                         { l: 'Downloads', v: modal.item.downloads, i: 'fa-solid fa-download' },
                                         { l: 'File Size', v: modal.item.size, i: 'fa-solid fa-hard-drive' },
@@ -536,7 +530,7 @@ console.log("FORM DATA:", form);
                                         </div>
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Class</label>
-                                            <select value={editForm.classLevel} onChange={(e) => setEditForm({ ...editForm, classLevel: e.target.value })} className={sel}>
+                                            <select value={editForm.class_level} onChange={(e) => setEditForm({ ...editForm, class_level: e.target.value })} className={sel}>
                                                 {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => (
                                                     <option key={c} value={c}>
                                                         Class {c}
