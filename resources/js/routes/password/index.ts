@@ -450,4 +450,9 @@ confirm: Object.assign(confirm, confirmD7e05f),
 confirmation: Object.assign(confirmation, confirmation),
 }
 
+export default passwordate),
+confirm: Object.assign(confirm, confirmD7e05f),
+confirmation: Object.assign(confirmation, confirmation),
+}
+
 export default password
