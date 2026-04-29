@@ -37,7 +37,8 @@ def generate_questions(
         context       = context,
         question_type = question_type,
         num_questions = num_questions,
-        topic         = topic
+        topic         = topic,
+        subject     = subject
     )
 
     response = client.chat.completions.create(
@@ -78,7 +79,8 @@ def evaluate_answer(
         class_level    = class_level,
         context        = context,
         question       = question,
-        student_answer = student_answer
+        student_answer = student_answer,
+        subject = subject
     )
 
     response = client.chat.completions.create(
