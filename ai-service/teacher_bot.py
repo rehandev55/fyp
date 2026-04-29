@@ -47,7 +47,7 @@ def get_teacher_response(
             {"role": "user",   "content": question}
         ],
         temperature = 0.3,          # low temp = focused, factual answers
-        max_tokens  = 1000
+        max_tokens  = 3000
     )
 
     return response.choices[0].message.content

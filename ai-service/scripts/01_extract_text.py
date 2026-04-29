@@ -6,7 +6,7 @@ from pdf2image import convert_from_path
 from pathlib import Path
 from datetime import datetime
 from google.cloud import vision
-
+import re 
 # ── config ────────────────────────────────────────────────────────────────────
 POPPLER_PATH  = r"C:\poppler\Library\bin"
 RAW_DIR       = Path("data/raw")
@@ -60,23 +60,54 @@ def extract_text_from_pdf(pdf_path: Path) -> list[str]:
     """Convert PDF pages to images then OCR each with Google Vision."""
     log(f"  Converting PDF to images (dpi=200)...")
 
-    pages = convert_from_path(
-        str(pdf_path),
-        dpi=200,
-        poppler_path=POPPLER_PATH
+    # get total page count first without loading all pages
+    import subprocess
+    result = subprocess.run(
+        [r"C:\poppler\Library\bin\pdfinfo.exe", str(pdf_path)],
+        capture_output=True, text=True
     )
+    total_pages = 0
+    for line in result.stdout.split('\n'):
+        if 'Pages:' in line:
+            total_pages = int(line.split(':')[1].strip())
+            break
 
-    log(f"  Total pages: {len(pages)}")
+    if total_pages == 0:
+        # fallback — try converting directly
+        total_pages = 999
+
+    log(f"  Total pages: {total_pages}")
 
     page_texts = []
-    for i, page_image in enumerate(pages, start=1):
-        log(f"  OCR page {i}/{len(pages)}...")
+    BATCH = 10  # process 10 pages at a time to save memory
 
-        text = ocr_page_with_google(page_image)
-        page_texts.append(text)
+    for batch_start in range(1, total_pages + 1, BATCH):
+        batch_end = min(batch_start + BATCH - 1, total_pages)
+        log(f"  Processing pages {batch_start} to {batch_end}...")
 
-        # small delay to avoid hitting API rate limits
-        time.sleep(0.1)
+        try:
+            pages = convert_from_path(
+                str(pdf_path),
+                dpi=150,                    # reduced from 200 to save memory
+                poppler_path=POPPLER_PATH,
+                first_page=batch_start,
+                last_page=batch_end
+            )
+        except Exception as e:
+            log(f"  ERROR converting pages {batch_start}-{batch_end}: {e}")
+            continue
+
+        for i, page_image in enumerate(pages, start=batch_start):
+            log(f"  OCR page {i}/{total_pages}...")
+            text = ocr_page_with_google(page_image)
+            page_texts.append(text)
+            time.sleep(0.1)
+
+            # free memory immediately after OCR
+            del page_image
+
+        # free batch from memory
+        del pages
 
     return page_texts
 
@@ -97,11 +128,19 @@ def parse_path_metadata(pdf_path: Path) -> dict:
 # ── save output ───────────────────────────────────────────────────────────────
 def save_processed(metadata: dict, page_texts: list[str], out_dir: Path):
     """Save extracted text and metadata as JSON."""
+
+    # use filename (without extension) to make output unique
+    clean_filename = Path(metadata['filename']).stem
+    # remove spaces and special chars from filename
+    clean_filename = re.sub(r'[^\w\-_]', '_', clean_filename)
+    clean_filename = re.sub(r'_+', '_', clean_filename).strip('_')
+
     name = (
         f"{metadata['board']}_"
         f"{metadata['class']}_"
         f"{metadata['subject']}_"
-        f"{metadata['type']}"
+        f"{metadata['type']}_"
+        f"{clean_filename}"        # ← filename included
     )
     out_path = out_dir / f"{name}.json"
 
@@ -123,18 +162,34 @@ def save_processed(metadata: dict, page_texts: list[str], out_dir: Path):
 
     log(f"  Saved → {out_path}")
     return out_path
-
 # ── skip already processed ────────────────────────────────────────────────────
 def is_already_processed(pdf_path: Path, out_dir: Path) -> bool:
     """Skip PDFs that were already extracted successfully."""
     parts = pdf_path.parts
-    name = (
+
+    clean_filename = Path(pdf_path.name).stem
+    clean_filename = re.sub(r'[^\w\-_]', '_', clean_filename)
+    clean_filename = re.sub(r'_+', '_', clean_filename).strip('_')
+
+    # check new format (with filename)
+    new_name = (
+        f"{parts[-5]}_"
+        f"{parts[-4]}_"
+        f"{parts[-3]}_"
+        f"{parts[-2]}_"
+        f"{clean_filename}.json"
+    )
+
+    # check old format (without filename) — for already processed class 11 files
+    old_name = (
         f"{parts[-5]}_"
         f"{parts[-4]}_"
         f"{parts[-3]}_"
         f"{parts[-2]}.json"
     )
-    return (out_dir / name).exists()
+
+    # skip if either format exists
+    return (out_dir / new_name).exists() or (out_dir / old_name).exists()
 
 # ── quality check ─────────────────────────────────────────────────────────────
 def check_extraction_quality(page_texts: list[str]) -> dict:
