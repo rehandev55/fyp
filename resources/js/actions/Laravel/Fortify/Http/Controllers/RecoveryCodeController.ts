@@ -134,9 +134,4 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 const RecoveryCodeController = { index, store }
 
-export default RecoveryCodeController        })
-    
-    store.form = storeForm
-const RecoveryCodeController = { index, store }
-
 export default RecoveryCodeController
