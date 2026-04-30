@@ -36,7 +36,8 @@ def get_teacher_response(
         board       = board,
         class_level = class_level,
         context     = context,
-        question    = question
+        question    = question,
+        subject     = subject
     )
 
     # step 4 — call LLM
