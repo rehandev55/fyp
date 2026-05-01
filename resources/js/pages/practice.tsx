@@ -34,6 +34,8 @@ function parseQuestions(raw: string) {
         const explanationLine = lines.find(line => line.startsWith("Explanation:"));
         const explanation = explanationLine?.replace("Explanation:", "").trim() || "";
 
+        // const [answers, setAnswers] = useState<{ [key: number]: number }>({});
+
         return {
             chapter: "", // optional (you can improve later)
             question,
@@ -83,6 +85,10 @@ export default function Practice() {
     const [questions, setQuestions] = useState<any[]>([]);
 const [loading, setLoading] = useState(false);
 
+const [userAnswers, setUserAnswers] = useState<string[]>([]);
+const [score, setScore] = useState(0);
+const [mcqAnswers, setMcqAnswers] = useState<number[]>([]);
+
     // Quiz state
     const [chapterScope, setChapterScope] = useState<'whole' | 'selected' | null>(null);
     const [selectedChapters, setSelectedChapters] = useState<string[]>([]);
@@ -118,9 +124,29 @@ useEffect(() => {
         setSelectedChapters(selectedChapters.length === subjectChapters.length ? [] : [...subjectChapters]);
     };
 
+    // const handleNext = () => {
+    //     currentQ < questions.length - 1 ? setCurrentQ(currentQ + 1) : setFinished(true);
+    // };
     const handleNext = () => {
-        currentQ < questions.length - 1 ? setCurrentQ(currentQ + 1) : setFinished(true);
-    };
+    if (currentQ < questions.length - 1) {
+        setCurrentQ(currentQ + 1);
+    } else {
+        // calculate score ONLY when quiz ends
+        if (mode === 'mcq') {
+            let finalScore = 0;
+
+            questions.forEach((q, index) => {
+                if (mcqAnswers[index] === q.correctAnswer) {
+                    finalScore++;
+                }
+            });
+
+            setScore(finalScore);
+        }
+
+        setFinished(true);
+    }
+};
     const resetToMode = () => { setMode(null); setCurrentQ(0); setFinished(false); };
     const resetToChapters = () => { setChapterScope(null); setSelectedChapters([]); setMode(null); setCurrentQ(0); setFinished(false); };
 
@@ -166,7 +192,7 @@ useEffect(() => {
 
 }} className={sel}>
                                     <option value="">Select Class</option>
-                                    {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => <option key={c} value={c}>Class {c}</option>)}
+                                    {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => <option key={c} value={c}>{c}</option>)}
                                 </select>
                             </div>
                             <div>
@@ -294,6 +320,8 @@ useEffect(() => {
                                 <button key={m.key} onClick={async () => {
     setMode(m.key);
    setLoading(true);
+   setScore(0);
+setMcqAnswers([]);
 
 try {
     const res = await api('/quiz/generate', {
@@ -308,7 +336,7 @@ try {
             subject: activeSubject,
             chapters: chapterScope === 'whole' ? subjectChapters : selectedChapters,
             question_type: m.key,
-            num_questions: 10
+            num_questions: 2
         })
     });
 
@@ -362,6 +390,17 @@ try {
                         </div>
                         <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Quiz Complete!</h2>
                         <p className="text-gray-500 dark:text-gray-400 mb-6">You completed all {questions.length} questions.</p>
+                        {mode === 'mcq' && (
+    <p className="text-lg font-semibold text-blue-500 mb-4">
+        Score: {score} / {questions.length}
+    </p>
+)}
+
+{(mode === 'short' || mode === 'long') && (
+    <p className="text-sm text-gray-500 mb-4">
+        Your answers have been recorded.
+    </p>
+)}
                         <div className="flex gap-3">
                             <button onClick={() => { setCurrentQ(0); setFinished(false); }} className="flex-1 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-semibold">Retry</button>
                             <button onClick={resetToChapters} className="flex-1 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white py-3 rounded-xl hover:shadow-lg transition text-sm font-semibold">New Quiz</button>
@@ -402,9 +441,50 @@ if (loading) {
                         <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">{Math.round((currentQ / questions.length) * 100)}%</span>
                     </div>
                 </div>
-                {/* <QuestionCard {...questions[currentQ]} onNext={handleNext} /> */}
-                {questions[currentQ] && (
+
+                {/* {questions[currentQ] && (
     <QuestionCard {...questions[currentQ]} onNext={handleNext} />
+)} */}
+{/* {questions[currentQ] && mode === 'mcq' && (
+    <QuestionCard {...questions[currentQ]} onNext={handleNext} />
+)} */}
+{questions[currentQ] && mode === 'mcq' && (
+    <QuestionCard
+        {...questions[currentQ]}
+        onNext={handleNext}
+        onAnswer={(index: number) => {
+            const updated = [...mcqAnswers];
+            updated[currentQ] = index;
+            setMcqAnswers(updated);
+        }}
+    />
+)}
+
+{questions[currentQ] && (mode === 'short' || mode === 'long') && (
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border">
+        <h3 className="text-lg font-semibold mb-4">
+            {questions[currentQ].question}
+        </h3>
+
+        <textarea
+            className="w-full border rounded-lg p-3 text-sm dark:bg-gray-700"
+            rows={mode === 'long' ? 6 : 3}
+            placeholder="Write your answer..."
+            value={userAnswers[currentQ] || ""}
+            onChange={(e) => {
+                const updated = [...userAnswers];
+                updated[currentQ] = e.target.value;
+                setUserAnswers(updated);
+            }}
+        />
+
+        <button
+            onClick={handleNext}
+            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
+        >
+            Next
+        </button>
+    </div>
 )}
             </div>
         </>

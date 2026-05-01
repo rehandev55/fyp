@@ -6,10 +6,11 @@ interface QuestionCardProps {
   correctAnswer?: number;
   answer?: string;
   explanation?: string;
+  onAnswer: (answerIndex: number) => void;
   onNext: () => void;
 }
 
-export default function QuestionCard({ question, options, correctAnswer, answer, explanation, onNext }: QuestionCardProps) {
+export default function QuestionCard({ question, options, correctAnswer, answer, explanation, onNext, onAnswer }: QuestionCardProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [textAnswer, setTextAnswer] = useState('');
@@ -37,7 +38,12 @@ export default function QuestionCard({ question, options, correctAnswer, answer,
               classes = 'border-[#2563EB] bg-blue-50 dark:bg-blue-900/30 text-[#2563EB] ring-1 ring-blue-200 dark:ring-blue-800';
             }
             return (
-              <button key={i} onClick={() => !submitted && setSelected(i)} disabled={submitted} className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-200 text-sm font-medium flex items-center gap-3 ${classes}`}>
+              <button key={i} onClick={() => {
+    if (!submitted) {
+        setSelected(i);
+        onAnswer(i);
+    }
+}} disabled={submitted} className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-200 text-sm font-medium flex items-center gap-3 ${classes}`}>
                 <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${submitted && i === correctAnswer ? 'bg-emerald-500 text-white' : submitted && i === selected ? 'bg-red-500 text-white' : i === selected ? 'bg-[#2563EB] text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400'}`}>
                   {String.fromCharCode(65 + i)}
                 </span>
