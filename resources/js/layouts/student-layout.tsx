@@ -16,8 +16,21 @@ function Header({ user, isAdmin, onLogout }: { user: { name: string; email: stri
     const [open, setOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const { resolvedAppearance, updateAppearance } = useAppearance();
-    const isDark = resolvedAppearance === 'dark';
-    const toggleDark = () => updateAppearance(isDark ? 'light' : 'dark');
+
+
+    // const isDark = resolvedAppearance === 'dark';
+    const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+    setMounted(true);
+}, []);
+
+const isDark = mounted && resolvedAppearance === 'dark';
+
+const toggleDark = () => {
+    updateAppearance(isDark ? 'light' : 'dark');
+};
+    // const toggleDark = () => updateAppearance(isDark ? 'light' : 'dark');
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {

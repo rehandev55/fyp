@@ -28,7 +28,10 @@ const subjects = [
     { value: 'chemistry', label: 'Chemistry' },
     { value: 'biology', label: 'Biology' },
     { value: 'mathematics', label: 'Mathematics' },
+     { value: 'computer', label: 'Computer Science' },
     { value: 'english', label: 'English' },
+    { value: 'islamiyat', label: 'Islamiyat' },
+    { value: 'pakistan_studies', label: 'Pakistan Studies' },
 ];
 
 export default function Profile() {
