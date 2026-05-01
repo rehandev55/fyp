@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+// import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\Settings\SecurityController::edit
  * @see app/Http/Controllers/Settings/SecurityController.php:31
@@ -16,7 +17,7 @@ edit.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\SecurityController::edit
- * @see app/Http/Controllers/Settings/SecurityController.php:31
+
  * @route '/settings/security'
  */
 edit.url = (options?: RouteQueryOptions) => {
@@ -24,8 +25,7 @@ edit.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see \App\Http\Controllers\Settings\SecurityController::edit
- * @see app/Http/Controllers/Settings/SecurityController.php:31
+
  * @route '/settings/security'
  */
 edit.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -75,7 +75,7 @@ edit.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     edit.form = editForm
 const security = {
     edit: Object.assign(edit, edit),
