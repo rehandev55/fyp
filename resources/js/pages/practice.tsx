@@ -13,6 +13,36 @@ interface User {
     board?: string;
 }
 
+function parseQuestions(raw: string) {
+    const blocks = raw.split("\n\n");
+
+    return blocks.map((block) => {
+        const lines = block.split("\n");
+
+        const question = lines[0]?.replace(/^Q\d+\.\s*/, "") || "";
+
+        const options = lines
+            .filter(line => line.match(/^[A-D]\)/))
+            .map(line => line.replace(/^[A-D]\)\s*/, ""));
+
+        const correctLine = lines.find(line => line.startsWith("Correct:"));
+        // const correctLetter = correctLine?.split(":")[1]?.trim();
+        const correctLetter = correctLine?.split(":")[1]?.trim() || "";
+
+        const correctAnswer = ["A", "B", "C", "D"].indexOf(correctLetter);
+
+        const explanationLine = lines.find(line => line.startsWith("Explanation:"));
+        const explanation = explanationLine?.replace("Explanation:", "").trim() || "";
+
+        return {
+            chapter: "", // optional (you can improve later)
+            question,
+            options,
+            correctAnswer,
+            explanation
+        };
+    });
+}
 const allSubjects = ['physics', 'chemistry', 'biology', 'mathematics', 'english'];
 
 const chaptersData: Record<string, string[]> = {
@@ -284,10 +314,14 @@ try {
 
     const data = await res.json();
 
-    console.log(data); // debug once
+    // console.log(data);
 
-    // setQuestions(data.questions || []);
-    setQuestions(Array.isArray(data.questions) ? data.questions : []);
+    // setQuestions(Array.isArray(data.questions) ? data.questions : []);
+    if (typeof data.questions === "string") {
+    setQuestions(parseQuestions(data.questions));
+} else {
+    setQuestions(data.questions || []);
+}
 } catch (err) {
     console.error(err);
 } finally {
