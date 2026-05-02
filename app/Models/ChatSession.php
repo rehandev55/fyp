@@ -15,6 +15,7 @@ class ChatSession extends Model
         'board',
         'class_level',
         'subject',
+        // 'existing_summary',
     ];
 
     protected function casts(): array

@@ -15,11 +15,14 @@ app = FastAPI(
 
 # ── request models ────────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
-    question:    str
-    board:       str
-    class_level: str
-    subject:     str
-    language:    str = "en"
+    question:         str
+    board:            str
+    class_level:      str
+    subject:          str
+    language:         str  = "en"
+    chat_history:     list = []
+    existing_summary: str  = ""    
+   
 
 class QuizRequest(BaseModel):
     topic:         str
@@ -38,8 +41,9 @@ class EvalRequest(BaseModel):
 
 # ── response models ───────────────────────────────────────────────────────────
 class ChatResponse(BaseModel):
-    answer:  str
-    success: bool = True
+    answer:           str
+    updated_summary:  str  = ""    
+    success:          bool = True
 
 class QuizResponse(BaseModel):
     questions: str
@@ -59,17 +63,40 @@ def health():
     return {"status": "ok", "service": "ai-service", "version": "1.0.0"}
 
 # ── teacher bot endpoint ──────────────────────────────────────────────────────
+# @app.post("/chat", response_model=ChatResponse)
+#     def chat(req: ChatRequest):
+#         try:
+#             result = get_teacher_response(        
+#                 question         = req.question,
+#                 board            = req.board,
+#                 class_level      = req.class_level,
+#                 subject          = req.subject,
+#                 language         = req.language,
+#                 chat_history     = req.chat_history,
+#                 existing_summary = req.existing_summary,   
+#             return ChatResponse(
+#                 answer          = result["answer"],
+#                 updated_summary = result["updated_summary"],
+#             )
+#         except Exception as e:
+#             raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
     try:
-        answer = get_teacher_response(
-            question    = req.question,
-            board       = req.board,
-            class_level = req.class_level,
-            subject     = req.subject,
-            language    = req.language
+        result = get_teacher_response(        # now returns a dict
+            question         = req.question,
+            board            = req.board,
+            class_level      = req.class_level,
+            subject          = req.subject,
+            language         = req.language,
+            chat_history     = req.chat_history,
+            existing_summary = req.existing_summary,   # ← pass through
         )
-        return ChatResponse(answer=answer)
+        return ChatResponse(
+            answer          = result["answer"],
+            updated_summary = result["updated_summary"],   # ← return to Laravel
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

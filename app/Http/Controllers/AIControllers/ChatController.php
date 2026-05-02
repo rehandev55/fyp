@@ -69,7 +69,7 @@ class ChatController extends Controller
 
         $chatHistory = $history->map(function ($msg) {
             return [
-                'role' => $msg->role === 'ai' ? 'ai' : 'user',
+                'role' => $msg->role === 'ai' ? 'assistant' : 'user',
                 'content' => $msg->message,
             ];
         })->values()->toArray();

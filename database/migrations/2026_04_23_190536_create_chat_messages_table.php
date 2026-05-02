@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('role', ['user', 'ai']);
 
             $table->text('message');
+            // $table->longText('existing_summary')->nullable();
             $table->timestamps();
         });
     }
