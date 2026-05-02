@@ -106,6 +106,20 @@ export default function AiChat() {
     const endRef = useRef<HTMLDivElement>(null);
     const recognitionRef = useRef<SpeechRecognition | null>(null);
 
+// chat memory
+useEffect(() => {
+    if (!activeSessionId) return;
+
+    const fetchMessages = async () => {
+        const res = await api(`/chat/history/${activeSessionId}`);
+        const data = await res.json();
+
+        setMessages(data.messages || []);
+    };
+
+    fetchMessages();
+}, [activeSessionId]);
+
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -192,16 +206,34 @@ export default function AiChat() {
         setLoading(true);
 
         try {
-            const res = await api('/chat/send', {
-                method: 'POST',
-                body: JSON.stringify({
-                    message: text,
-                    session_id: activeSessionId,
-                    board: activeBoard,
-                    class_level: activeClassLevel,
-                    subject: activeSubject,
-                }),
-            });
+            // const res = await api('/chat/send', {
+            //     method: 'POST',
+            //     body: JSON.stringify({
+            //         message: text,
+            //         session_id: activeSessionId,
+            //         board: activeBoard,
+            //         class_level: activeClassLevel,
+            //         subject: activeSubject,
+            //     }),
+            // });
+            const chatHistory = messages
+    .slice(-10)
+    .map((m) => ({
+        role: m.role,
+        content: m.text,
+    }));
+
+const res = await api('/chat/send', {
+    method: 'POST',
+    body: JSON.stringify({
+        message: text,
+        session_id: activeSessionId,
+        board: activeBoard,
+        class_level: activeClassLevel,
+        subject: activeSubject,
+        chat_history: chatHistory,
+    }),
+});
 
             const data = await res.json();
 

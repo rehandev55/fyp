@@ -46,4 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'destroy']);
     Route::patch('/users/toggle/{id}', [UserController::class, 'toggleStatus']);
+
+    //data sent to ai for chat memory
+    Route::get('/chat/history/{sessionId}', [ChatController::class, 'history']);
 });

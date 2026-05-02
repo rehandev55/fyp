@@ -13,13 +13,14 @@ class AIService
         $this->baseUrl = config('services.ai.url');
     }
 
-    public function chat(string $question, string $board, string $classLevel, string $subject): string
+    public function chat(string $question, string $board, string $classLevel, string $subject, $chatHistory = []): string
     {
         $response = Http::post("{$this->baseUrl}/chat", [
             'question' => $question,
             'board' => $board,
             'class_level' => $classLevel,
             'subject' => $subject,
+            'chat_history' => $chatHistory,
         ]);
 
         $data = $response->json();

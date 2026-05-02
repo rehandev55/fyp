@@ -38,10 +38,6 @@ class ChatController extends Controller
         ]);
 
         $user = $request->user();
-
-        // $board = $request->input('board', $user->board?->value ?? Board::Federal->value);
-        // $classLevel = $request->input('class_level', $user->class_level?->value ?? ClassLevel::Class10->value);
-        // $subject = $request->input('subject', $user->subject?->value ?? Subject::Physics->value);
         $board = Board::tryFrom($request->input('board'))
             ?? $user->board
             ?? Board::Federal;
@@ -64,6 +60,19 @@ class ChatController extends Controller
                 'subject' => $subject,
             ]);
         }
+        //memory chat
+        $history = ChatMessage::where('session_id', $session->id)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get()
+            ->reverse();
+
+        $chatHistory = $history->map(function ($msg) {
+            return [
+                'role' => $msg->role === 'ai' ? 'ai' : 'user',
+                'content' => $msg->message,
+            ];
+        })->values()->toArray();
 
         ChatMessage::create([
             'session_id' => $session->id,
@@ -72,11 +81,19 @@ class ChatController extends Controller
         ]);
 
         // $reply = $this->ai->chat($request->message, $board, $classLevel, $subject);
+        // $reply = $this->ai->chat(
+        //     $request->message,
+        //     $board instanceof \App\Enums\Board ? $board->value : $board,
+        //     $classLevel instanceof \App\Enums\ClassLevel ? $classLevel->value : $classLevel,
+        //     $subject instanceof \App\Enums\Subject ? $subject->value : $subject,
+        // );
+
         $reply = $this->ai->chat(
             $request->message,
             $board instanceof \App\Enums\Board ? $board->value : $board,
             $classLevel instanceof \App\Enums\ClassLevel ? $classLevel->value : $classLevel,
             $subject instanceof \App\Enums\Subject ? $subject->value : $subject,
+            $chatHistory
         );
 
         ChatMessage::create([
@@ -99,5 +116,24 @@ class ChatController extends Controller
         ChatMessage::where('session_id', $id)->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    public function history($sessionId)
+    {
+        $messages = ChatMessage::where('session_id', $sessionId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Format for AI
+        $formatted = $messages->map(function ($msg) {
+            return [
+                'role' => $msg->role,          // 'user' or 'ai'
+                'content' => $msg->message     // actual text
+            ];
+        });
+
+        return response()->json([
+            'messages' => $formatted
+        ]);
     }
 }
