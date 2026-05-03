@@ -96,15 +96,23 @@ class ChatController extends Controller
             $chatHistory
         );
 
+        // $reply = $response['answer'] ?? '';
+        $updatedSummary = $response['updated_summary'] ?? '';
+
         ChatMessage::create([
             'session_id' => $session->id,
             'role' => 'ai',
             'message' => $reply,
         ]);
 
+        if (!empty($updatedSummary)) {
+            $session->existing_summary = $updatedSummary;
+            $session->save();
+        }
         return response()->json([
             'session_id' => $session->id,
             'reply' => $reply,
+            'updatedSummary' => $updatedSummary,
             // dd($reply)
         ]);
     }

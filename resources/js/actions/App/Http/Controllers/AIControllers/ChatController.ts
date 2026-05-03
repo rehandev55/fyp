@@ -1,5 +1,4 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::sessions
  * @see app/Http/Controllers/AIControllers/ChatController.php:19
@@ -232,7 +231,7 @@ send.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     send.form = sendForm
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::deleteMethod
- * @see app/Http/Controllers/AIControllers/ChatController.php:113
+ * @see app/Http/Controllers/AIControllers/ChatController.php:121
  * @route '/api/chat/{id}'
  */
 export const deleteMethod = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -247,7 +246,7 @@ deleteMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::deleteMethod
- * @see app/Http/Controllers/AIControllers/ChatController.php:113
+ * @see app/Http/Controllers/AIControllers/ChatController.php:121
  * @route '/api/chat/{id}'
  */
 deleteMethod.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -275,7 +274,7 @@ deleteMethod.url = (args: { id: string | number } | [id: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::deleteMethod
- * @see app/Http/Controllers/AIControllers/ChatController.php:113
+ * @see app/Http/Controllers/AIControllers/ChatController.php:121
  * @route '/api/chat/{id}'
  */
 deleteMethod.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -285,7 +284,7 @@ deleteMethod.delete = (args: { id: string | number } | [id: string | number ] | 
 
     /**
 * @see \App\Http\Controllers\AIControllers\ChatController::deleteMethod
- * @see app/Http/Controllers/AIControllers/ChatController.php:113
+ * @see app/Http/Controllers/AIControllers/ChatController.php:121
  * @route '/api/chat/{id}'
  */
     const deleteMethodForm = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -300,7 +299,7 @@ deleteMethod.delete = (args: { id: string | number } | [id: string | number ] | 
 
             /**
 * @see \App\Http\Controllers\AIControllers\ChatController::deleteMethod
- * @see app/Http/Controllers/AIControllers/ChatController.php:113
+ * @see app/Http/Controllers/AIControllers/ChatController.php:121
  * @route '/api/chat/{id}'
  */
         deleteMethodForm.delete = (args: { id: string | number } | [id: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -316,7 +315,7 @@ deleteMethod.delete = (args: { id: string | number } | [id: string | number ] | 
     deleteMethod.form = deleteMethodForm
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::history
- * @see app/Http/Controllers/AIControllers/ChatController.php:121
+ * @see app/Http/Controllers/AIControllers/ChatController.php:129
  * @route '/api/chat/history/{sessionId}'
  */
 export const history = (args: { sessionId: string | number } | [sessionId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -331,7 +330,7 @@ history.definition = {
 
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::history
- * @see app/Http/Controllers/AIControllers/ChatController.php:121
+ * @see app/Http/Controllers/AIControllers/ChatController.php:129
  * @route '/api/chat/history/{sessionId}'
  */
 history.url = (args: { sessionId: string | number } | [sessionId: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -359,7 +358,7 @@ history.url = (args: { sessionId: string | number } | [sessionId: string | numbe
 
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::history
- * @see app/Http/Controllers/AIControllers/ChatController.php:121
+ * @see app/Http/Controllers/AIControllers/ChatController.php:129
  * @route '/api/chat/history/{sessionId}'
  */
 history.get = (args: { sessionId: string | number } | [sessionId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -368,7 +367,7 @@ history.get = (args: { sessionId: string | number } | [sessionId: string | numbe
 })
 /**
 * @see \App\Http\Controllers\AIControllers\ChatController::history
- * @see app/Http/Controllers/AIControllers/ChatController.php:121
+ * @see app/Http/Controllers/AIControllers/ChatController.php:129
  * @route '/api/chat/history/{sessionId}'
  */
 history.head = (args: { sessionId: string | number } | [sessionId: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -378,7 +377,7 @@ history.head = (args: { sessionId: string | number } | [sessionId: string | numb
 
     /**
 * @see \App\Http\Controllers\AIControllers\ChatController::history
- * @see app/Http/Controllers/AIControllers/ChatController.php:121
+ * @see app/Http/Controllers/AIControllers/ChatController.php:129
  * @route '/api/chat/history/{sessionId}'
  */
     const historyForm = (args: { sessionId: string | number } | [sessionId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -388,7 +387,7 @@ history.head = (args: { sessionId: string | number } | [sessionId: string | numb
 
             /**
 * @see \App\Http\Controllers\AIControllers\ChatController::history
- * @see app/Http/Controllers/AIControllers/ChatController.php:121
+ * @see app/Http/Controllers/AIControllers/ChatController.php:129
  * @route '/api/chat/history/{sessionId}'
  */
         historyForm.get = (args: { sessionId: string | number } | [sessionId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -397,7 +396,7 @@ history.head = (args: { sessionId: string | number } | [sessionId: string | numb
         })
             /**
 * @see \App\Http\Controllers\AIControllers\ChatController::history
- * @see app/Http/Controllers/AIControllers/ChatController.php:121
+ * @see app/Http/Controllers/AIControllers/ChatController.php:129
  * @route '/api/chat/history/{sessionId}'
  */
         historyForm.head = (args: { sessionId: string | number } | [sessionId: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
