@@ -75,7 +75,7 @@ login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     login.form = loginForm
 /**
 * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
@@ -130,7 +130,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
             action: logout.url(options),
             method: 'post',
         })
-    
+
     logout.form = logoutForm
 /**
 * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
@@ -208,7 +208,7 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     register.form = registerForm
 /**
 * @see \Inertia\Controller::__invoke
@@ -286,7 +286,7 @@ home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     home.form = homeForm
 /**
 * @see \App\Http\Controllers\DashboardController::__invoke
@@ -364,7 +364,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     dashboard.form = dashboardForm
 /**
 * @see \App\Http\Controllers\SelectionController::__invoke
@@ -442,7 +442,7 @@ selection.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     selection.form = selectionForm
 /**
 * @see \App\Http\Controllers\AiChatController::__invoke
@@ -520,7 +520,7 @@ aichat.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     aichat.form = aichatForm
 /**
 * @see \App\Http\Controllers\PracticeController::__invoke
@@ -598,7 +598,7 @@ practice.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     practice.form = practiceForm
 /**
 * @see \App\Http\Controllers\ResourceController::__invoke
@@ -676,7 +676,7 @@ resources.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     resources.form = resourcesForm
 /**
 * @see \App\Http\Controllers\ProgressController::__invoke
@@ -754,7 +754,7 @@ progress.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     progress.form = progressForm
 /**
 * @see \App\Http\Controllers\ProfileController::profile
@@ -832,7 +832,7 @@ profile.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     profile.form = profileForm
 /**
 * @see \App\Http\Controllers\AboutController::__invoke
@@ -910,5 +910,5 @@ about.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
                     }),
             method: 'get',
         })
-    
+
     about.form = aboutForm

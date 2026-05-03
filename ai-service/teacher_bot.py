@@ -2,11 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from rag.retriever import retrieve, format_context
-<<<<<<< HEAD
-from memory_manager import build_messages_with_memory
-=======
 from memory_manager import build_messages_with_memory, _update_summary  # ← import at top
->>>>>>> main
 from pathlib import Path
 
 load_dotenv()
@@ -22,25 +18,6 @@ def get_teacher_response(
     subject:          str,
     language:         str  = "en",
     chat_history:     list = [],
-<<<<<<< HEAD
-    existing_summary: str  = "",   # ← new: pass in stored summary from Laravel
-) -> dict:                         # ← returns dict now, not plain string
-    """
-    Returns:
-        {
-            "answer":          str,   — the tutor reply
-            "updated_summary": str,   — store this in your DB/session for next turn
-        }
-
-    Laravel should:
-        1. Pass `existing_summary` from the stored column on the session/chat row.
-        2. After this call, persist `updated_summary` back to that column.
-    """
-    print(f"[DEBUG] chat_history received: {len(chat_history)} messages")
-    print(f"[DEBUG] existing_summary: '{existing_summary[:80]}...' " if existing_summary else "[DEBUG] existing_summary: empty")
-    chunks  = retrieve(
-        query       = question,
-=======
     existing_summary: str  = "",
 ) -> dict:
 
@@ -51,7 +28,6 @@ def get_teacher_response(
         search_query = question
     chunks = retrieve(
         query       = search_query,
->>>>>>> main
         board       = board,
         class_level = class_level,
         subject     = subject,
@@ -67,10 +43,6 @@ def get_teacher_response(
         question    = question,
     )
 
-<<<<<<< HEAD
-    # build compressed messages + get (possibly updated) summary
-=======
->>>>>>> main
     messages, updated_summary = build_messages_with_memory(
         system_prompt    = system_prompt,
         chat_history     = chat_history,
@@ -84,12 +56,6 @@ def get_teacher_response(
         temperature = 0.3,
         max_tokens  = 1000,
     )
-<<<<<<< HEAD
-       
-    return {
-        "answer":          response.choices[0].message.content,
-        "updated_summary": updated_summary,
-=======
 
     answer = response.choices[0].message.content
 
@@ -110,5 +76,4 @@ def get_teacher_response(
     return {
         "answer":          answer,
         "updated_summary": final_summary,
->>>>>>> main
     }

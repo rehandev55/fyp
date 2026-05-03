@@ -80,14 +80,6 @@ class ChatController extends Controller
             'message' => $request->message,
         ]);
 
-        // $reply = $this->ai->chat($request->message, $board, $classLevel, $subject);
-        // $reply = $this->ai->chat(
-        //     $request->message,
-        //     $board instanceof \App\Enums\Board ? $board->value : $board,
-        //     $classLevel instanceof \App\Enums\ClassLevel ? $classLevel->value : $classLevel,
-        //     $subject instanceof \App\Enums\Subject ? $subject->value : $subject,
-        // );
-
         $reply = $this->ai->chat(
             $request->message,
             $board instanceof \App\Enums\Board ? $board->value : $board,
