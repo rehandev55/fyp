@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from rag.retriever import retrieve, format_context
-from memory_manager import build_messages_with_memory
+from memory_manager import build_messages_with_memory, _update_summary  # ← import at top
 from pathlib import Path
 
 load_dotenv()
@@ -18,23 +18,16 @@ def get_teacher_response(
     subject:          str,
     language:         str  = "en",
     chat_history:     list = [],
-    existing_summary: str  = "",   # ← new: pass in stored summary from Laravel
-) -> dict:                         # ← returns dict now, not plain string
-    """
-    Returns:
-        {
-            "answer":          str,   — the tutor reply
-            "updated_summary": str,   — store this in your DB/session for next turn
-        }
+    existing_summary: str  = "",
+) -> dict:
 
-    Laravel should:
-        1. Pass `existing_summary` from the stored column on the session/chat row.
-        2. After this call, persist `updated_summary` back to that column.
-    """
-    print(f"[DEBUG] chat_history received: {len(chat_history)} messages")
-    print(f"[DEBUG] existing_summary: '{existing_summary[:80]}...' " if existing_summary else "[DEBUG] existing_summary: empty")
-    chunks  = retrieve(
-        query       = question,
+    if existing_summary and len(question.split()) < 6:
+        summary_context = existing_summary.split('.')[0]
+        search_query = f"{summary_context}. {question}"
+    else:
+        search_query = question
+    chunks = retrieve(
+        query       = search_query,
         board       = board,
         class_level = class_level,
         subject     = subject,
@@ -50,7 +43,6 @@ def get_teacher_response(
         question    = question,
     )
 
-    # build compressed messages + get (possibly updated) summary
     messages, updated_summary = build_messages_with_memory(
         system_prompt    = system_prompt,
         chat_history     = chat_history,
@@ -64,8 +56,24 @@ def get_teacher_response(
         temperature = 0.3,
         max_tokens  = 1000,
     )
-       
+
+    answer = response.choices[0].message.content
+
+    # always update summary with current exchange
+    try:
+        current_exchange = [
+            {"role": "user",      "content": question},
+            {"role": "assistant", "content": answer},
+        ]
+        final_summary = _update_summary(
+            existing_summary = updated_summary or existing_summary,
+            new_messages     = current_exchange
+        )
+    except Exception as e:
+        print(f"[WARNING] Summary update failed: {e}")
+        final_summary = updated_summary or existing_summary
+
     return {
-        "answer":          response.choices[0].message.content,
-        "updated_summary": updated_summary,
+        "answer":          answer,
+        "updated_summary": final_summary,
     }
