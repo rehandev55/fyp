@@ -9,21 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('chat_sessions', function (Blueprint $table) {
-            //
-            $table->longText('existing_summary')->nullable();
-        });
-    }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('chat_sessions', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
+        });
+    }
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('status')->default('Active');
         });
     }
 };

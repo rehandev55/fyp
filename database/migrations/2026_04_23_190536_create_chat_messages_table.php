@@ -17,10 +17,9 @@ return new class extends Migration
                 ->constrained('chat_sessions')
                 ->onDelete('cascade');
 
-            $table->enum('role', ['user', 'ai']);
+            $table->enum('role', ['user', 'assistant']);
 
             $table->text('message');
-            // $table->longText('existing_summary')->nullable();
             $table->timestamps();
         });
     }

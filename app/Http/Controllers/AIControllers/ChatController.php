@@ -69,7 +69,7 @@ class ChatController extends Controller
 
         $chatHistory = $history->map(function ($msg) {
             return [
-                'role' => $msg->role === 'ai' ? 'assistant' : 'user',
+                'role' => $msg->role,
                 'content' => $msg->message,
             ];
         })->values()->toArray();
@@ -80,32 +80,40 @@ class ChatController extends Controller
             'message' => $request->message,
         ]);
 
-        $reply = $this->ai->chat(
+        $response = $this->ai->chat(
             $request->message,
             $board instanceof \App\Enums\Board ? $board->value : $board,
             $classLevel instanceof \App\Enums\ClassLevel ? $classLevel->value : $classLevel,
             $subject instanceof \App\Enums\Subject ? $subject->value : $subject,
-            $chatHistory
+            $chatHistory,
+            $session->existing_summary
         );
+        // dd($response);
 
-        // $reply = $response['answer'] ?? '';
-        $updatedSummary = $response['updated_summary'] ?? '';
-
+        $updatedSummary = $response['updated_summary'] ?? null;
+        // dd($reply);
+        $reply = $response['reply'] ?? '';
         ChatMessage::create([
             'session_id' => $session->id,
-            'role' => 'ai',
+            'role' => 'assistant',
             'message' => $reply,
         ]);
+        // dd([
+        //     'old' => $session->existing_summary,
+        //     'new' => $updatedSummary
+        // ]);
 
         if (!empty($updatedSummary)) {
             $session->existing_summary = $updatedSummary;
             $session->save();
         }
+
         return response()->json([
             'session_id' => $session->id,
             'reply' => $reply,
             'updatedSummary' => $updatedSummary,
             // dd($reply)
+            'existing_summary' => $session->existing_summary,
         ]);
     }
 

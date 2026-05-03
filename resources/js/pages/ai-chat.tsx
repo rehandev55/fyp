@@ -31,7 +31,7 @@ declare global {
 }
 
 interface Message {
-    role: 'user' | 'ai';
+    role: 'user' | 'assistant';
     text: string;
 }
 
@@ -107,6 +107,7 @@ export default function AiChat() {
     const recognitionRef = useRef<SpeechRecognition | null>(null);
 
 // chat memory
+
 useEffect(() => {
     if (!activeSessionId) return;
 
@@ -195,6 +196,10 @@ useEffect(() => {
         }
     }, [activeSessionId]);
 
+
+
+
+
     const sendMessage = useCallback(async (text: string) => {
         if (!text.trim() || loading) return;
 
@@ -219,6 +224,8 @@ useEffect(() => {
             const chatHistory = messages
     .slice(-10)
     .map((m) => ({
+        // role: m.role,
+        // role: m.role === 'ai' ? 'assistant' : 'user',
         role: m.role,
         content: m.text,
     }));
@@ -232,15 +239,17 @@ const res = await api('/chat/send', {
         class_level: activeClassLevel,
         subject: activeSubject,
         chat_history: chatHistory,
+
     }),
 });
 
+
             const data = await res.json();
 
-            const aiMsg: Message = {
-                role: 'ai',
-                text: data.reply ?? 'No response',
-            };
+           const aiMsg: Message = {
+    role: 'assistant',
+    text: data.reply ?? 'No response',
+};
 
             const finalMessages = [...updatedMessages, aiMsg];
             setMessages(finalMessages);
@@ -527,13 +536,13 @@ const res = await api('/chat/send', {
                             <div className="space-y-4">
                                 {messages.map((msg, i) => (
                                     <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                        {msg.role === 'ai' && (
+                                        {msg.role === 'assistant' && (
                                             <div className="w-8 h-8 bg-gradient-to-br from-[#2563EB] to-[#7C3AED] rounded-full flex items-center justify-center mr-2 mt-1 flex-shrink-0">
                                                 <LogoES className="w-4 h-4" />
                                             </div>
                                         )}
                                         <div className={`max-w-[75%] text-sm leading-relaxed ${msg.role === 'user' ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-2xl rounded-br-md shadow-md shadow-blue-100 dark:shadow-blue-900/20 px-4 py-3' : ''}`}>
-                                            {msg.role === 'ai' ? (
+                                            {msg.role === 'assistant' ? (
                                                 <div className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-2xl rounded-bl-md shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                                                     <div className="px-4 py-3 whitespace-pre-wrap">{msg.text}</div>
                                                     {voiceEnabled && (
