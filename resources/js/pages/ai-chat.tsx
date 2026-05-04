@@ -2,13 +2,14 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import StudentLayout from '@/layouts/student-layout';
 import LogoES from '@/components/logo-es';
+import { api } from '@/lib/api';
 
 interface User {
     name: string;
     email: string;
     role?: string;
     subject?: string;
-    classLevel?: string;
+    class_level?: string;
     board?: string;
 }
 
@@ -29,28 +30,66 @@ declare global {
     }
 }
 
-const aiResponses: Record<string, string> = {
-    explain: "Let me explain this concept in detail:\n\nThe concept works by breaking down complex topics into simpler parts. In physics, for example, Newton's laws describe the relationship between a body and the forces acting upon it.\n\n1. First Law: An object at rest stays at rest, and an object in motion stays in motion unless acted upon by an external force.\n2. Second Law: Force = Mass x Acceleration (F = ma)\n3. Third Law: For every action, there is an equal and opposite reaction.\n\nThese laws form the foundation of classical mechanics.",
-    simplify: "Here's a simpler way to understand it:\n\nThink of it like pushing a shopping cart. The harder you push (more force), the faster it goes (more acceleration). A heavier cart needs more push. And when you push the cart, the cart pushes back on your hands!\n\nThat's basically Newton's three laws in everyday life.",
-    example: "Here's a practical example:\n\nImagine you're playing cricket:\n\n\u2022 First Law: The ball stays still on the ground until the bowler picks it up and throws it.\n\u2022 Second Law: The harder the batsman hits (force), the farther the ball goes (acceleration). A heavier ball needs a harder hit.\n\u2022 Third Law: When the bat hits the ball, the ball also pushes back on the bat (that's why you feel the impact in your hands).",
-    default: "That's a great question! Let me think about this...\n\nBased on your syllabus, this topic is important for board exams. The key points to remember are:\n\n1. Understand the core concept and its definition\n2. Learn the formulas and their derivations\n3. Practice numerical problems related to this topic\n4. Review past paper questions on this topic\n\nWould you like me to explain any specific part in more detail?",
-};
-
 interface Message {
-    role: 'user' | 'ai';
+    role: 'user' | 'assistant';
     text: string;
 }
 
 interface ChatSession {
     id: number;
     title: string;
+    subject?: string;
+    class_level?: string;
     messages: Message[];
     timestamp: string;
 }
 
+const boards = [
+    { value: 'federal', label: 'Federal Board' },
+    { value: 'ajk', label: 'AJK Board' },
+];
+
+const classes = [
+    { value: 'class_9', label: 'Class 9' },
+    { value: 'class_10', label: 'Class 10' },
+    { value: 'class_11', label: 'Class 11' },
+    { value: 'class_12', label: 'Class 12' },
+];
+
+const subjects = [
+    { value: 'physics', label: 'Physics' },
+    { value: 'chemistry', label: 'Chemistry' },
+    { value: 'biology', label: 'Biology' },
+    { value: 'mathematics', label: 'Mathematics' },
+    { value: 'english', label: 'English' },
+];
+
+const getLabel = (list: { value: string; label: string }[], value: string) =>
+    list.find(i => i.value === value)?.label || value;
+
 export default function AiChat() {
+    const [sidebarWidth, setSidebarWidth] = useState(200);
+
     const { auth } = usePage<{ auth: { user: User } }>().props;
     const user = auth.user;
+
+    // Read subject/board/class from URL query params, fall back to user profile
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialBoard = urlParams.get('board') || user?.board || '';
+    const initialClassLevel = urlParams.get('class_level') || user?.class_level || '';
+    const initialSubject = urlParams.get('subject') || user?.subject || '';
+
+    // Active preferences (can be changed via popup)
+    const [activeBoard, setActiveBoard] = useState(initialBoard);
+    const [activeClassLevel, setActiveClassLevel] = useState(initialClassLevel);
+    const [activeSubject, setActiveSubject] = useState(initialSubject);
+
+    // Subject selector popup
+    const needsSelection = !activeBoard || !activeClassLevel || !activeSubject;
+    const [showSelector, setShowSelector] = useState(needsSelection);
+    const [selectorBoard, setSelectorBoard] = useState(activeBoard);
+    const [selectorClass, setSelectorClass] = useState(activeClassLevel);
+    const [selectorSubject, setSelectorSubject] = useState(activeSubject);
 
     // Chat history
     const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -66,6 +105,21 @@ export default function AiChat() {
     const [voiceEnabled, setVoiceEnabled] = useState(false);
     const endRef = useRef<HTMLDivElement>(null);
     const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+// chat memory
+
+useEffect(() => {
+    if (!activeSessionId) return;
+
+    const fetchMessages = async () => {
+        const res = await api(`/chat/history/${activeSessionId}`);
+        const data = await res.json();
+
+        setMessages(data.messages || []);
+    };
+
+    fetchMessages();
+}, [activeSessionId]);
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -120,37 +174,96 @@ export default function AiChat() {
         }
     };
 
-    // Save current messages to session
-    const saveCurrentSession = useCallback((msgs: Message[]) => {
+    const saveCurrentSession = useCallback(async (msgs: Message[]) => {
         if (msgs.length === 0) return;
-        const title = msgs[0].text.slice(0, 40) + (msgs[0].text.length > 40 ? '...' : '');
-        if (activeSessionId !== null) {
-            setSessions(prev => prev.map(s => s.id === activeSessionId ? { ...s, messages: msgs, title } : s));
-        } else {
-            const newId = Date.now();
-            setSessions(prev => [{ id: newId, title, messages: msgs, timestamp: new Date().toLocaleDateString() }, ...prev]);
-            setActiveSessionId(newId);
+
+        const title = msgs[0].text.slice(0, 40);
+
+        try {
+            const res = await api('/chats', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: activeSessionId,
+                    title,
+                    messages: msgs,
+                }),
+            });
+
+            const data = await res.json();
+            setActiveSessionId(data.chat_id);
+        } catch (err) {
+            console.error(err);
         }
     }, [activeSessionId]);
 
-    const sendMessage = useCallback((text: string) => {
+
+
+
+
+    const sendMessage = useCallback(async (text: string) => {
         if (!text.trim() || loading) return;
-        const userMsg: Message = { role: 'user', text: text.trim() };
-        const newMessages = [...messages, userMsg];
-        setMessages(newMessages);
+
+        const userMsg: Message = { role: 'user', text };
+
+        const updatedMessages = [...messages, userMsg];
+        setMessages(updatedMessages);
         setInput('');
         setLoading(true);
-        const lower = text.trim().toLowerCase();
-        const response = aiResponses[lower] || aiResponses.default;
-        setTimeout(() => {
-            const aiMsg: Message = { role: 'ai', text: response };
-            const updated = [...newMessages, aiMsg];
-            setMessages(updated);
+
+        try {
+            // const res = await api('/chat/send', {
+            //     method: 'POST',
+            //     body: JSON.stringify({
+            //         message: text,
+            //         session_id: activeSessionId,
+            //         board: activeBoard,
+            //         class_level: activeClassLevel,
+            //         subject: activeSubject,
+            //     }),
+            // });
+            const chatHistory = messages
+    .slice(-10)
+    .map((m) => ({
+        // role: m.role,
+        // role: m.role === 'ai' ? 'assistant' : 'user',
+        role: m.role,
+        content: m.text,
+    }));
+
+const res = await api('/chat/send', {
+    method: 'POST',
+    body: JSON.stringify({
+        message: text,
+        session_id: activeSessionId,
+        board: activeBoard,
+        class_level: activeClassLevel,
+        subject: activeSubject,
+        chat_history: chatHistory,
+
+    }),
+});
+
+
+            const data = await res.json();
+
+           const aiMsg: Message = {
+    role: 'assistant',
+    text: data.reply ?? 'No response',
+};
+
+            const finalMessages = [...updatedMessages, aiMsg];
+            setMessages(finalMessages);
+
+            if (!activeSessionId && data.session_id) {
+                setActiveSessionId(data.session_id);
+                fetchSessions();
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
             setLoading(false);
-            speakText(response);
-            saveCurrentSession(updated);
-        }, 1200);
-    }, [loading, speakText, messages, saveCurrentSession]);
+        }
+    }, [messages, activeSessionId, loading, activeBoard, activeClassLevel, activeSubject]);
 
     const startNewChat = () => {
         setMessages([]);
@@ -158,31 +271,152 @@ export default function AiChat() {
         setSidebarOpen(false);
     };
 
-    const loadSession = (session: ChatSession) => {
-        setMessages(session.messages);
+    const loadSession = async (session: ChatSession) => {
         setActiveSessionId(session.id);
         setSidebarOpen(false);
+
+        try {
+            const res = await api(`/chat/messages/${session.id}`);
+            const data = await res.json();
+
+            const formatted = data.map((m: any) => ({
+                role: m.role,
+                text: m.message,
+            }));
+
+            setMessages(formatted);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
-    const deleteSession = (id: number) => {
-        setSessions(prev => prev.filter(s => s.id !== id));
-        if (activeSessionId === id) {
-            setMessages([]);
-            setActiveSessionId(null);
+    const deleteSession = async (id: number) => {
+        try {
+            await api(`/chat/${id}`, { method: 'DELETE' });
+            setSessions(prev => prev.filter(s => s.id !== id));
+
+            if (activeSessionId === id) {
+                setMessages([]);
+                setActiveSessionId(null);
+            }
+        } catch (err) {
+            console.error(err);
         }
     };
 
     const hasSpeechRecognition = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
-    const subjectInfo = user?.subject ? `${user.subject} — Class ${user.classLevel}` : null;
+    const subjectLabel = activeSubject ? getLabel(subjects, activeSubject) : '';
+    const classLabel = activeClassLevel ? getLabel(classes, activeClassLevel) : '';
+    const subjectInfo = activeSubject && activeClassLevel ? `${subjectLabel} — ${classLabel}` : null;
+
+    useEffect(() => {
+        fetchSessions();
+    }, []);
+
+    const fetchSessions = async () => {
+        try {
+            const res = await api('/chat/sessions');
+            const data = await res.json();
+            setSessions(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleSelectorConfirm = () => {
+        if (selectorBoard && selectorClass && selectorSubject) {
+            setActiveBoard(selectorBoard);
+            setActiveClassLevel(selectorClass);
+            setActiveSubject(selectorSubject);
+            setShowSelector(false);
+            // Start a new chat when subject changes
+            setMessages([]);
+            setActiveSessionId(null);
+        }
+    };
+
+    const sel = 'w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white hover:bg-white dark:hover:bg-gray-600 transition';
 
     return (
         <>
             <Head title="AI Chat" />
+
+            {/* Subject Selector Popup */}
+            {showSelector && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 w-full max-w-md p-6">
+                        <div className="text-center mb-6">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                                <i className="fa-solid fa-book-open text-[#2563EB] text-xl" />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-white">Select Your Subject</h3>
+                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Choose what you want to study</p>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Board</label>
+                                <select value={selectorBoard} onChange={(e) => setSelectorBoard(e.target.value)} className={sel}>
+                                    <option value="">Select Board</option>
+                                    {boards.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Class</label>
+                                <select value={selectorClass} onChange={(e) => { setSelectorClass(e.target.value); setSelectorSubject(''); }} className={sel}>
+                                    <option value="">Select Class</option>
+                                    {classes.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Subject</label>
+                                <select value={selectorSubject} onChange={(e) => setSelectorSubject(e.target.value)} disabled={!selectorClass} className={`${sel} disabled:opacity-50 disabled:cursor-not-allowed`}>
+                                    <option value="">Select Subject</option>
+                                    {subjects.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                                </select>
+                            </div>
+                            <button
+                                onClick={handleSelectorConfirm}
+                                disabled={!selectorBoard || !selectorClass || !selectorSubject}
+                                className="w-full bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white py-3 rounded-xl hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 text-sm font-semibold flex items-center justify-center gap-2"
+                            >
+                                Start Learning <i className="fa-solid fa-arrow-right" />
+                            </button>
+                        </div>
+                        {!needsSelection && (
+                            <button onClick={() => setShowSelector(false)} className="w-full mt-3 text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+                                Cancel
+                            </button>
+                        )}
+                    </div>
+                </div>
+            )}
+
             <div className="flex h-full overflow-hidden bg-[#F8FAFC] dark:bg-gray-900">
                 {/* History Sidebar */}
                 {sidebarOpen && <div className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-30" onClick={() => setSidebarOpen(false)} />}
-                <aside className={`fixed md:relative top-0 left-0 h-full w-72 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 z-30 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+                <aside
+                    style={{ width: sidebarWidth }}
+                    className={`fixed md:relative top-0 left-0 h-full bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 z-30 flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
+                >
+                    <div
+                        onMouseDown={(e) => {
+                            e.preventDefault();
+                            const startX = e.clientX;
+                            const startWidth = sidebarWidth;
+                            const onMouseMove = (e: MouseEvent) => {
+                                const newWidth = startWidth + (e.clientX - startX);
+                                if (newWidth > 220 && newWidth < 500) setSidebarWidth(newWidth);
+                            };
+                            const onMouseUp = () => {
+                                document.removeEventListener('mousemove', onMouseMove);
+                                document.removeEventListener('mouseup', onMouseUp);
+                            };
+                            document.addEventListener('mousemove', onMouseMove);
+                            document.addEventListener('mouseup', onMouseUp);
+                        }}
+                        className="absolute top-0 right-0 w-1 h-full cursor-col-resize bg-gray-300 dark:bg-gray-600 hover:bg-blue-500 z-50"
+                    />
                     <div className="p-4 border-b border-gray-100 dark:border-gray-700">
                         <button
                             onClick={startNewChat}
@@ -206,7 +440,12 @@ export default function AiChat() {
                                 >
                                     <button onClick={() => loadSession(s)} className="flex-1 text-left min-w-0">
                                         <p className="text-sm font-medium truncate">{s.title}</p>
-                                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{s.timestamp}</p>
+                                        {s.subject && (
+                                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 flex items-center gap-1">
+                                                <i className="fa-solid fa-book-open text-[10px]" />
+                                                {getLabel(subjects, s.subject)} — {getLabel(classes, s.class_level || '')}
+                                            </p>
+                                        )}
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); deleteSession(s.id); }}
@@ -220,10 +459,16 @@ export default function AiChat() {
                     </div>
                     {subjectInfo && (
                         <div className="p-4 border-t border-gray-100 dark:border-gray-700">
-                            <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                <i className="fa-solid fa-book-open" />
-                                {subjectInfo}
-                            </div>
+                            <button
+                                onClick={() => { setSelectorBoard(activeBoard); setSelectorClass(activeClassLevel); setSelectorSubject(activeSubject); setShowSelector(true); }}
+                                className="w-full flex items-center justify-between gap-2 text-xs text-gray-500 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#2563EB] transition"
+                            >
+                                <span className="flex items-center gap-2">
+                                    <i className="fa-solid fa-book-open" />
+                                    {subjectInfo}
+                                </span>
+                                <i className="fa-solid fa-pen-to-square" />
+                            </button>
                         </div>
                     )}
                 </aside>
@@ -248,13 +493,23 @@ export default function AiChat() {
                                     </p>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => { setVoiceEnabled(!voiceEnabled); if (isSpeaking) stopSpeaking(); }}
-                                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${voiceEnabled ? 'bg-[#2563EB] text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
-                            >
-                                <i className={`fa-solid ${voiceEnabled ? 'fa-volume-high' : 'fa-volume-xmark'}`} />
-                                {voiceEnabled ? 'Voice On' : 'Voice Off'}
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => { setSelectorBoard(activeBoard); setSelectorClass(activeClassLevel); setSelectorSubject(activeSubject); setShowSelector(true); }}
+                                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
+                                    title="Change subject"
+                                >
+                                    <i className="fa-solid fa-exchange-alt" />
+                                    Change
+                                </button>
+                                <button
+                                    onClick={() => { setVoiceEnabled(!voiceEnabled); if (isSpeaking) stopSpeaking(); }}
+                                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${voiceEnabled ? 'bg-[#2563EB] text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
+                                >
+                                    <i className={`fa-solid ${voiceEnabled ? 'fa-volume-high' : 'fa-volume-xmark'}`} />
+                                    {voiceEnabled ? 'Voice On' : 'Voice Off'}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -281,13 +536,13 @@ export default function AiChat() {
                             <div className="space-y-4">
                                 {messages.map((msg, i) => (
                                     <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                        {msg.role === 'ai' && (
+                                        {msg.role === 'assistant' && (
                                             <div className="w-8 h-8 bg-gradient-to-br from-[#2563EB] to-[#7C3AED] rounded-full flex items-center justify-center mr-2 mt-1 flex-shrink-0">
                                                 <LogoES className="w-4 h-4" />
                                             </div>
                                         )}
                                         <div className={`max-w-[75%] text-sm leading-relaxed ${msg.role === 'user' ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-2xl rounded-br-md shadow-md shadow-blue-100 dark:shadow-blue-900/20 px-4 py-3' : ''}`}>
-                                            {msg.role === 'ai' ? (
+                                            {msg.role === 'assistant' ? (
                                                 <div className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-2xl rounded-bl-md shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                                                     <div className="px-4 py-3 whitespace-pre-wrap">{msg.text}</div>
                                                     {voiceEnabled && (

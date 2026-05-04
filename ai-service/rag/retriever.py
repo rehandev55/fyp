@@ -62,8 +62,29 @@ def retrieve(
             "type":    match.metadata.get("type", ""),
             "chunk_index": match.metadata.get("chunk_index", 0)
         })
+    
+    if not chunks:
+        results_fallback = index.query(
+            vector           = query_vector,
+            top_k            = 3,
+            filter           = {
+                "board":   {"$eq": board},
+                "class":   {"$eq": class_level},
+                "subject": {"$eq": subject}
+            },
+            include_metadata = True
+        )
+        for match in results_fallback.matches:
+            chunks.append({
+                "score":       round(match.score, 4),
+                "text":        match.metadata.get("text", ""),
+                "subject":     match.metadata.get("subject", ""),
+                "type":        match.metadata.get("type", ""),
+                "chunk_index": match.metadata.get("chunk_index", 0)
+            })
 
     return chunks
+    
 
 # ── format context for LLM ────────────────────────────────────────────────────
 def format_context(chunks: list[dict]) -> str:

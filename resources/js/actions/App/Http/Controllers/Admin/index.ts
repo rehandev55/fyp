@@ -1,10 +1,10 @@
-import DashboardController from './DashboardController'
-import UserController from './UserController'
 import ContentController from './ContentController'
+import UserController from './UserController'
+import DashboardController from './DashboardController'
 const Admin = {
-    DashboardController: Object.assign(DashboardController, DashboardController),
+    ContentController: Object.assign(ContentController, ContentController),
 UserController: Object.assign(UserController, UserController),
-ContentController: Object.assign(ContentController, ContentController),
+DashboardController: Object.assign(DashboardController, DashboardController),
 }
 
 export default Admin

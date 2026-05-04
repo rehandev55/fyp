@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminLayout from '@/layouts/admin-layout';
+import axios from "axios";
 
 interface ContentItem {
     id: number;
     title: string;
     type: string;
     board: string;
-    classLevel: string;
+    class_level: string;
     subject: string;
     date: string;
     downloads: number;
@@ -19,50 +20,128 @@ interface Modal {
     item: ContentItem;
 }
 
-const initialContent: ContentItem[] = [
-    { id: 1, title: 'Physics Past Papers 2024', type: 'Past Paper', board: 'Federal Board', classLevel: '10', subject: 'Physics', date: '2026-03-15', downloads: 234, size: '2.4 MB' },
-    { id: 2, title: 'Math Key Book Solutions', type: 'Key Book', board: 'Federal Board', classLevel: '10', subject: 'Mathematics', date: '2026-03-10', downloads: 189, size: '5.1 MB' },
-    { id: 3, title: 'Biology Chapter Notes', type: 'Notes', board: 'Federal Board', classLevel: '10', subject: 'Biology', date: '2026-03-08', downloads: 156, size: '1.8 MB' },
-    { id: 4, title: 'Chemistry Formulas Sheet', type: 'Notes', board: 'AJK Board', classLevel: '9', subject: 'Chemistry', date: '2026-02-25', downloads: 312, size: '890 KB' },
-    { id: 5, title: 'English Grammar Guide', type: 'Book', board: 'AJK Board', classLevel: '9', subject: 'English', date: '2026-02-20', downloads: 98, size: '3.2 MB' },
-    { id: 6, title: 'Physics Solved Numericals', type: 'Solved Paper', board: 'Federal Board', classLevel: '12', subject: 'Physics', date: '2026-01-15', downloads: 445, size: '4.7 MB' },
-    { id: 7, title: 'Bio Diagrams Pack', type: 'Notes', board: 'Federal Board', classLevel: '11', subject: 'Biology', date: '2026-01-08', downloads: 267, size: '12.3 MB' },
-    { id: 8, title: 'Math Worksheets Set A', type: 'Worksheet', board: 'AJK Board', classLevel: '10', subject: 'Mathematics', date: '2025-12-20', downloads: 178, size: '1.5 MB' },
-];
+// const initialContent: ContentItem[] = [
+//     { id: 1, title: 'Physics Past Papers 2024', type: 'Past Paper', board: 'Federal Board', class_level: '10', subject: 'Physics', date: '2026-03-15', downloads: 234, size: '2.4 MB' },
+//     { id: 2, title: 'Math Key Book Solutions', type: 'Key Book', board: 'Federal Board', class_level: '10', subject: 'Mathematics', date: '2026-03-10', downloads: 189, size: '5.1 MB' },
+//     { id: 3, title: 'Biology Chapter Notes', type: 'Notes', board: 'Federal Board', class_level: '10', subject: 'Biology', date: '2026-03-08', downloads: 156, size: '1.8 MB' },
+//     { id: 4, title: 'Chemistry Formulas Sheet', type: 'Notes', board: 'AJK Board', class_level: '9', subject: 'Chemistry', date: '2026-02-25', downloads: 312, size: '890 KB' },
+//     { id: 5, title: 'English Grammar Guide', type: 'Book', board: 'AJK Board', class_level: '9', subject: 'English', date: '2026-02-20', downloads: 98, size: '3.2 MB' },
+//     { id: 6, title: 'Physics Solved Numericals', type: 'Solved Paper', board: 'Federal Board', class_level: '12', subject: 'Physics', date: '2026-01-15', downloads: 445, size: '4.7 MB' },
+//     { id: 7, title: 'Bio Diagrams Pack', type: 'Notes', board: 'Federal Board', class_level: '11', subject: 'Biology', date: '2026-01-08', downloads: 267, size: '12.3 MB' },
+//     { id: 8, title: 'Math Worksheets Set A', type: 'Worksheet', board: 'AJK Board', class_level: '10', subject: 'Mathematics', date: '2025-12-20', downloads: 178, size: '1.5 MB' },
+// ];
 
 const contentTypes = ['Book', 'Key Book', 'Past Paper', 'Notes', 'Solved Paper', 'Worksheet'];
 
 function Content() {
-    const [content, setContent] = useState<ContentItem[]>(initialContent);
+    const [content, setContent] = useState<ContentItem[]>([]);
     const [showUpload, setShowUpload] = useState(false);
     const [filterType, setFilterType] = useState('');
     const [search, setSearch] = useState('');
     const [modal, setModal] = useState<Modal | null>(null);
     const [editForm, setEditForm] = useState<ContentItem>({} as ContentItem);
-    const [form, setForm] = useState({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
+    const [form, setForm] = useState({ title: '', type: 'Book', board: 'federal', class_level: 'class_10', subject: 'physics' });
 
     const filtered = content.filter((c) => (!filterType || c.type === filterType) && (!search || c.title.toLowerCase().includes(search.toLowerCase())));
+    const [uploadProgress, setUploadProgress] = useState(0);   //use state for upload progress
 
-    const handleUpload = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!form.title) return;
-        setContent((prev) => [{ id: Date.now(), ...form, date: new Date().toISOString().split('T')[0], downloads: 0, size: '0 KB' }, ...prev]);
-        setForm({ title: '', type: 'Book', board: 'Federal Board', classLevel: '10', subject: 'Physics' });
+const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("type", form.type);
+    formData.append("board", form.board);
+    formData.append("class_level", form.class_level);
+    formData.append("subject", form.subject);
+    formData.append("file", file);
+
+    try {
+        console.log("FORM DATA:", formData);
+        formData.forEach((value, key) => {
+    console.log(key, value);
+});
+        const res = await axios.post(
+            "https://fyp_backend.test/api/content",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percent = Math.round(
+                        (progressEvent.loaded * 100) / (progressEvent.total || 1)
+                    );
+                    setUploadProgress(percent);
+                },
+            }
+        );
+
+        console.log(res.data); // 👈 VERY IMPORTANT
+
+        // success reset
+        setUploadProgress(0);
         setShowUpload(false);
-    };
+        fetchContent();
+
+    } catch (err: any) {
+        console.error("UPLOAD ERROR:", err.response?.data || err.message);
+
+        // ❗ reset even on error
+        setUploadProgress(0);
+    }
+};
 
     const openEdit = (c: ContentItem) => {
         setEditForm({ ...c });
         setModal({ type: 'edit', item: c });
     };
-    const saveEdit = () => {
-        setContent((prev) => prev.map((c) => (c.id === editForm.id ? { ...editForm } : c)));
+
+    const saveEdit = async () => {
+    try {
+        await fetch(`https://fyp_backend.test/api/content/${editForm.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: editForm.title,
+                type: editForm.type,
+                board: editForm.board,
+                class_level: editForm.class_level,
+                subject: editForm.subject,
+            }),
+        });
+
+        // keep your UI update (so it feels instant)
+        setContent((prev) =>
+            prev.map((c) => (c.id === editForm.id ? { ...editForm } : c))
+        );
+
         setModal(null);
-    };
-    const deleteContent = (id: number) => {
+
+    } catch (err) {
+        console.error("Edit failed:", err);
+    }
+};
+
+const deleteContent = async (id: number) => {
+    try {
+        await fetch(`https://fyp_backend.test/api/content/${id}`, {
+            method: "DELETE",
+        });
+
+        // update UI
         setContent((prev) => prev.filter((c) => c.id !== id));
+
         setModal(null);
-    };
+
+    } catch (err) {
+        console.error("Delete failed:", err);
+    }
+};
 
     const sel =
         'w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white transition';
@@ -82,7 +161,7 @@ function Content() {
         'Solved Paper': 'fa-solid fa-check-double',
         Worksheet: 'fa-solid fa-file-pen',
     };
-
+const [file, setFile] = useState<File | null>(null);
     const totalDownloads = content.reduce((a, c) => a + c.downloads, 0);
     const downloadsByType = contentTypes
         .map((t) => ({
@@ -90,6 +169,23 @@ function Content() {
             downloads: content.filter((c) => c.type === t).reduce((a, c) => a + c.downloads, 0),
         }))
         .filter((d) => d.downloads > 0);
+
+
+        useEffect(() => {
+    fetchContent();
+}, []);
+
+const fetchContent = async () => {
+    const res = await fetch("https://fyp_backend.test/api/content");
+    const data = await res.json();
+
+
+    setContent(data.data);
+};
+
+const downloadFile = (id: number) => {
+    window.open(`https://fyp_backend.test/api/content/download/${id}`);
+};
 
     return (
         <div className="space-y-6">
@@ -173,7 +269,7 @@ function Content() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Subject</label>
                                 <select value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className={sel}>
-                                    {['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'].map((s) => (
+                                    {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => (
                                         <option key={s} value={s}>
                                             {s}
                                         </option>
@@ -185,28 +281,56 @@ function Content() {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Board</label>
                                 <select value={form.board} onChange={(e) => setForm({ ...form, board: e.target.value })} className={sel}>
-                                    <option value="Federal Board">Federal Board</option>
-                                    <option value="AJK Board">AJK Board</option>
+                                    <option value="federal">Federal Board</option>
+                                    <option value="ajk">AJK Board</option>
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Class</label>
-                                <select value={form.classLevel} onChange={(e) => setForm({ ...form, classLevel: e.target.value })} className={sel}>
-                                    {['9', '10', '11', '12'].map((c) => (
-                                        <option key={c} value={c}>
-                                            Class {c}
-                                        </option>
-                                    ))}
-                                </select>
+                                <select
+    value={form.class_level}
+    onChange={(e) => setForm({ ...form, class_level: e.target.value })}
+    className={sel}
+>
+    {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => (
+        <option key={c} value={c}>
+            Class {c.split('_')[1]}
+        </option>
+    ))}
+</select>
                             </div>
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">File</label>
-                            <div className="border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl p-8 text-center hover:border-[#7C3AED] transition cursor-pointer">
-                                <i className="fa-solid fa-cloud-arrow-up text-3xl text-gray-300 dark:text-gray-600 mb-3" />
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Click to upload or drag & drop</p>
-                                <p className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX up to 50MB</p>
-                            </div>
+
+                            {uploadProgress > 0 && (
+    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+        <div
+            className="bg-[#7C3AED] h-2 rounded-full transition-all"
+            style={{ width: `${uploadProgress}%` }}
+        ></div>
+        <p className="text-xs text-gray-500 mt-1 text-right">
+            {uploadProgress}%
+        </p>
+    </div>
+)}
+                            {/* <input
+    type="file"
+    onChange={(e) => setFile(e.target.files?.[0] || null)}
+/> */}
+<label className="w-full cursor-pointer">
+    <div className="w-full bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg active:scale-95 transition">
+        <i className="fa-solid fa-upload text-xs" />
+        {file ? file.name : "Choose File"}
+    </div>
+
+    <input
+        type="file"
+        className="hidden"
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
+    />
+</label>
+
                         </div>
                         <div className="flex gap-3 pt-2">
                             <button
@@ -219,7 +343,9 @@ function Content() {
                             <button
                                 type="submit"
                                 disabled={!form.title}
-                                className="flex-1 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl hover:shadow-lg disabled:opacity-40 transition text-sm font-semibold"
+                                className="flex-1 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white py-3 rounded-xl
+hover:shadow-lg active:scale-95 active:brightness-90
+disabled:opacity-40 transition-all duration-150 text-sm font-semibold"
                             >
                                 Upload
                             </button>
@@ -227,7 +353,6 @@ function Content() {
                     </form>
                 </div>
             )}
-
             {/* Search + Type Filters */}
             <div className="space-y-4">
                 <div className="relative max-w-md">
@@ -269,9 +394,10 @@ function Content() {
                         <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-gray-800 dark:text-white text-sm truncate">{c.title}</h4>
                             <div className="flex items-center gap-2 mt-1 flex-wrap">
+
                                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColors[c.type]}`}>{c.type}</span>
                                 <span className="text-xs text-gray-400">{c.subject}</span>
-                                <span className="text-xs text-gray-400">Class {c.classLevel}</span>
+                                <span className="text-xs text-gray-400">{c.class_level}</span>
                                 <span className="text-xs text-gray-400">{c.size}</span>
                             </div>
                         </div>
@@ -301,6 +427,9 @@ function Content() {
                             >
                                 <i className="fa-solid fa-trash-can text-xs" />
                             </button>
+                            <button onClick={() => downloadFile(c.id)}>
+    Download
+</button>
                         </div>
                     </div>
                 ))}
@@ -333,7 +462,7 @@ function Content() {
                                 <div className="space-y-3 text-sm">
                                     {[
                                         { l: 'Subject', v: modal.item.subject, i: 'fa-solid fa-book' },
-                                        { l: 'Class', v: `Class ${modal.item.classLevel}`, i: 'fa-solid fa-graduation-cap' },
+                                        { l: 'Class', v: `Class ${modal.item.class_level}`, i: 'fa-solid fa-graduation-cap' },
                                         { l: 'Board', v: modal.item.board, i: 'fa-solid fa-building-columns' },
                                         { l: 'Downloads', v: modal.item.downloads, i: 'fa-solid fa-download' },
                                         { l: 'File Size', v: modal.item.size, i: 'fa-solid fa-hard-drive' },
@@ -383,7 +512,7 @@ function Content() {
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Subject</label>
                                             <select value={editForm.subject} onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })} className={sel}>
-                                                {['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'].map((s) => (
+                                                {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => (
                                                     <option key={s} value={s}>
                                                         {s}
                                                     </option>
@@ -401,8 +530,8 @@ function Content() {
                                         </div>
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Class</label>
-                                            <select value={editForm.classLevel} onChange={(e) => setEditForm({ ...editForm, classLevel: e.target.value })} className={sel}>
-                                                {['9', '10', '11', '12'].map((c) => (
+                                            <select value={editForm.class_level} onChange={(e) => setEditForm({ ...editForm, class_level: e.target.value })} className={sel}>
+                                                {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => (
                                                     <option key={c} value={c}>
                                                         Class {c}
                                                     </option>

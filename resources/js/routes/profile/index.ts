@@ -1,5 +1,70 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
 /**
+* @see \App\Http\Controllers\ProfileController::preferences
+ * @see app/Http/Controllers/ProfileController.php:20
+ * @route '/profile'
+ */
+export const preferences = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: preferences.url(options),
+    method: 'put',
+})
+
+preferences.definition = {
+    methods: ["put"],
+    url: '/profile',
+} satisfies RouteDefinition<["put"]>
+
+/**
+* @see \App\Http\Controllers\ProfileController::preferences
+ * @see app/Http/Controllers/ProfileController.php:20
+ * @route '/profile'
+ */
+preferences.url = (options?: RouteQueryOptions) => {
+    return preferences.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ProfileController::preferences
+ * @see app/Http/Controllers/ProfileController.php:20
+ * @route '/profile'
+ */
+preferences.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+    url: preferences.url(options),
+    method: 'put',
+})
+
+    /**
+* @see \App\Http\Controllers\ProfileController::preferences
+ * @see app/Http/Controllers/ProfileController.php:20
+ * @route '/profile'
+ */
+    const preferencesForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: preferences.url({
+                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                        _method: 'PUT',
+                        ...(options?.query ?? options?.mergeQuery ?? {}),
+                    }
+                }),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\ProfileController::preferences
+ * @see app/Http/Controllers/ProfileController.php:20
+ * @route '/profile'
+ */
+        preferencesForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: preferences.url({
+                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+                            _method: 'PUT',
+                            ...(options?.query ?? options?.mergeQuery ?? {}),
+                        }
+                    }),
+            method: 'post',
+        })
+    
+    preferences.form = preferencesForm
+/**
 * @see \App\Http\Controllers\Settings\ProfileController::edit
  * @see app/Http/Controllers/Settings/ProfileController.php:20
  * @route '/settings/profile'
@@ -208,7 +273,8 @@ destroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     
     destroy.form = destroyForm
 const profile = {
-    edit: Object.assign(edit, edit),
+    preferences: Object.assign(preferences, preferences),
+edit: Object.assign(edit, edit),
 update: Object.assign(update, update),
 destroy: Object.assign(destroy, destroy),
 }

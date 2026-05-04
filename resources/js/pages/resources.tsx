@@ -13,34 +13,38 @@ interface User {
 }
 
 interface Resource {
+    id: number;
     title: string;
-    description: string;
+    type: string;
     board: string;
-    classLevel: string;
+    class_level: string;
     subject: string;
+    file_path: string;
+    file_size: string | null;
+    downloads: number;
 }
 
-const allResources: Resource[] = [
-    { title: 'Physics Past Papers 2024', description: 'Complete collection of past board exam papers for Physics with answer keys.', board: 'Federal Board', classLevel: '10', subject: 'Physics' },
-    { title: 'Math Key Book Solutions', description: 'Step-by-step solutions and key book for Mathematics.', board: 'Federal Board', classLevel: '10', subject: 'Mathematics' },
-    { title: 'Biology Chapter Notes', description: 'Comprehensive chapter-wise notes for Biology preparation.', board: 'Federal Board', classLevel: '10', subject: 'Biology' },
-    { title: 'Chemistry Formulas Sheet', description: 'All important chemistry formulas and equations in one place.', board: 'AJK Board', classLevel: '9', subject: 'Chemistry' },
-    { title: 'English Grammar Guide', description: 'Complete grammar reference with examples and board exam tips.', board: 'AJK Board', classLevel: '9', subject: 'English' },
-    { title: 'Physics Solved Numericals', description: '100+ solved numerical problems with detailed steps.', board: 'Federal Board', classLevel: '12', subject: 'Physics' },
-    { title: 'Biology Diagrams Pack', description: 'High-quality labeled diagrams for all Biology chapters.', board: 'Federal Board', classLevel: '11', subject: 'Biology' },
-    { title: 'Math Practice Worksheets', description: 'Topic-wise practice worksheets with increasing difficulty.', board: 'AJK Board', classLevel: '10', subject: 'Mathematics' },
-    { title: 'Chemistry Lab Manual', description: 'Practical lab manual with procedures and viva questions.', board: 'Federal Board', classLevel: '9', subject: 'Chemistry' },
-];
-
 export default function Resources() {
-    const { auth } = usePage<{ auth: { user: User } }>().props;
-    const user = auth.user;
+    const { auth, resources } = usePage<{ auth: { user: User }; resources: Resource[] }>().props;
 
-    const [board, setBoard] = useState(user?.board || '');
-    const [classLevel, setClassLevel] = useState(user?.classLevel || '');
+    const [board, setBoard] = useState('');
+    const [classLevel, setClassLevel] = useState('');
     const [subject, setSubject] = useState('');
 
-    const filtered = allResources.filter((r) => (!board || r.board === board) && (!classLevel || r.classLevel === classLevel) && (!subject || r.subject === subject));
+    const classOptions = [
+    { value: 'class_9', label: 'Class 9' },
+    { value: 'class_10', label: 'Class 10' },
+    { value: 'class_11', label: 'Class 11' },
+    { value: 'class_12', label: 'Class 12' },
+];
+
+    const filtered = resources.filter(
+        (r) =>
+            (!board || r.board === board) &&
+            (!classLevel || r.class_level === classLevel) &&
+            (!subject || r.subject === subject),
+    );
+
     const sel = 'border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-white dark:bg-gray-700 dark:text-white hover:border-blue-300 transition';
 
     return (
@@ -59,22 +63,38 @@ export default function Resources() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <select value={board} onChange={(e) => setBoard(e.target.value)} className={sel}>
                             <option value="">All Boards</option>
-                            <option value="Federal Board">Federal Board</option>
-                            <option value="AJK Board">AJK Board</option>
+                            <option value="federal">Federal Board</option>
+                            <option value="ajk">AJK Board</option>
                         </select>
                         <select value={classLevel} onChange={(e) => setClassLevel(e.target.value)} className={sel}>
                             <option value="">All Classes</option>
-                            {['9', '10', '11', '12'].map((c) => <option key={c} value={c}>Class {c}</option>)}
+                            {classOptions.map((c) => (
+    <option key={c.value} value={c.value}>
+        {c.label}
+    </option>
+))}
                         </select>
                         <select value={subject} onChange={(e) => setSubject(e.target.value)} className={sel}>
                             <option value="">All Subjects</option>
-                            {['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'].map((s) => <option key={s} value={s}>{s}</option>)}
+                            {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
                 </div>
                 {filtered.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                        {filtered.map((r, i) => <ResourceCard key={i} {...r} />)}
+                        {filtered.map((r) => (
+                            <ResourceCard
+                                key={r.id}
+                                id={r.id}
+                                title={r.title}
+                                type={r.type}
+                                subject={r.subject}
+                                classLevel={r.class_level}
+                                board={r.board}
+                                fileSize={r.file_size ?? undefined}
+                                downloads={r.downloads}
+                            />
+                        ))}
                     </div>
                 ) : (
                     <div className="text-center py-16">

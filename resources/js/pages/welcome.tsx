@@ -1,11 +1,22 @@
 import { Head, Link } from '@inertiajs/react';
 import LogoES from '@/components/logo-es';
 import { useAppearance } from '@/hooks/use-appearance';
+import { useState, useEffect } from 'react';
 
 export default function Welcome() {
     const { resolvedAppearance, updateAppearance } = useAppearance();
-    const isDark = resolvedAppearance === 'dark';
-    const toggleDark = () => updateAppearance(isDark ? 'light' : 'dark');
+
+const isDark = resolvedAppearance === 'dark';
+
+const toggleDark = () => {
+    updateAppearance(isDark ? 'light' : 'dark');
+};
+
+    const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+    setMounted(true);
+}, []);
 
     const features = [
         {
@@ -91,8 +102,13 @@ export default function Welcome() {
         },
     ];
 
+       if (!mounted) {
+    return null;
+}
     return (
+
         <>
+
             <Head title="Welcome">
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link

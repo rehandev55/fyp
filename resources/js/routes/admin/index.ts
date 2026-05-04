@@ -79,7 +79,7 @@ dashboard.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     dashboard.form = dashboardForm
 /**
 * @see \App\Http\Controllers\Admin\UserController::__invoke
- * @see app/Http/Controllers/Admin/UserController.php:10
+ * @see app/Http/Controllers/Admin/UserController.php:12
  * @route '/admin/users'
  */
 export const users = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -94,7 +94,7 @@ users.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::__invoke
- * @see app/Http/Controllers/Admin/UserController.php:10
+ * @see app/Http/Controllers/Admin/UserController.php:12
  * @route '/admin/users'
  */
 users.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ users.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\UserController::__invoke
- * @see app/Http/Controllers/Admin/UserController.php:10
+ * @see app/Http/Controllers/Admin/UserController.php:12
  * @route '/admin/users'
  */
 users.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -112,7 +112,7 @@ users.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Admin\UserController::__invoke
- * @see app/Http/Controllers/Admin/UserController.php:10
+ * @see app/Http/Controllers/Admin/UserController.php:12
  * @route '/admin/users'
  */
 users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -122,7 +122,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Admin\UserController::__invoke
- * @see app/Http/Controllers/Admin/UserController.php:10
+ * @see app/Http/Controllers/Admin/UserController.php:12
  * @route '/admin/users'
  */
     const usersForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -132,7 +132,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Admin\UserController::__invoke
- * @see app/Http/Controllers/Admin/UserController.php:10
+ * @see app/Http/Controllers/Admin/UserController.php:12
  * @route '/admin/users'
  */
         usersForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -141,7 +141,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Admin\UserController::__invoke
- * @see app/Http/Controllers/Admin/UserController.php:10
+ * @see app/Http/Controllers/Admin/UserController.php:12
  * @route '/admin/users'
  */
         usersForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -157,7 +157,7 @@ users.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     users.form = usersForm
 /**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
- * @see app/Http/Controllers/Admin/ContentController.php:10
+ * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
  */
 export const content = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ content.definition = {
 
 /**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
- * @see app/Http/Controllers/Admin/ContentController.php:10
+ * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
  */
 content.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ content.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
- * @see app/Http/Controllers/Admin/ContentController.php:10
+ * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
  */
 content.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -190,7 +190,7 @@ content.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 /**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
- * @see app/Http/Controllers/Admin/ContentController.php:10
+ * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
  */
 content.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -200,7 +200,7 @@ content.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
     /**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
- * @see app/Http/Controllers/Admin/ContentController.php:10
+ * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
  */
     const contentForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -210,7 +210,7 @@ content.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
             /**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
- * @see app/Http/Controllers/Admin/ContentController.php:10
+ * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
  */
         contentForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -219,7 +219,7 @@ content.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
         })
             /**
 * @see \App\Http\Controllers\Admin\ContentController::__invoke
- * @see app/Http/Controllers/Admin/ContentController.php:10
+ * @see app/Http/Controllers/Admin/ContentController.php:13
  * @route '/admin/content'
  */
         contentForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({

@@ -28,6 +28,7 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
 # Python AI service
 ai-service/venv/
 ai-service/__pycache__/
@@ -36,3 +37,6 @@ ai-service/*.pyc
 ai-service/data/
 ai-service/.env
 ai-service/google-credentials.json
+ai-service/__pycache__/
+*.pyc
+ai-service/rag/__pycache__
