@@ -91,11 +91,11 @@ def chat(req: ChatRequest):
             subject          = req.subject,
             language         = req.language,
             chat_history     = req.chat_history,
-            existing_summary = req.existing_summary,   # ← pass through
+            existing_summary = req.existing_summary,   
         )
         return ChatResponse(
             answer          = result["answer"],
-            updated_summary = result["updated_summary"],   # ← return to Laravel
+            updated_summary = result["updated_summary"],   
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
