@@ -13,6 +13,15 @@ interface User {
     board?: string;
 }
 
+function getChapters(classLevel: string, subject: string) {
+    if (!classLevel || !subject) return [];
+
+    const classData = (CURRICULUM_DATA as any)[classLevel];
+    if (!classData) return [];
+
+    return classData[subject] || [];
+}
+
 function parseQuestions(raw: string) {
     const blocks = raw.split("\n\n");
 
@@ -45,14 +54,47 @@ function parseQuestions(raw: string) {
         };
     });
 }
-const allSubjects = ['physics', 'chemistry', 'biology', 'mathematics', 'english'];
+const allSubjects = ['physics', 'chemistry', 'biology', 'mathematics','computer', 'english','urdu'];
 
-const chaptersData: Record<string, string[]> = {
-    physics: ['Measurements', 'Kinematics', 'Dynamics', 'Work & Energy', 'Waves', 'Light', 'Electricity', 'Magnetism'],
-    chemistry: ['Fundamentals of Chemistry', 'Atomic Structure', 'Periodic Table', 'Chemical Bonding', 'States of Matter', 'Solutions', 'Chemical Reactions', 'Acids, Bases & Salts'],
-    biology: ['Introduction to Biology', 'Cell Structure', 'Cell Division', 'Enzymes', 'Nutrition', 'Transport', 'Breathing', 'Ecosystem'],
-    mathematics: ['Real Numbers', 'Polynomials', 'Linear Equations', 'Quadratic Equations', 'Geometry', 'Trigonometry', 'Statistics', 'Probability'],
-    english: ['Comprehension', 'Grammar Basics', 'Tenses', 'Narration', 'Voice', 'Vocabulary', 'Essay Writing', 'Letter Writing'],
+const CURRICULUM_DATA = {
+    class_9 : {
+physics: ['PHYSICAL QUANTITIES AND MEASUREMENT', 'KINEMATICS', 'DYNAMICS - I', 'DYNAMICS - II', 'PRESSURE AND DEFORMATION IN SOLIDS', 'WORK AND ENERGY', 'DENSITY AND TEMPERATURE', 'MAGNETISM', 'NATURE OF SCIENCE AND PHYSICS'],
+chemistry: ['Nature of Science in Chemistry', 'Matter', 'Atomic Structure', 'Periodic Table and Periodicity of Properties', 'Chemical Bonding', 'Stoichimetery', 'Electrochemistry', 'Energetics', 'Chemical Equilibrium', 'Acids, Bases & Salts', 'Enviromental Chemistry-Air', 'Enviromental Chemistry-Water', 'Organic Chemistry', 'Hydrocarbons', 'Biochemistry', 'Empirical Data Collection and Analysis', 'Separation Techniques', 'Qualitative Analysis', 'Chromatography'],
+biology: ['The Science of Biology', 'Biodiversity', 'Cell', 'Cell Cycle', 'Tissues, Organ and Organ System', 'Molecular Biology', 'Metabolism', 'Plant Physiology', 'Plant Reproduction', 'Evolution'],
+mathematics: ['Real Numbers', 'Logarithms', 'Sets and Relations', 'Factorization and Algebraic Manipulation', 'Linear Equations and Inequalities', 'Trigonometry and Bearing', 'Coordinate Geometry', 'Geometry of Straight Lines', 'Geometry and Polygons', 'Practical Geometry', 'Basic Statistics'],
+english: ['Hazrat Muhammad Rasulullah (ﷺ): A Mercy for All Creation', "The Art of Muslim Women's Entrepreneurship", 'Modern World and Age of Digital Globalization', 'Nothing is Impossible-The Construction of Spectacular Brooklyn Bridge', "5 of Jeff Benzo's best lessons for success from his 27 year as Amazon CEO", 'Say No to Drugs', 'Mowing by Robert Frost', 'The Eagle by Alfred Tennyson (Poem)', 'Travel and Tourism', 'Two Mothers Remembered by Joann Snow Duncanson', 'The Metamorphosis', 'Good Health and Well being'],
+computer: ['Computer System', 'Computational Thinking and Algorithms', 'Programming Fundamentals', 'Data and Analysis', 'Application of Computer Science', 'Impacts of Computing', 'Entrepreneuship'],
+urdu: ['Ikhlaq-e-Hasna', 'Katba', 'Bheriya', 'Aaram o Sukoon', 'Kaleem aur Mirza Zahir Dar Baig', 'Naam Deo Mali', 'Ibtidai Hisab', 'Lari Mein Paroye Hue Manzar', 'Apni Madad Aap', 'Hamd', 'Naat', 'Javed Ke Naam', 'Mehnat Ki Barkat', 'Cricket aur Mushaira', 'Payam-e-Latif', 'Faqirana Aaye Sada Kar Chale', 'Sun To Sahi Jahan Mein Hai Tera Fasana Kya', 'Gham Hai Ya Khushi Hai Tu', 'Kash Tufan Mein Safine Ko Utara Hota'],
+},
+
+class_10 : {
+physics: ['Heat Capacity and Modes of Heat Transfer', 'Thermal Expansion and Change of State', 'Waves', 'Sound', 'Optics', 'Electrostatics', 'Current Electricity', 'Electric Circuits', 'Electronics', 'Electromagnetism', 'Electromagnetic Waves', 'Nuclear Physics'],
+chemistry: ['History of Chemistry', 'Matter', 'Stoichiometry', 'Electrochemistry', 'Reaction Kinetics', 'Salts', 'Nitrogen, Sulphur and Metals', 'Organic Chemistry', 'Hydrocarbons', 'Hydroxy Compounds', 'Carboxylic Compounds', 'Polymers', 'Biochemistry'],
+biology: ['Digestive system', 'Circulatory system', 'Respiratory system', 'Urinary system', 'Nervous system', 'Reproduction', 'Inheritance', 'Diseases', 'Immunity', 'Biotechnology', 'Biostatistics and data analysis'],
+mathematics: ['Complex Numbers', 'Quadratic Equations', 'Matrices And Determinants', 'Linear and Quadratic Inequalities', 'Algebraic Fractions', 'Functions And Graphs', 'Vectors in Plane', 'Application of Trigonometry', 'Chord and Arcs of a Circle', 'Tangents and Angles of a Circle', 'Practical Geometry of Circles', 'Basic Statistics'],
+english: ['Animal Rights in Islam: Showing Compassion', 'Cultural Festivals of Pakistan: Unity in Diversity', 'Media Literacy in the Modern Age', "Thank You, Ma'am: (Langston Hughes)", 'Mother Nature (Poem)', 'How to Make Better Decisions About Your Career', 'The Alchemist', 'Blue (Poem)', 'The Menace of Drugs', 'Earth and Environment', 'Adventure Sports', 'Importance of Life Skills', 'The Oyster and the Pearl (Play)'],
+computer: ['Computer Systems', 'Computational Thinking and Algorithms', 'Programming Fundamentals', 'Data and Analysis', 'Application of Computer Science', 'Impacts of Computing', 'Data Literacy', 'Entrepreneuship in Digital Age'],
+urdu: ['Ikhlaq-e-Nabwi ﷺ', 'Mohsin Muhalla', 'Kaffara', 'Chughal Khor', 'Dastak', 'Old Age Home', 'Mera Gaon', 'Sir Syed Ka Bachpan', 'Sawere Jo Kal Aankh Meri Khuli', 'Babul Ke Khandar', 'Kuch Zariya-e-Taleem Ke Bare Mein', 'Hamd', 'Naat', 'Khitab Ba Jawan-e-Islam', 'Aya-e-Subh', 'Admi Nama', 'Waghera', 'Bazicha-e-Atfal Hai Duniya Mere Aage', 'Asar Is Ko Zara Nahin Hota', 'Hai Mashq-e-Sukhan Jari Chakki Ki Mashaqqat Bhi', 'Yun Kehne Ko Mir Ik Bimar Bohat Hai'],
+},
+  class_11: {
+    biology: ['Cells and Sub-Cellular Organelles', 'Molecular Biology', 'Enzymes', 'Bioenergetics', 'Acellular Life', 'Prokaryotes', 'Protista and Fungi', 'Plantae', 'Diversity in Plant Functions', 'Animalia', 'Reproduction', 'Inheritance', 'Chromosome and DNA', 'Evolution', 'Ecology'],
+    physics: ['Physical Quantities and Measurements', 'Vectors', 'Translatory Motion', 'Rotational and Circular Motion', 'Work and Kinetic Energy', 'Fluid Mechanics', 'Physics of Solids', 'Heat and Thermodynamics', 'Waves', 'Electrostatics', 'Electricity', 'Magnetism', 'Relativity', 'Particle Physics'],
+    mathematics: ['Complex Numbers', 'Matrices and Determinants', 'Vectors', 'Sequences and Series', 'Polynomials', 'Permutation and Combination', 'Mathematical Induction and Binomial Theorem', 'Fundamentals of Trigonometry', 'Trigonometric Functions'],
+    chemistry: ['History of Chemistry', 'Atomic Structure', 'Chemical Bonding', 'Stoichiometry', 'States and Phases of Matter', 'Energetics', 'Chemical Kinetics', 'Chemical Equilibrium', 'Acids - Bases Chemistry', 'Periodic Table', 'Nitrogen and Sulphur', 'Halogens', 'Environmental Chemistry-Air', 'Environmental Chemistry-Water', 'Organic Chemistry', 'Hydrocarbons', 'Halogenoalkanes', 'Alcohol', 'Carbonyl Compounds', 'Nitrogen Compounds-Amines', 'Organic Synthesis', 'Energy'],
+    computer: ['Computer Systems', 'Computational Thinking & Algorithms', 'Programming Fundamentals', 'Data and Analysis', 'Application of Computer Science', 'Impacts of Computing', 'Digital Literacy', 'Entrepreneurship in Digital Age'],
+    english: ['Family Values In Pakistan', 'Shooting Stars', 'The Wind', 'Butterflies', 'Clean water and Sanitation', 'The Darkling Thrush', 'World Heritage Sites in Pakistan', 'Social Media: A Blessing or a Curse?', 'Sunshine After Rain', 'The Small Woman', 'The Three Questions', 'Break Break Break', 'Blow, Blow, Thou', 'Choice of a Profession', 'The Ninny', 'Fourteen', 'The Last Leaf', 'The Necklace'],
+    urdu: ['Ikhlaq-e-Hasna', 'Naya Qanoon', 'Tareekh Ka Kafan', 'Dahliz', 'Aur Pakistan Ban Gaya', 'Ek Ustad Adalat Ke Kat-hare Mein', 'Makateeb-e-Ghalib', 'Faqah Mein Rozah', 'Pakistani Zabanein Aur Un Ka Bahami Rishta', 'Charpai', 'Hamd', 'Naat', 'Milli Naghma', 'Ae Wadi-e-Lulab', 'Katba', 'Azadi', 'Rehman Baba', 'Pata Pata Boota Boota Hal Hamara Jane Hai', 'Sar Mein Sauda Bhi Nahin Dil Mein Tamanna Bhi Nahin', 'Be Chain Bohat Phirna Ghabraye Hue Rehna', 'Silsile Tor Gaya Woh Sabhi Jate Jate', 'Baadbaan Khulne Se Pehle Ka Ishara Dekhna'],
+},
+  class_12: {
+    chemistry: ['s AND p - BLOCK ELEMENTS', 'd AND f BLOCK ELEMENTS', 'ORGANIC COMPOUNDS', 'HYDROCARBONS', 'ALKYL HALIDE AND AMINE', 'ALCOHOL, PHENOLS AND ETHRS', 'ALDEHYDES AND KETONES', 'CARBONYL COMPOUNDS', 'BIOCHEMISTRY', 'INDUSTRIAL CHEMISTRY', 'ENVIRONMENTAL CHEMISTRY', 'ANALYTICAL CHEMISTRY'],
+    mathematics: ['Functions and Graphs', 'Limit, Continuity and Derivative', 'Integration', 'Differential Equations', 'Kinematics of Motion in a Straight Line', 'Analytical Geometry', 'Conic Section', 'Inverse Trigonometric Functions and Their Graphs', 'Solution of Trigonometric Equations', 'Numerical Methods'],
+    urdu: ['Kamali Nafs aur Makarim-e-Akhlaq', 'Mashar', 'Ma-G-Ni', 'Rustum o Sohrab', 'Shakhon Par Jalte Hue Basere', 'Shuru-e-Qissa Ka', 'Bahadur Khan Ki Sarguzasht', 'Kafi', 'Beetay', 'Nazria-e-Pakistan', 'Hamd', 'Naat', 'Main Rozay Say Hun', 'Shehr Main Teri Galiyon Ke', 'Insan-e-Kamil Ki Barkat', 'Nayi Nasl Ka Nauha', 'Dastan Tayyari Main Bagh Ki', 'Jag Main Aa Kar Idhar Udhar Dekha', 'Sab Kahan Kuch Lala o Gul Main Numayan Ho Gayin', 'Sitaron Se Aage Jahan Aur Bhi Hain', 'Wohi Khwab Aankhon Main Daal De Jo Nizam-e-Sham o Visal De', 'Ye Fakhr To Hasil Hai Buray Hain Ke Bhallay Hain'],
+    physics: ['Gravitation', 'Statistical Mechanics and Thermodynamics', 'Simple Harmonic Motion', 'Diffraction and Interference', 'Electric Potential and Capacitor', 'Alternating Current', 'Quantum Physics', 'Nuclear Physics', 'Cosmology', 'Earth Climate', 'Medical Imaging', 'Nature of Science: A Debate'],
+    english: ['LINGKUAN GORGE', 'POPULATION EXPLOSION IN PAKISTAN', 'THE INCOME-TAX MAN', 'Rubaiyat of Omar Khayam', 'THE BLANKET', 'STAY HUNGRY - STAY FOOLISH', 'TOBACCO AND YOUR HEALTH', 'THE SEA', 'First Year At Harrow', 'THERE’S A NEW PLANET IN SIGHT', 'HARVEST HYMN', 'THE KAGHAN VALLEY', 'AFTER TWENTY YEARS', 'The Solitary Reaper', 'The Pearl'],
+    biology: ['Respiration', 'Homeostasis', 'Support and Movement', 'Nervous Coordination', 'Chemical Coordination', 'Behaviour', 'Reproduction', 'Development and Aging', 'Inheritance', 'Chromosome and DNA', 'Evolution', 'Man and His Environment', 'Biotechnology', 'Biology and Human Welfare'],
+    computer: ['Operating System', 'System Development Life Cycle', 'Object Oriented Programming in C++', 'Control Structures', 'Arrays and Strings', 'Functions', 'Pointers', 'Objects and Classes', 'File Handling'],
+
+  }
 };
 
 interface MCQQuestion {
@@ -112,9 +154,14 @@ useEffect(() => {
         setSubject(user.subject || '');
     }
 }, [user]);
+const subjectChapters = getChapters(activeClass, activeSubject);
+    // const hasSelection = !!(activeSubject && activeClass && activeBoard);
+    const hasSelection =
+    !!activeSubject &&
+    !!activeClass &&
+    !!activeBoard &&
+    subjectChapters.length > 0;
 
-    const hasSelection = !!(activeSubject && activeClass && activeBoard);
-    const subjectChapters = hasSelection ? (chaptersData[activeSubject] || []) : [];
 
     const toggleChapter = (ch: string) => {
         setSelectedChapters((prev) => prev.includes(ch) ? prev.filter((c) => c !== ch) : [...prev, ch]);
@@ -124,29 +171,49 @@ useEffect(() => {
         setSelectedChapters(selectedChapters.length === subjectChapters.length ? [] : [...subjectChapters]);
     };
 
-    // const handleNext = () => {
-    //     currentQ < questions.length - 1 ? setCurrentQ(currentQ + 1) : setFinished(true);
-    // };
-    const handleNext = () => {
+    // const [feedbacks, setFeedbacks] = useState<string[]>([]);
+const [checked, setChecked] = useState(false);
+const [loadingEval, setLoadingEval] = useState(false);
+
+const handleNext = () => {
+    if (mode === 'mcq') {
+        const correct = questions[currentQ]?.correctAnswer;
+        const userAns = mcqAnswers[currentQ];
+
+        if (userAns === correct) {
+            setScore((prev) => prev + 1);
+        }
+    }
+    setChecked(false);
+
     if (currentQ < questions.length - 1) {
         setCurrentQ(currentQ + 1);
     } else {
-        // calculate score ONLY when quiz ends
-        if (mode === 'mcq') {
-            let finalScore = 0;
-
-            questions.forEach((q, index) => {
-                if (mcqAnswers[index] === q.correctAnswer) {
-                    finalScore++;
-                }
-            });
-
-            setScore(finalScore);
-        }
-
         setFinished(true);
     }
 };
+
+const handleCheckAnswer = async () => {
+    const currentQuestion = questions[currentQ];
+    const answer = userAnswers[currentQ];
+
+    setLoadingEval(true);
+
+    const result = await evaluateAnswer(
+        currentQuestion.question,
+        answer
+    );
+
+    const updated = [...feedbacks];
+    updated[currentQ] = result?.feedback || "No feedback";
+
+    setFeedbacks(updated);
+    setChecked(true);
+
+    setLoadingEval(false);
+};
+
+
     const resetToMode = () => { setMode(null); setCurrentQ(0); setFinished(false); };
     const resetToChapters = () => { setChapterScope(null); setSelectedChapters([]); setMode(null); setCurrentQ(0); setFinished(false); };
 
@@ -157,6 +224,30 @@ useEffect(() => {
     ];
 
     const sel = 'w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white hover:bg-white dark:hover:bg-gray-600 transition';
+const [feedbacks, setFeedbacks] = useState<string[]>([]);
+    const evaluateAnswer = async (question: string, answer: string) => {
+    try {
+        const res = await api('/quiz/evaluate', {
+            method: 'POST',
+            body: JSON.stringify({
+                question,
+                student_answer: answer,
+                board: activeBoard,
+                class_level: activeClass,
+                subject: activeSubject,
+            }),
+        });
+
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+};
+
+
+
+
 
     // Screen 1: Subject selection
     // if (!hasSelection) {
@@ -268,7 +359,7 @@ useEffect(() => {
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">
-                                {subjectChapters.map((ch, i) => (
+                                {subjectChapters.map((ch: string, i: string) => (
                                     <button
                                         key={ch}
                                         onClick={() => toggleChapter(ch)}
@@ -395,12 +486,6 @@ try {
         Score: {score} / {questions.length}
     </p>
 )}
-
-{(mode === 'short' || mode === 'long') && (
-    <p className="text-sm text-gray-500 mb-4">
-        Your answers have been recorded.
-    </p>
-)}
                         <div className="flex gap-3">
                             <button onClick={() => { setCurrentQ(0); setFinished(false); }} className="flex-1 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-semibold">Retry</button>
                             <button onClick={resetToChapters} className="flex-1 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white py-3 rounded-xl hover:shadow-lg transition text-sm font-semibold">New Quiz</button>
@@ -442,12 +527,7 @@ if (loading) {
                     </div>
                 </div>
 
-                {/* {questions[currentQ] && (
-    <QuestionCard {...questions[currentQ]} onNext={handleNext} />
-)} */}
-{/* {questions[currentQ] && mode === 'mcq' && (
-    <QuestionCard {...questions[currentQ]} onNext={handleNext} />
-)} */}
+
 {questions[currentQ] && mode === 'mcq' && (
     <QuestionCard
         {...questions[currentQ]}
@@ -477,13 +557,31 @@ if (loading) {
                 setUserAnswers(updated);
             }}
         />
+        {feedbacks[currentQ] && (
+    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg border">
+        <h4 className="font-semibold text-sm mb-1">AI Feedback</h4>
+        <p className="text-sm">{feedbacks[currentQ]}</p>
+    </div>
+)}
 
+        <div className="mt-4 flex gap-3">
+    {!checked ? (
+        <button
+            onClick={handleCheckAnswer}
+            disabled={loadingEval}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        >
+            {loadingEval ? "Checking..." : "Check Answer"}
+        </button>
+    ) : (
         <button
             onClick={handleNext}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
+            className="bg-green-500 text-white px-4 py-2 rounded-lg"
         >
-            Next
+            Next Question
         </button>
+    )}
+</div>
     </div>
 )}
             </div>
