@@ -39,3 +39,4 @@ ai-service/.env
 ai-service/google-credentials.json
 ai-service/__pycache__/
 *.pyc
+ai-service/rag/__pycache__

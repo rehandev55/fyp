@@ -63,6 +63,24 @@ def health():
     return {"status": "ok", "service": "ai-service", "version": "1.0.0"}
 
 # ── teacher bot endpoint ──────────────────────────────────────────────────────
+# @app.post("/chat", response_model=ChatResponse)
+#     def chat(req: ChatRequest):
+#         try:
+#             result = get_teacher_response(        
+#                 question         = req.question,
+#                 board            = req.board,
+#                 class_level      = req.class_level,
+#                 subject          = req.subject,
+#                 language         = req.language,
+#                 chat_history     = req.chat_history,
+#                 existing_summary = req.existing_summary,   
+#             return ChatResponse(
+#                 answer          = result["answer"],
+#                 updated_summary = result["updated_summary"],
+#             )
+#         except Exception as e:
+#             raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
     try:

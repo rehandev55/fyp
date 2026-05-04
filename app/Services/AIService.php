@@ -13,20 +13,25 @@ class AIService
         $this->baseUrl = config('services.ai.url');
     }
 
-    public function chat(string $question, string $board, string $classLevel, string $subject): string
+    public function chat(string $question, string $board, string $classLevel, string $subject, $chatHistory = [], $existingSummary = null): array
     {
         $response = Http::post("{$this->baseUrl}/chat", [
             'question' => $question,
             'board' => $board,
             'class_level' => $classLevel,
             'subject' => $subject,
+            'chat_history' => $chatHistory,
+            'existing_summary' => $existingSummary ?? '',
         ]);
-
+        // dd($response->body());
         $data = $response->json();
 
         // dd($data);
 
-        return $data['reply'] ?? $data['answer'] ?? 'No response';
+        return [
+            'reply' => $data['reply'] ?? $data['answer'] ?? 'No response',
+            'updated_summary' => $data['updated_summary'] ?? null,
+        ];
     }
 
     public function generateQuiz(array $params): array
