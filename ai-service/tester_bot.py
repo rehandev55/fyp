@@ -1,96 +1,98 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from rag.retriever import retrieve, format_context
+from rag.retriever import retrieve, retrieve_combined, format_context, _openai_client as client
+from utils.token_logger import log_token_usage
 from pathlib import Path
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 TESTER_TEMPLATE    = Path("prompts/tester.txt").read_text(encoding="utf-8")
 EVALUATOR_TEMPLATE = Path("prompts/evaluator.txt").read_text(encoding="utf-8")
+
 
 def generate_questions(
     topic:         str,
     board:         str,
     class_level:   str,
     subject:       str,
-    question_type: str = "mcq",    # mcq | short | long
-    num_questions: int = 5
+    question_type: str = "mcq",
+    num_questions: int = 5,
 ) -> str:
-    """Generate exam questions on a topic."""
+    # single embed call for both textbook and past paper retrieval
+    context = retrieve_combined(topic, board, class_level, subject)
 
-    # retrieve relevant chunks
-    chunks = retrieve(
-        query       = topic,
-        board       = board,
-        class_level = class_level,
-        subject     = subject,
-        top_k       = 5
-    )
-    context = format_context(chunks)
-
-    # build prompt
     prompt = TESTER_TEMPLATE.format(
         board         = board,
         class_level   = class_level,
+        subject       = subject,
         context       = context,
         question_type = question_type,
         num_questions = num_questions,
         topic         = topic,
-        subject     = subject
     )
 
     response = client.chat.completions.create(
-        model    = "gpt-4o-mini",
-        messages = [
+        model       = "gpt-4o-mini",
+        messages    = [
             {"role": "system", "content": prompt},
-            {"role": "user",   "content": f"Generate {num_questions} {question_type} questions on: {topic}"}
+            {"role": "user",   "content": f"Generate {num_questions} {question_type} on: {topic}"},
         ],
         temperature = 0.4,
-        max_tokens  = 2000
+        max_tokens  = 2000,
+    )
+
+    log_token_usage(
+        endpoint          = "quiz_generate",
+        model             = "gpt-4o-mini",
+        board             = board,
+        class_level       = class_level,
+        subject           = subject,
+        prompt_tokens     = response.usage.prompt_tokens,
+        completion_tokens = response.usage.completion_tokens,
     )
 
     return response.choices[0].message.content
 
 
 def evaluate_answer(
-    question:      str,
+    question:       str,
     student_answer: str,
-    board:         str,
-    class_level:   str,
-    subject:       str
+    board:          str,
+    class_level:    str,
+    subject:        str,
 ) -> str:
-    """Evaluate a student's answer and give feedback."""
-
-    # retrieve relevant chunks for context
-    chunks = retrieve(
-        query       = question,
-        board       = board,
-        class_level = class_level,
-        subject     = subject,
-        top_k       = 3
-    )
+    chunks  = retrieve(query=question, board=board,
+                       class_level=class_level, subject=subject, top_k=3)
     context = format_context(chunks)
 
-    # build prompt
     prompt = EVALUATOR_TEMPLATE.format(
         board          = board,
         class_level    = class_level,
+        subject        = subject,
         context        = context,
         question       = question,
         student_answer = student_answer,
-        subject = subject
     )
 
     response = client.chat.completions.create(
-        model    = "gpt-4o-mini",
-        messages = [
+        model       = "gpt-4o-mini",
+        messages    = [
             {"role": "system", "content": prompt},
-            {"role": "user",   "content": f"Evaluate this answer: {student_answer}"}
+            {"role": "user",   "content": f"Evaluate: {student_answer}"},
         ],
         temperature = 0.2,
-        max_tokens  = 500
+        max_tokens  = 500,
+    )
+
+    log_token_usage(
+        endpoint          = "quiz_evaluate",
+        model             = "gpt-4o-mini",
+        board             = board,
+        class_level       = class_level,
+        subject           = subject,
+        prompt_tokens     = response.usage.prompt_tokens,
+        completion_tokens = response.usage.completion_tokens,
     )
 
     return response.choices[0].message.content
