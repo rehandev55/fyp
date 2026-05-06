@@ -487,7 +487,17 @@ try {
     </p>
 )}
                         <div className="flex gap-3">
-                            <button onClick={() => { setCurrentQ(0); setFinished(false); }} className="flex-1 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-semibold">Retry</button>
+                            <button onClick={() => {
+    setCurrentQ(0);
+    setFinished(false);
+
+    // RESET EVERYTHING
+    setScore(0);
+    setMcqAnswers([]);
+    setUserAnswers([]);
+    setFeedbacks([]);
+    setChecked(false);
+}} className="flex-1 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-semibold">Retry</button>
                             <button onClick={resetToChapters} className="flex-1 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white py-3 rounded-xl hover:shadow-lg transition text-sm font-semibold">New Quiz</button>
                         </div>
                     </div>
