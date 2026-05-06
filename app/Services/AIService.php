@@ -47,4 +47,10 @@ class AIService
 
         return $response->json();
     }
+    public function overallQuiz(array $params): array
+    {
+        $response = Http::post("{$this->baseUrl}/quiz/overall", $params);
+
+        return $response->json();
+    }
 }

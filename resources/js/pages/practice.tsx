@@ -175,22 +175,35 @@ const subjectChapters = getChapters(activeClass, activeSubject);
 const [checked, setChecked] = useState(false);
 const [loadingEval, setLoadingEval] = useState(false);
 
-const handleNext = () => {
+const handleNext = async() => {
     if (mode === 'mcq') {
-        const correct = questions[currentQ]?.correctAnswer;
-        const userAns = mcqAnswers[currentQ];
+    const correct = questions[currentQ]?.correctAnswer;
+    const userAns = mcqAnswers[currentQ];
 
-        if (userAns === correct) {
-            setScore((prev) => prev + 1);
-        }
+    if (userAns === correct) {
+        setScore((prev) => prev + 1);
     }
+}
     setChecked(false);
 
-    if (currentQ < questions.length - 1) {
+//     if (currentQ < questions.length - 1) {
+//         setCurrentQ(currentQ + 1);
+//         const overall = await evaluateOverall();
+// console.log("OVERALL RESULT:", overall);
+//     } else {
+//         setFinished(true);
+//     }
+if (currentQ < questions.length - 1) {
         setCurrentQ(currentQ + 1);
-    } else {
-        setFinished(true);
+        setChecked(false);
+        return;
     }
+
+    // 👇 LAST QUESTION REACHED
+    setFinished(true);
+
+    const overall = await evaluateOverall();
+    console.log("OVERALL RESULT:", overall);
 };
 
 const handleCheckAnswer = async () => {
@@ -246,7 +259,62 @@ const [feedbacks, setFeedbacks] = useState<string[]>([]);
 };
 
 
+//mcqs evaluate
+// const evaluateMcq = async (
+//     question: string,
+//     studentAnswer: string,
+//     correctAnswer: string | number
+// ) => {
+//     try {
+//         const res = await api('/quiz/evaluate', {
+//             method: 'POST',
+//             body: JSON.stringify({
+//                 question,
+//                 student_answer: studentAnswer,
+//                 correct_answer: correctAnswer,
+//                 type: 'mcq',
+//                 board: activeBoard,
+//                 class_level: activeClass,
+//                 subject: activeSubject,
+//             }),
+//         });
 
+//         return await res.json();
+//     } catch (err) {
+//         console.error(err);
+//         return null;
+//     }
+// };
+const evaluateOverall = async () => {
+    const results = questions.map((q, index) => ({
+        question: q.question,
+        student_answer:
+            mode === 'mcq'
+                ? mcqAnswers[index] ?? ''
+                : userAnswers[index] ?? '',
+        score:
+            mode === 'mcq'
+                ? mcqAnswers[index] === q.correctAnswer ? 10 : 0
+                : 0, // short/long can be AI-filled later
+        feedback:
+            feedbacks?.[index] || '',
+    }));
+
+    const payload = {
+        board: activeBoard,
+        class_level: activeClass,
+        subject: activeSubject,
+        question_type: mode,
+        results,
+    };
+
+    const res = await api('/quiz/overall', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+    });
+
+    return await res.json();
+};
 
 
     // Screen 1: Subject selection

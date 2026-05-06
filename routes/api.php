@@ -4,9 +4,11 @@ use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AIControllers\AIController;
 use App\Http\Controllers\AIControllers\ChatController;
+use App\Http\Controllers\AIControllers\QuizController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 // Public auth routes
 Route::post('/register', [AuthController::class, 'register']);
@@ -23,7 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // AI
     Route::post('/chat', [AIController::class, 'chat']);
     Route::post('/quiz/generate', [AIController::class, 'generateQuiz']);
-    Route::post('/quiz/evaluate', [AIController::class, 'evaluateQuiz']);
+    Route::post('/quiz/evaluate', [QuizController::class, 'evaluate']);
 
     // Chat
     Route::get('/chat/sessions', [ChatController::class, 'sessions']);
@@ -49,4 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //data sent to ai for chat memory
     Route::get('/chat/history/{sessionId}', [ChatController::class, 'history']);
+
+    //overall
+    Route::post('/quiz/overall', [QuizController::class, 'overall']);
 });

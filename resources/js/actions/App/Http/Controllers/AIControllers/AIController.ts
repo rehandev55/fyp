@@ -109,61 +109,6 @@ generateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
         })
     
     generateQuiz.form = generateQuizForm
-/**
-* @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:30
- * @route '/api/quiz/evaluate'
- */
-export const evaluateQuiz = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: evaluateQuiz.url(options),
-    method: 'post',
-})
-
-evaluateQuiz.definition = {
-    methods: ["post"],
-    url: '/api/quiz/evaluate',
-} satisfies RouteDefinition<["post"]>
-
-/**
-* @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:30
- * @route '/api/quiz/evaluate'
- */
-evaluateQuiz.url = (options?: RouteQueryOptions) => {
-    return evaluateQuiz.definition.url + queryParams(options)
-}
-
-/**
-* @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:30
- * @route '/api/quiz/evaluate'
- */
-evaluateQuiz.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
-    url: evaluateQuiz.url(options),
-    method: 'post',
-})
-
-    /**
-* @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:30
- * @route '/api/quiz/evaluate'
- */
-    const evaluateQuizForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: evaluateQuiz.url(options),
-        method: 'post',
-    })
-
-            /**
-* @see \App\Http\Controllers\AIControllers\AIController::evaluateQuiz
- * @see app/Http/Controllers/AIControllers/AIController.php:30
- * @route '/api/quiz/evaluate'
- */
-        evaluateQuizForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: evaluateQuiz.url(options),
-            method: 'post',
-        })
-    
-    evaluateQuiz.form = evaluateQuizForm
-const AIController = { chat, generateQuiz, evaluateQuiz }
+const AIController = { chat, generateQuiz }
 
 export default AIController
