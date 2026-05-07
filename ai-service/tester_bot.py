@@ -61,7 +61,7 @@ def evaluate_answer(
     board:          str,
     class_level:    str,
     subject:        str,
-) -> str:
+) -> dict:                    # ← returns dict now, not string
     chunks  = retrieve(query=question, board=board,
                        class_level=class_level, subject=subject, top_k=3)
     context = format_context(chunks)
@@ -82,7 +82,7 @@ def evaluate_answer(
             {"role": "user",   "content": f"Evaluate: {student_answer}"},
         ],
         temperature = 0.2,
-        max_tokens  = 500,
+        max_tokens  = 200,    # ← reduced from 500 — short feedback only
     )
 
     log_token_usage(
@@ -95,4 +95,24 @@ def evaluate_answer(
         completion_tokens = response.usage.completion_tokens,
     )
 
-    return response.choices[0].message.content
+    raw = response.choices[0].message.content.strip()
+
+    # parse SCORE and FEEDBACK from structured response
+    score    = 0
+    feedback = raw
+
+    for line in raw.split("\n"):
+        line = line.strip()
+        if line.upper().startswith("SCORE:"):
+            try:
+                score = int(float(line.split(":", 1)[1].strip().split("/")[0]))
+                score = max(0, min(10, score))  # clamp between 0 and 10
+            except:
+                score = 0
+        elif line.upper().startswith("FEEDBACK:"):
+            feedback = line.split(":", 1)[1].strip()
+
+    return {
+        "score":    score,
+        "feedback": feedback,
+    }
