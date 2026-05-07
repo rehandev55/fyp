@@ -112,11 +112,6 @@ interface WrittenQuestion {
     explanation: string;
 }
 
-interface SubjectBank {
-    mcq: MCQQuestion[];
-    short: WrittenQuestion[];
-    long: WrittenQuestion[];
-}
 type QuizMode = 'mcq' | 'short' | 'long';
 
 export default function Practice() {
@@ -202,8 +197,10 @@ if (currentQ < questions.length - 1) {
     // 👇 LAST QUESTION REACHED
     setFinished(true);
 
+
     const overall = await evaluateOverall();
-    console.log("OVERALL RESULT:", overall);
+setOverallResult(overall);
+console.log(overall);
 };
 
 const handleCheckAnswer = async () => {
@@ -228,7 +225,7 @@ const handleCheckAnswer = async () => {
 
 
     const resetToMode = () => { setMode(null); setCurrentQ(0); setFinished(false); };
-    const resetToChapters = () => { setChapterScope(null); setSelectedChapters([]); setMode(null); setCurrentQ(0); setFinished(false); };
+    const resetToChapters = () => { setChapterScope(null); setSelectedChapters([]); setMode(null); setCurrentQ(0); setFinished(false);    setOverallResult(null);};
 
     const modes = [
         { key: 'mcq' as QuizMode, label: 'MCQ', desc: 'Multiple choice questions to test your knowledge', icon: 'fa-solid fa-list-check', gradient: 'from-blue-500 to-indigo-600' },
@@ -238,6 +235,8 @@ const handleCheckAnswer = async () => {
 
     const sel = 'w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white hover:bg-white dark:hover:bg-gray-600 transition';
 const [feedbacks, setFeedbacks] = useState<string[]>([]);
+
+const [overallResult, setOverallResult] = useState<any>(null);
     const evaluateAnswer = async (question: string, answer: string) => {
     try {
         const res = await api('/quiz/evaluate', {
@@ -554,10 +553,14 @@ try {
         Score: {score} / {questions.length}
     </p>
 )}
+
                         <div className="flex gap-3">
+
                             <button onClick={() => {
     setCurrentQ(0);
     setFinished(false);
+
+    setOverallResult(null);
 
     // RESET EVERYTHING
     setScore(0);
@@ -567,8 +570,62 @@ try {
     setChecked(false);
 }} className="flex-1 border-2 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition text-sm font-semibold">Retry</button>
                             <button onClick={resetToChapters} className="flex-1 bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white py-3 rounded-xl hover:shadow-lg transition text-sm font-semibold">New Quiz</button>
+
+
                         </div>
+                        {overallResult && (
+    <div className="mt-6 text-left border-t pt-5">
+
+        <h3 className="text-lg font-bold mb-4 text-center">
+            Overall Performance
+        </h3>
+
+        <div className="space-y-3 text-sm">
+
+            <div>
+                <span className="font-semibold">Total Score:</span>{" "}
+                {overallResult.total_score}
+            </div>
+
+            <div>
+                <span className="font-semibold">Percentage:</span>{" "}
+                {overallResult.percentage}%
+            </div>
+
+            <div>
+                <span className="font-semibold">Grade:</span>{" "}
+                {overallResult.grade}
+            </div>
+
+            <div>
+                <span className="font-semibold">Strong Areas:</span>{" "}
+                {overallResult.strong_areas?.join(", ")}
+            </div>
+
+            <div>
+                <span className="font-semibold">Weak Areas:</span>{" "}
+                {overallResult.weak_areas?.join(", ")}
+            </div>
+
+            <div>
+                <span className="font-semibold">Feedback:</span>
+                <p className="mt-1 text-gray-600 dark:text-gray-300">
+                    {overallResult.overall_feedback}
+                </p>
+            </div>
+
+            <div>
+                <span className="font-semibold">Study Tip:</span>
+                <p className="mt-1 text-gray-600 dark:text-gray-300">
+                    {overallResult.study_tip}
+                </p>
+            </div>
+
+        </div>
+    </div>
+)}
                     </div>
+
                 </div>
             </>
         );
