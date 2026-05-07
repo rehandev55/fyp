@@ -69,6 +69,7 @@ class QuizResponse(BaseModel):
 
 class EvalResponse(BaseModel):
     feedback: str
+    score: int
     success:  bool = True
 
 class OverallFeedbackResponse(BaseModel):
@@ -130,17 +131,19 @@ def quiz_generate(req: QuizRequest):
 @app.post("/quiz/evaluate", response_model=EvalResponse)
 def quiz_evaluate(req: EvalRequest):
     try:
-        feedback = evaluate_answer(
+        result = evaluate_answer(
             question       = req.question,
             student_answer = req.student_answer,
             board          = req.board,
             class_level    = req.class_level,
             subject        = req.subject,
         )
-        return EvalResponse(feedback=feedback)
+        return EvalResponse(
+            feedback = result["feedback"],
+            score    = result["score"],
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/quiz/overall", response_model=OverallFeedbackResponse)
 def quiz_overall(req: OverallFeedbackRequest):
