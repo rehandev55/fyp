@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class QuizSession extends Model
 {
     //
+    public function results()
+    {
+        return $this->hasMany(QuizResult::class, 'session_id');
+    }
     protected $fillable = [
         'user_id',
         'subject',

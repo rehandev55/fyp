@@ -1,20 +1,31 @@
 import { Head } from '@inertiajs/react';
 import StudentLayout from '@/layouts/student-layout';
 
-export default function Progress() {
-    const stats = [
-        { label: 'Total Quizzes', value: 12, max: 50, color: 'from-[#2563EB] to-[#3B82F6]', icon: 'fa-solid fa-clipboard-check' },
-        { label: 'Average Score', value: 78, max: 100, suffix: '%', color: 'from-emerald-500 to-teal-500', icon: 'fa-solid fa-chart-column' },
-        { label: 'Questions Done', value: 45, max: 100, color: 'from-purple-500 to-pink-500', icon: 'fa-solid fa-circle-question' },
-    ];
-
-    const subjects = [
-        { name: 'Physics', score: 85, status: 'Strong' },
-        { name: 'Mathematics', score: 72, status: 'Good' },
-        { name: 'Biology', score: 90, status: 'Excellent' },
-        { name: 'Chemistry', score: 55, status: 'Needs Work' },
-        { name: 'English', score: 68, status: 'Good' },
-    ];
+export default function Progress({ stats, subjects, focus_area }: any) {
+    const statsData = [
+  {
+    label: 'Total Quizzes',
+    value: stats.total_quizzes,
+    max: 50,
+    color: 'from-[#2563EB] to-[#3B82F6]',
+    icon: 'fa-solid fa-clipboard-check'
+  },
+  {
+    label: 'Average Score',
+    value: stats.average_score,
+    max: 100,
+    suffix: '%',
+    color: 'from-emerald-500 to-teal-500',
+    icon: 'fa-solid fa-chart-column'
+  },
+  {
+    label: 'Questions Done',
+    value: stats.questions_done,
+    max: 100,
+    color: 'from-purple-500 to-pink-500',
+    icon: 'fa-solid fa-circle-question'
+  },
+];
 
     const getBarColor = (s: number) => s >= 80 ? 'from-emerald-400 to-emerald-500' : s >= 60 ? 'from-blue-400 to-blue-500' : 'from-orange-400 to-red-400';
     const getStatusColor = (s: string) => s === 'Excellent' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : s === 'Strong' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' : s === 'Good' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300' : 'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300';
@@ -28,7 +39,7 @@ export default function Progress() {
                     <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Track your learning journey</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                    {stats.map((s) => (
+                    {statsData.map((s) => (
                         <div key={s.label} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
                             <div className="flex items-center justify-between mb-4">
                                 <div className={`w-12 h-12 bg-gradient-to-br ${s.color} rounded-xl flex items-center justify-center shadow-lg`}>
@@ -46,7 +57,7 @@ export default function Progress() {
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8">
                     <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-6">Subject Performance</h3>
                     <div className="space-y-5">
-                        {subjects.map((s) => (
+                       {subjects.map((s: any) => (
                             <div key={s.name} className="flex items-center gap-4">
                                 <span className="text-sm font-medium text-gray-700 dark:text-gray-200 w-24 flex-shrink-0">{s.name}</span>
                                 <div className="flex-1">
@@ -67,7 +78,10 @@ export default function Progress() {
                         </div>
                         <div>
                             <h4 className="font-semibold text-orange-800 dark:text-orange-300">Focus Areas</h4>
-                            <p className="text-sm text-orange-700 dark:text-orange-400 mt-1">Chemistry needs more practice. Try taking more quizzes and reviewing AI explanations.</p>
+                            {/* <p className="text-sm text-orange-700 dark:text-orange-400 mt-1">Chemistry needs more practice. Try taking more quizzes and reviewing AI explanations.</p> */}
+                            <p>
+    {focus_area ?? "Loading focus area..."}
+</p>
                         </div>
                     </div>
                 </div>

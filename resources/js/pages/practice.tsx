@@ -170,37 +170,61 @@ const subjectChapters = getChapters(activeClass, activeSubject);
 const [checked, setChecked] = useState(false);
 const [loadingEval, setLoadingEval] = useState(false);
 
-const handleNext = async() => {
-    if (mode === 'mcq') {
-    const correct = questions[currentQ]?.correctAnswer;
-    const userAns = mcqAnswers[currentQ];
+const handleNext = async () => {
 
-    if (userAns === correct) {
-        setScore((prev) => prev + 1);
+    let latestFeedbacks = [...feedbacks];
+    let latestScores = [...scores];
+
+    // MCQ evaluation
+    if (mode === 'mcq') {
+
+        const currentQuestion = questions[currentQ];
+        const selectedIndex = mcqAnswers[currentQ];
+
+        const selectedOption =
+            currentQuestion.options[selectedIndex];
+
+        const correctOption =
+            currentQuestion.options[currentQuestion.correctAnswer];
+
+        const result = await evaluateMcq(
+            currentQuestion.question,
+            selectedOption,
+            correctOption
+        );
+
+        // save feedback
+        latestFeedbacks[currentQ] =
+            String(result?.feedback || '');
+
+        setFeedbacks(latestFeedbacks);
+
+        // save score
+        latestScores[currentQ] =
+            result?.score || 0;
+
+        setScores(latestScores);
+
+        // optional frontend display score
+        setScore((prev) => prev + (result?.score || 0));
     }
-}
+
     setChecked(false);
 
-//     if (currentQ < questions.length - 1) {
-//         setCurrentQ(currentQ + 1);
-//         const overall = await evaluateOverall();
-// console.log("OVERALL RESULT:", overall);
-//     } else {
-//         setFinished(true);
-//     }
-if (currentQ < questions.length - 1) {
+    if (currentQ < questions.length - 1) {
         setCurrentQ(currentQ + 1);
-        setChecked(false);
         return;
     }
 
-    // 👇 LAST QUESTION REACHED
     setFinished(true);
 
+    // PASS FRESH DATA HERE
+    const overall = await evaluateOverall(
+        latestFeedbacks,
+        latestScores
+    );
 
-    const overall = await evaluateOverall();
-setOverallResult(overall);
-console.log(overall);
+    setOverallResult(overall);
 };
 
 const handleCheckAnswer = async () => {
@@ -214,10 +238,15 @@ const handleCheckAnswer = async () => {
         answer
     );
 
-    const updated = [...feedbacks];
-    updated[currentQ] = result?.feedback || "No feedback";
+   const updatedFeedbacks = [...feedbacks];
+updatedFeedbacks[currentQ] = result?.feedback || "No feedback";
 
-    setFeedbacks(updated);
+setFeedbacks(updatedFeedbacks);
+
+const updatedScores = [...scores];
+updatedScores[currentQ] = result?.score || 0;
+
+setScores(updatedScores);
     setChecked(true);
 
     setLoadingEval(false);
@@ -235,6 +264,7 @@ const handleCheckAnswer = async () => {
 
     const sel = 'w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white hover:bg-white dark:hover:bg-gray-600 transition';
 const [feedbacks, setFeedbacks] = useState<string[]>([]);
+const [scores, setScores] = useState<number[]>([]);
 
 const [overallResult, setOverallResult] = useState<any>(null);
     const evaluateAnswer = async (question: string, answer: string) => {
@@ -258,45 +288,46 @@ const [overallResult, setOverallResult] = useState<any>(null);
 };
 
 
-//mcqs evaluate
-// const evaluateMcq = async (
-//     question: string,
-//     studentAnswer: string,
-//     correctAnswer: string | number
-// ) => {
-//     try {
-//         const res = await api('/quiz/evaluate', {
-//             method: 'POST',
-//             body: JSON.stringify({
-//                 question,
-//                 student_answer: studentAnswer,
-//                 correct_answer: correctAnswer,
-//                 type: 'mcq',
-//                 board: activeBoard,
-//                 class_level: activeClass,
-//                 subject: activeSubject,
-//             }),
-//         });
+// mcqs evaluate
+const evaluateMcq = async (
+    question: string,
+    studentAnswer: string,
+    correctAnswer: string | number
+) => {
+    try {
+        const res = await api('/quiz/evaluate', {
+            method: 'POST',
+            body: JSON.stringify({
+                question,
+                student_answer: studentAnswer,
+                correct_answer: correctAnswer,
+                type: 'mcq',
+                board: activeBoard,
+                class_level: activeClass,
+                subject: activeSubject,
+            }),
+        });
 
-//         return await res.json();
-//     } catch (err) {
-//         console.error(err);
-//         return null;
-//     }
-// };
-const evaluateOverall = async () => {
+        return await res.json();
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+};
+const evaluateOverall = async (
+    latestFeedbacks = feedbacks,
+    latestScores = scores
+) => {
     const results = questions.map((q, index) => ({
         question: q.question,
-        student_answer:
-            mode === 'mcq'
-                ? mcqAnswers[index] ?? ''
-                : userAnswers[index] ?? '',
-        score:
-            mode === 'mcq'
-                ? mcqAnswers[index] === q.correctAnswer ? 10 : 0
-                : 0, // short/long can be AI-filled later
-        feedback:
-            feedbacks?.[index] || '',
+       student_answer:
+    mode === 'mcq'
+        ? questions[index].options[mcqAnswers[index]] || ''
+        : userAnswers[index] || '',
+      score: latestScores[index] || 0,
+
+feedback:
+    String(latestFeedbacks?.[index] || ''),
     }));
 
     const payload = {
@@ -548,11 +579,11 @@ try {
                         </div>
                         <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Quiz Complete!</h2>
                         <p className="text-gray-500 dark:text-gray-400 mb-6">You completed all {questions.length} questions.</p>
-                        {mode === 'mcq' && (
+                        {/* {mode === 'mcq' && (
     <p className="text-lg font-semibold text-blue-500 mb-4">
         Score: {score} / {questions.length}
     </p>
-)}
+)} */}
 
                         <div className="flex gap-3">
 

@@ -49,22 +49,22 @@ class QuizController extends Controller
             'completed_at' => now(),
         ]);
 
-        // foreach ($request->results as $result) {
+        foreach ($request->results as $result) {
 
-        //     QuizResult::create([
-        //         'session_id' => $session->id,
-        //         'user_id' => $request->user()->id,
+            QuizResult::create([
+                'session_id' => $session->id,
+                'user_id' => $request->user()->id,
 
-        //         'question' => $result['question'],
-        //         'student_answer' => $result['student_answer'] ?? '',
+                'question' => $result['question'] ?? '',
+                'student_answer' => $result['student_answer'] ?? '',
 
-        //         'score' => $result['score'] ?? 0,
+                'score' => (float) ($result['score'] ?? 0),
 
-        //         'feedback' => $result['feedback'] ?? '',
+                'feedback' => $result['feedback'] ?? '',
 
-        //         'is_correct' => ($result['score'] ?? 0) >= 5,
-        //     ]);
-        // }
+                'is_correct' => (float) ($result['score'] ?? 0) >= 5,
+            ]);
+        }
 
         return response()->json([
             'session_id' => $session->id,

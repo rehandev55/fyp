@@ -14,22 +14,14 @@ return new class extends Migration
         Schema::create('quiz_results', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('session_id')
-                ->constrained('quiz_sessions')
-                ->onDelete('cascade');
-
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDelete('cascade');
+            $table->foreignId('session_id')->constrained('quiz_sessions')->onDelete('cascade');
+            $table->foreignId('user_id');
 
             $table->text('question');
-
             $table->text('student_answer')->nullable();
 
-            $table->float('score')->nullable();
-
+            $table->float('score')->default(0);
             $table->text('feedback')->nullable();
-
             $table->boolean('is_correct')->default(false);
 
             $table->timestamps();

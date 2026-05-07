@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ProgressController::__invoke
- * @see app/Http/Controllers/ProgressController.php:9
+ * @see app/Http/Controllers/ProgressController.php:12
  * @route '/progress'
  */
 const ProgressController = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ ProgressController.definition = {
 
 /**
 * @see \App\Http\Controllers\ProgressController::__invoke
- * @see app/Http/Controllers/ProgressController.php:9
+ * @see app/Http/Controllers/ProgressController.php:12
  * @route '/progress'
  */
 ProgressController.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ ProgressController.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ProgressController::__invoke
- * @see app/Http/Controllers/ProgressController.php:9
+ * @see app/Http/Controllers/ProgressController.php:12
  * @route '/progress'
  */
 ProgressController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -34,7 +34,7 @@ ProgressController.get = (options?: RouteQueryOptions): RouteDefinition<'get'> =
 })
 /**
 * @see \App\Http\Controllers\ProgressController::__invoke
- * @see app/Http/Controllers/ProgressController.php:9
+ * @see app/Http/Controllers/ProgressController.php:12
  * @route '/progress'
  */
 ProgressController.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -44,7 +44,7 @@ ProgressController.head = (options?: RouteQueryOptions): RouteDefinition<'head'>
 
     /**
 * @see \App\Http\Controllers\ProgressController::__invoke
- * @see app/Http/Controllers/ProgressController.php:9
+ * @see app/Http/Controllers/ProgressController.php:12
  * @route '/progress'
  */
     const ProgressControllerForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -54,7 +54,7 @@ ProgressController.head = (options?: RouteQueryOptions): RouteDefinition<'head'>
 
             /**
 * @see \App\Http\Controllers\ProgressController::__invoke
- * @see app/Http/Controllers/ProgressController.php:9
+ * @see app/Http/Controllers/ProgressController.php:12
  * @route '/progress'
  */
         ProgressControllerForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -63,7 +63,7 @@ ProgressController.head = (options?: RouteQueryOptions): RouteDefinition<'head'>
         })
             /**
 * @see \App\Http\Controllers\ProgressController::__invoke
- * @see app/Http/Controllers/ProgressController.php:9
+ * @see app/Http/Controllers/ProgressController.php:12
  * @route '/progress'
  */
         ProgressControllerForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
