@@ -10,7 +10,7 @@ interface User {
     board?: string;
 }
 
-export default function Dashboard() {
+export default function Dashboard({ progressSummary, recentActivities }: any){
     const { auth } = usePage<{ auth: { user: User } }>().props;
     const user = auth.user;
 
@@ -70,10 +70,26 @@ export default function Dashboard() {
                     <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Progress Summary</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                         {[
-                            { label: 'Questions Practiced', value: '24', icon: 'fa-solid fa-circle-question', gradient: 'from-blue-500 to-indigo-600' },
-                            { label: 'Average Score', value: '78%', icon: 'fa-solid fa-chart-column', gradient: 'from-emerald-500 to-teal-600' },
-                            { label: 'Weak Subject', value: 'Chemistry', icon: 'fa-solid fa-triangle-exclamation', gradient: 'from-orange-500 to-amber-600' },
-                        ].map((s) => (
+    {
+        label: 'Questions Practiced',
+        value: progressSummary.questions_practiced,
+        icon: 'fa-solid fa-circle-question',
+        gradient: 'from-blue-500 to-indigo-600'
+    },
+    {
+        label: 'Average Score',
+        value: `${progressSummary.average_score}%`,
+        icon: 'fa-solid fa-chart-column',
+        gradient: 'from-emerald-500 to-teal-600'
+    },
+    {
+        label: 'Weak Subject',
+        value: progressSummary.weak_subject,
+        icon: 'fa-solid fa-triangle-exclamation',
+        gradient: 'from-orange-500 to-amber-600'
+    },
+
+                             ].map((s) => (
                             <div key={s.label} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 group hover:shadow-lg transition-all duration-300">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className={`w-10 h-10 bg-gradient-to-br ${s.gradient} rounded-xl flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
@@ -90,18 +106,31 @@ export default function Dashboard() {
                 <div>
                     <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">Recent Activity</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 divide-y divide-gray-50 dark:divide-gray-700">
-                        {[
-                            { text: 'Asked AI: "Explain photosynthesis in detail"', time: '2 hours ago', icon: 'fa-solid fa-robot', color: 'from-blue-500 to-indigo-600' },
-                            { text: 'Completed Physics MCQ Quiz — Score: 8/10', time: '5 hours ago', icon: 'fa-solid fa-circle-check', color: 'from-emerald-500 to-teal-600' },
-                            { text: 'Downloaded Math Key Book', time: '1 day ago', icon: 'fa-solid fa-download', color: 'from-purple-500 to-pink-600' },
-                        ].map((a, i) => (
+                        {recentActivities.map((a: any, i: number) => (
                             <div key={i} className="flex items-center gap-4 p-5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition group">
-                                <div className={`w-10 h-10 bg-gradient-to-br ${a.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                                    <i className={`${a.icon} text-white text-sm`} />
+                                <div
+    className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-300
+    ${
+        a.type === 'chat'
+            ? 'bg-gradient-to-br from-blue-500 to-indigo-600'
+            : a.type === 'quiz'
+            ? 'bg-gradient-to-br from-emerald-500 to-teal-600'
+            : 'bg-gradient-to-br from-purple-500 to-pink-600'
+    }`}
+>
+                                    <i
+    className={`text-white text-sm ${
+        a.type === 'chat'
+            ? 'fa-solid fa-robot'
+            : a.type === 'quiz'
+            ? 'fa-solid fa-circle-check'
+            : 'fa-solid fa-download'
+    }`}
+/>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{a.text}</p>
-                                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{a.time}</p>
+                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{a.message}</p>
+                                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{new Date(a.created_at).toLocaleString()}</p>
                                 </div>
                             </div>
                         ))}

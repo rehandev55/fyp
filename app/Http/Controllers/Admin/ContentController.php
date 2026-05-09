@@ -7,6 +7,8 @@ use Inertia\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Content;
+use App\Models\Activity;
+use Illuminate\Support\Facades\Auth;
 
 class ContentController extends Controller
 {
@@ -61,8 +63,26 @@ class ContentController extends Controller
     {
         $content = Content::findOrFail($id);
         $content->increment('downloads');
-
         $filePath = storage_path('app/public/' . $content->file_path);
+        //recent activity table
+        Activity::create([
+            'user_id' => Auth::id(),
+            'type' => 'resource',
+            'message' => 'Downloaded ' . $content->title,
+        ]);
+        $userId = Auth::id();
+
+        $latestIds = Activity::where('user_id', $userId)
+            ->latest()
+            ->take(8)
+            ->pluck('id');
+
+        Activity::where('user_id', $userId)
+            ->where('created_at', '<', now()->subMinutes(3))
+            ->whereNotIn('id', $latestIds)
+            ->delete();
+
+
 
         return response()->download($filePath);
     }

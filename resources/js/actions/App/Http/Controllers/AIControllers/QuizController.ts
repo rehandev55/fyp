@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AIControllers\QuizController::evaluate
- * @see app/Http/Controllers/AIControllers/QuizController.php:15
+ * @see app/Http/Controllers/AIControllers/QuizController.php:16
  * @route '/api/quiz/evaluate'
  */
 export const evaluate = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ evaluate.definition = {
 
 /**
 * @see \App\Http\Controllers\AIControllers\QuizController::evaluate
- * @see app/Http/Controllers/AIControllers/QuizController.php:15
+ * @see app/Http/Controllers/AIControllers/QuizController.php:16
  * @route '/api/quiz/evaluate'
  */
 evaluate.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ evaluate.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AIControllers\QuizController::evaluate
- * @see app/Http/Controllers/AIControllers/QuizController.php:15
+ * @see app/Http/Controllers/AIControllers/QuizController.php:16
  * @route '/api/quiz/evaluate'
  */
 evaluate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -35,7 +35,7 @@ evaluate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\AIControllers\QuizController::evaluate
- * @see app/Http/Controllers/AIControllers/QuizController.php:15
+ * @see app/Http/Controllers/AIControllers/QuizController.php:16
  * @route '/api/quiz/evaluate'
  */
     const evaluateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -45,7 +45,7 @@ evaluate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\AIControllers\QuizController::evaluate
- * @see app/Http/Controllers/AIControllers/QuizController.php:15
+ * @see app/Http/Controllers/AIControllers/QuizController.php:16
  * @route '/api/quiz/evaluate'
  */
         evaluateForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -56,7 +56,7 @@ evaluate.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     evaluate.form = evaluateForm
 /**
 * @see \App\Http\Controllers\AIControllers\QuizController::overall
- * @see app/Http/Controllers/AIControllers/QuizController.php:28
+ * @see app/Http/Controllers/AIControllers/QuizController.php:29
  * @route '/api/quiz/overall'
  */
 export const overall = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -71,7 +71,7 @@ overall.definition = {
 
 /**
 * @see \App\Http\Controllers\AIControllers\QuizController::overall
- * @see app/Http/Controllers/AIControllers/QuizController.php:28
+ * @see app/Http/Controllers/AIControllers/QuizController.php:29
  * @route '/api/quiz/overall'
  */
 overall.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ overall.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\AIControllers\QuizController::overall
- * @see app/Http/Controllers/AIControllers/QuizController.php:28
+ * @see app/Http/Controllers/AIControllers/QuizController.php:29
  * @route '/api/quiz/overall'
  */
 overall.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -90,7 +90,7 @@ overall.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\AIControllers\QuizController::overall
- * @see app/Http/Controllers/AIControllers/QuizController.php:28
+ * @see app/Http/Controllers/AIControllers/QuizController.php:29
  * @route '/api/quiz/overall'
  */
     const overallForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -100,7 +100,7 @@ overall.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\AIControllers\QuizController::overall
- * @see app/Http/Controllers/AIControllers/QuizController.php:28
+ * @see app/Http/Controllers/AIControllers/QuizController.php:29
  * @route '/api/quiz/overall'
  */
         overallForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

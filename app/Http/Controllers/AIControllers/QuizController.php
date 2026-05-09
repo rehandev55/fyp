@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\AIService;
 use App\Models\QuizSession;
 use App\Models\QuizResult;
+use App\Models\Activity;
 
 class QuizController extends Controller
 {
@@ -48,7 +49,23 @@ class QuizController extends Controller
 
             'completed_at' => now(),
         ]);
+        //recent activity table
+        Activity::create([
+            'user_id' => $request->user()->id,
+            'type' => 'quiz',
+            'message' => 'Completed ' . ucfirst($request->subject) . ' Quiz — Score: ' . ($response['percentage'] ?? 0) . '%',
+        ]);
+        $userId = $request->user()->id;
 
+        $latestIds = Activity::where('user_id', $userId)
+            ->latest()
+            ->take(8)
+            ->pluck('id');
+
+        Activity::where('user_id', $userId)
+            ->where('created_at', '<', now()->subMinutes(3))
+            ->whereNotIn('id', $latestIds)
+            ->delete();
         foreach ($request->results as $result) {
 
             QuizResult::create([

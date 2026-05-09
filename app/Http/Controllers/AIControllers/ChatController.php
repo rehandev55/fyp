@@ -10,6 +10,7 @@ use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Services\AIService;
 use Illuminate\Http\Request;
+use App\Models\Activity;
 use SebastianBergmann\Environment\Console;
 
 class ChatController extends Controller
@@ -103,6 +104,23 @@ class ChatController extends Controller
         //     'new' => $updatedSummary
         // ]);
 
+        //recent activity table
+        Activity::create([
+            'user_id' => $user->id,
+            'type' => 'chat',
+            'message' => 'Asked AI about ' . $subject->value,
+        ]);
+        $userId = $user->id;
+
+        $latestIds = Activity::where('user_id', $userId)
+            ->latest()
+            ->take(8)
+            ->pluck('id');
+
+        Activity::where('user_id', $userId)
+            ->where('created_at', '<', now()->subMinutes(3))
+            ->whereNotIn('id', $latestIds)
+            ->delete();
         if (!empty($updatedSummary)) {
             $session->existing_summary = $updatedSummary;
             $session->save();
