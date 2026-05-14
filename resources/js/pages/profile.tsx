@@ -30,8 +30,7 @@ const subjects = [
     { value: 'mathematics', label: 'Mathematics' },
      { value: 'computer', label: 'Computer Science' },
     { value: 'english', label: 'English' },
-    { value: 'islamiyat', label: 'Islamiyat' },
-    { value: 'pakistan_studies', label: 'Pakistan Studies' },
+    { value: 'urdu', label: 'Urdu' },
 ];
 
 export default function Profile() {

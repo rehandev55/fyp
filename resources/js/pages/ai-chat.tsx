@@ -42,6 +42,7 @@ interface ChatSession {
     class_level?: string;
     messages: Message[];
     timestamp: string;
+      board?: string;
 }
 
 const boards = [
@@ -61,14 +62,16 @@ const subjects = [
     { value: 'chemistry', label: 'Chemistry' },
     { value: 'biology', label: 'Biology' },
     { value: 'mathematics', label: 'Mathematics' },
+    { value: 'computer', label: 'Computer' },
     { value: 'english', label: 'English' },
+    { value: 'urdu', label: 'Urdu' },
 ];
 
 const getLabel = (list: { value: string; label: string }[], value: string) =>
     list.find(i => i.value === value)?.label || value;
 
 export default function AiChat() {
-    const [sidebarWidth, setSidebarWidth] = useState(200);
+    const [sidebarWidth, setSidebarWidth] = useState(250);
 
     const { auth } = usePage<{ auth: { user: User } }>().props;
     const user = auth.user;
@@ -108,18 +111,18 @@ export default function AiChat() {
 
 // chat memory
 
-useEffect(() => {
-    if (!activeSessionId) return;
+// useEffect(() => {
+//     if (!activeSessionId) return;
 
-    const fetchMessages = async () => {
-        const res = await api(`/chat/history/${activeSessionId}`);
-        const data = await res.json();
+//     const fetchMessages = async () => {
+//         const res = await api(`/chat/history/${activeSessionId}`);
+//         const data = await res.json();
 
-        setMessages(data.messages || []);
-    };
+//         setMessages(data.messages || []);
+//     };
 
-    fetchMessages();
-}, [activeSessionId]);
+//     fetchMessages();
+// }, [activeSessionId]);
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -186,6 +189,9 @@ useEffect(() => {
                     id: activeSessionId,
                     title,
                     messages: msgs,
+                    subject: activeSubject,
+    class_level: activeClassLevel,
+    board: activeBoard,
                 }),
             });
 
@@ -194,7 +200,7 @@ useEffect(() => {
         } catch (err) {
             console.error(err);
         }
-    }, [activeSessionId]);
+    }, [activeSessionId, activeSubject, activeClassLevel, activeBoard]);
 
 
 
@@ -269,11 +275,26 @@ const res = await api('/chat/send', {
         setMessages([]);
         setActiveSessionId(null);
         setSidebarOpen(false);
+
+        localStorage.removeItem('active_chat_id');
     };
 
     const loadSession = async (session: ChatSession) => {
         setActiveSessionId(session.id);
         setSidebarOpen(false);
+
+         // restore chat context
+    if (session.subject) {
+        setActiveSubject(session.subject);
+    }
+
+    if (session.class_level) {
+        setActiveClassLevel(session.class_level);
+    }
+
+    if (session.board) {
+        setActiveBoard(session.board);
+    }
 
         try {
             const res = await api(`/chat/messages/${session.id}`);
@@ -310,9 +331,66 @@ const res = await api('/chat/send', {
     const classLabel = activeClassLevel ? getLabel(classes, activeClassLevel) : '';
     const subjectInfo = activeSubject && activeClassLevel ? `${subjectLabel} — ${classLabel}` : null;
 
+    // useEffect(() => {
+    //     fetchSessions();
+    // }, []);
     useEffect(() => {
-        fetchSessions();
-    }, []);
+    const restoreChat = async () => {
+        try {
+            // load all sessions
+            const res = await api('/chat/sessions');
+            const data = await res.json();
+
+            const allSessions = Array.isArray(data) ? data : [];
+
+            setSessions(allSessions);
+
+            // restore active session
+            const savedId = localStorage.getItem('active_chat_id');
+
+            if (savedId) {
+                const sessionId = Number(savedId);
+
+                const foundSession = allSessions.find(
+                    (s: ChatSession) => s.id === sessionId
+                );
+
+                if (foundSession) {
+
+                    // restore subject/class/board
+                    if (foundSession.subject) {
+                        setActiveSubject(foundSession.subject);
+                    }
+
+                    if (foundSession.class_level) {
+                        setActiveClassLevel(foundSession.class_level);
+                    }
+
+                    if (foundSession.board) {
+                        setActiveBoard(foundSession.board);
+                    }
+
+                    // restore session id
+                    // setActiveSessionId(foundSession.id);
+                    await loadSession(foundSession);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    restoreChat();
+}, []);
+
+useEffect(() => {
+    if (activeSessionId) {
+        localStorage.setItem(
+            'active_chat_id',
+            activeSessionId.toString()
+        );
+    }
+}, [activeSessionId]);
 
     const fetchSessions = async () => {
         try {

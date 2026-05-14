@@ -274,6 +274,7 @@ const [overallResult, setOverallResult] = useState<any>(null);
             body: JSON.stringify({
                 question,
                 student_answer: answer,
+                 type: mode,
                 board: activeBoard,
                 class_level: activeClass,
                 subject: activeSubject,
