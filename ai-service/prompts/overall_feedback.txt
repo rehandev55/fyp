@@ -17,11 +17,16 @@ RULES:
 SESSION RESULTS:
 {session_results}
 
+ACTUAL SESSION TOTALS:
+Earned Marks: {total_earned}
+Total Possible Marks: {total_possible}
+
+IMPORTANT:
+- Use these exact totals.
+- Do not recalculate totals yourself.
+
 Provide response in this EXACT format (no extra text):
 
-TOTAL_SCORE: [sum of all scores] / [total possible]
-PERCENTAGE: [percentage as number only, e.g. 70]
-GRADE: [Excellent/Good/Needs Work/Poor based on percentage]
 STRONG_AREAS: [comma separated topics student answered well]
 WEAK_AREAS: [comma separated topics student struggled with]
 OVERALL_FEEDBACK: [2-3 encouraging sentences about performance]

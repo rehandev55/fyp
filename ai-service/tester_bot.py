@@ -61,6 +61,7 @@ def evaluate_answer(
     board:          str,
     class_level:    str,
     subject:        str,
+    question_type: str,
 ) -> dict:                    # ← returns dict now, not string
     chunks  = retrieve(query=question, board=board,
                        class_level=class_level, subject=subject, top_k=3)
@@ -73,6 +74,7 @@ def evaluate_answer(
         context        = context,
         question       = question,
         student_answer = student_answer,
+        question_type = question_type,
     )
 
     response = client.chat.completions.create(
@@ -106,7 +108,13 @@ def evaluate_answer(
         if line.upper().startswith("SCORE:"):
             try:
                 score = int(float(line.split(":", 1)[1].strip().split("/")[0]))
-                score = max(0, min(10, score))  # clamp between 0 and 10
+                score_limits = {
+                                "mcq": 1,
+                                "short": 3,
+                                "long": 8,
+                            }
+                max_score = score_limits.get(question_type.lower(), 10)
+                score = max(0, min(max_score, score))
             except:
                 score = 0
         elif line.upper().startswith("FEEDBACK:"):

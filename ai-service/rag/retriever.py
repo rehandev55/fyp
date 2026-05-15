@@ -73,7 +73,7 @@ def retrieve(
             "chunk_index": m.metadata.get("chunk_index", 0),
         }
         for m in results.matches
-        if m.score >= 0.3   # skip low confidence results
+        if m.score >= 0.2   
     ]
 
     return chunks

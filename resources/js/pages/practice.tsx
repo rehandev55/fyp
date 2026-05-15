@@ -274,7 +274,7 @@ const [overallResult, setOverallResult] = useState<any>(null);
             body: JSON.stringify({
                 question,
                 student_answer: answer,
-                 type: mode,
+                 question_type: mode,
                 board: activeBoard,
                 class_level: activeClass,
                 subject: activeSubject,
@@ -302,7 +302,7 @@ const evaluateMcq = async (
                 question,
                 student_answer: studentAnswer,
                 correct_answer: correctAnswer,
-                type: 'mcq',
+                question_type: 'mcq',
                 board: activeBoard,
                 class_level: activeClass,
                 subject: activeSubject,

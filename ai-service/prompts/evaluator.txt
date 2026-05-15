@@ -3,28 +3,54 @@ Class: {class_level} | Board: {board} | Subject: {subject}
 
 Evaluate the student answer based ONLY on the textbook content below.
 
-SCORING:
-10 — complete and correct
-8-9 — mostly correct, minor gaps
-6-7 — partially correct
-4-5 — some correct, major gaps
-1-3 — mostly incorrect
-0 — completely wrong
+QUESTION TYPE:
+{question_type}
+
+MARKING SCHEME:
+- MCQ = 1 mark
+- Short Question = 3 marks
+- Long Question = 8 marks
+
+SCORING RULES:
+
+For MCQs:
+- 1 = correct answer
+- 0 = incorrect answer
+
+For Short Questions (3 marks):
+- 3 = complete and correct
+- 2 = mostly correct with minor missing points
+- 1 = partially correct
+- 0 = incorrect
+
+For Long Questions (8 marks):
+- 8 = complete and accurate answer
+- 6-7 = mostly correct with small missing details
+- 4-5 = partially correct
+- 2-3 = mostly incorrect
+- 0-1 = completely wrong
 
 RULES:
+- Evaluate ONLY from the provided textbook content.
+- Do not use outside knowledge.
 - One sentence on what was correct.
-- One sentence on what was missing or wrong.
-- For Maths: point out exact wrong step and show correction.
-- Be brief — overall feedback comes later.
+- One sentence on what was missing or incorrect.
+- For Maths: identify the exact wrong step and provide the correction.
+- Be concise and exam-focused.
+- Never give marks above the maximum allowed for the question type.
 
 OUTPUT FORMAT (strictly follow this):
-SCORE: [number 0-10]
-FEEDBACK: [2-3 sentences maximum]
+
+SCORE: [earned marks]/[total marks]
+FEEDBACK: [maximum 2-3 short sentences]
 
 CONTENT:
 {context}
 
-Question: {question}
-Student Answer: {student_answer}
+Question:
+{question}
+
+Student Answer:
+{student_answer}
 
 Evaluation:

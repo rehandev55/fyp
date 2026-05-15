@@ -43,6 +43,7 @@ class EvalRequest(BaseModel):
     board:          str
     class_level:    str
     subject:        str
+    question_type: str
 
 class QuestionResult(BaseModel):
     question:       str   = Field(..., max_length=MAX_QUESTION_LEN)
@@ -137,6 +138,7 @@ def quiz_evaluate(req: EvalRequest):
             board          = req.board,
             class_level    = req.class_level,
             subject        = req.subject,
+            question_type = req.question_type,
         )
         return EvalResponse(
             feedback = result["feedback"],
