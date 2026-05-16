@@ -5,13 +5,15 @@ interface User {
     id: number;
     name: string;
     email: string;
-    classLevel: string;
+    class_level: string;
     board: string;
-    subject: string;
+    subject:string;
+    weakSubject: string;
     status: string;
     quizzes: number;
     score: number;
-    joined: string;
+    role:string,
+    created_at: string;
 }
 
 interface Modal {
@@ -19,18 +21,9 @@ interface Modal {
     user: User;
 }
 
-// const initialUsers: User[] = [
-//     { id: 1, name: 'Ahmed Khan', email: 'ahmed@example.com', classLevel: '10', board: 'Federal Board', subject: 'Physics', status: 'Active', quizzes: 24, score: 78, joined: '2026-03-15' },
-//     { id: 2, name: 'Sara Ali', email: 'sara@example.com', classLevel: '9', board: 'AJK Board', subject: 'Biology', status: 'Active', quizzes: 18, score: 85, joined: '2026-03-20' },
-//     { id: 3, name: 'Hassan Raza', email: 'hassan@example.com', classLevel: '12', board: 'Federal Board', subject: 'Mathematics', status: 'Blocked', quizzes: 5, score: 42, joined: '2026-02-10' },
-//     { id: 4, name: 'Ayesha Noor', email: 'ayesha@example.com', classLevel: '11', board: 'Federal Board', subject: 'Chemistry', status: 'Active', quizzes: 31, score: 91, joined: '2026-01-25' },
-//     { id: 5, name: 'Usman Tariq', email: 'usman@example.com', classLevel: '10', board: 'AJK Board', subject: 'English', status: 'Active', quizzes: 12, score: 67, joined: '2026-03-28' },
-//     { id: 6, name: 'Fatima Zahra', email: 'fatima@example.com', classLevel: '9', board: 'Federal Board', subject: 'Physics', status: 'Inactive', quizzes: 0, score: 0, joined: '2026-04-01' },
-//     { id: 7, name: 'Bilal Ahmed', email: 'bilal@example.com', classLevel: '10', board: 'Federal Board', subject: 'Biology', status: 'Active', quizzes: 45, score: 88, joined: '2025-12-05' },
-//     { id: 8, name: 'Zainab Malik', email: 'zainab@example.com', classLevel: '11', board: 'AJK Board', subject: 'Chemistry', status: 'Active', quizzes: 22, score: 73, joined: '2026-02-18' },
-// ];
 
 function Users() {
+    const isAdminUser = (role: string) => role?.toLowerCase() === 'admin';
     const [users, setUsers] = useState<User[]>([]);
     const [search, setSearch] = useState('');
     const [filterStatus, setFilterStatus] = useState('');
@@ -42,12 +35,9 @@ function Users() {
         (u) =>
             (!search || u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())) &&
             (!filterStatus || u.status === filterStatus) &&
-            (!filterClass || u.classLevel === filterClass),
+            (!filterClass || u.class_level === filterClass),
     );
 
-    // const toggleStatus = (id: number) => {
-    //     setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status: u.status === 'Active' ? 'Blocked' : 'Active' } : u)));
-    // };
     const toggleStatus = async (id: number) => {
     try {
         const res = await fetch(`https://fyp_backend.test/api/users/toggle/${id}`, {
@@ -68,22 +58,28 @@ function Users() {
         setEditForm({ ...u });
         setModal({ type: 'edit', user: u });
     };
-    // const saveEdit = () => {
-    //     setUsers((prev) => prev.map((u) => (u.id === editForm.id ? { ...editForm } : u)));
-    //     setModal(null);
-    // };
 
   const saveEdit = async () => {
     try {
+        // console.log(editForm.id);
         await fetch(`https://fyp_backend.test/api/users/${editForm.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
+            // body: JSON.stringify({
+            //     name: editForm.name,
+            //     email: editForm.email,
+            // }),
+            //  body: JSON.stringify(editForm),
             body: JSON.stringify({
-                name: editForm.name,
-                email: editForm.email,
-            }),
+    name: editForm.name,
+    email: editForm.email,
+    class_level: editForm.class_level,
+    board: editForm.board,
+    subject: editForm.subject,
+    status: editForm.status,
+}),
         });
 
         // keep UI data as it is (fake fields stay)
@@ -99,10 +95,7 @@ function Users() {
     }
 };
 
-    // const deleteUser = (id: number) => {
-    //     setUsers((prev) => prev.filter((u) => u.id !== id));
-    //     setModal(null);
-    // };
+
     const deleteUser = async (id: number) => {
     try {
         await fetch(`https://fyp_backend.test/api/users/${id}`, {
@@ -139,9 +132,15 @@ const fetchUsers = async () => {
         console.error("Error fetching users:", err);
     }
 };
+const adminFlags = users.reduce((acc, u) => {
+    acc[u.id] = isAdminUser(u.role);
+    return acc;
+}, {} as Record<number, boolean>);
 
     return (
+
         <div className="space-y-6">
+
             {/* Header */}
             <div>
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">User Management</h2>
@@ -189,7 +188,7 @@ const fetchUsers = async () => {
                     </select>
                     <select value={filterClass} onChange={(e) => setFilterClass(e.target.value)} className={sel}>
                         <option value="">All Classes</option>
-                        {['9', '10', '11', '12'].map((c) => (
+                        {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => (
                             <option key={c} value={c}>
                                 Class {c}
                             </option>
@@ -205,8 +204,11 @@ const fetchUsers = async () => {
                         <thead>
                             <tr className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                                 <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Student</th>
+                                                                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
+
                                 <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Class</th>
-                                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Subject</th>
+                                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Board</th>
+                                <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Weak Subject</th>
                                 <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Quizzes</th>
                                 <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Score</th>
                                 <th className="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
@@ -215,6 +217,7 @@ const fetchUsers = async () => {
                         </thead>
                         <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                             {filtered.map((u) => (
+
                                 <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                                     <td className="px-5 py-4">
                                         <div className="flex items-center gap-3">
@@ -227,8 +230,12 @@ const fetchUsers = async () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden sm:table-cell">Class {u.classLevel}</td>
-                                    <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden md:table-cell">{u.subject}</td>
+                                                                                                            <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden sm:table-cell">{u.role}</td>
+
+                                    <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden sm:table-cell">{u.class_level}</td>
+                                                                        <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden sm:table-cell">{u.board}</td>
+
+                                    <td className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300 hidden md:table-cell">{u.weakSubject}</td>
                                     <td className="px-5 py-4 text-sm font-semibold text-gray-800 dark:text-white hidden lg:table-cell">{u.quizzes}</td>
                                     <td className="px-5 py-4 hidden lg:table-cell">
                                         <span className={`text-sm font-semibold ${u.score >= 70 ? 'text-emerald-600' : u.score >= 50 ? 'text-amber-600' : 'text-red-600'}`}>{u.score}%</span>
@@ -256,20 +263,43 @@ const fetchUsers = async () => {
                                             >
                                                 <i className="fa-solid fa-pen text-xs" />
                                             </button>
-                                            <button
-                                                onClick={() => toggleStatus(u.id)}
-                                                className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${u.status === 'Blocked' ? 'text-gray-400 hover:bg-emerald-50 hover:text-emerald-500' : 'text-gray-400 hover:bg-orange-50 hover:text-orange-500'}`}
-                                                title={u.status === 'Blocked' ? 'Unblock' : 'Block'}
-                                            >
-                                                <i className={`fa-solid ${u.status === 'Blocked' ? 'fa-lock-open' : 'fa-ban'} text-xs`} />
-                                            </button>
-                                            <button
-                                                onClick={() => setModal({ type: 'delete', user: u })}
-                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 transition"
-                                                title="Delete"
-                                            >
-                                                <i className="fa-solid fa-trash-can text-xs" />
-                                            </button>
+
+
+
+
+                                          <button
+    onClick={() => {
+        if (adminFlags[u.id]) return;
+        toggleStatus(u.id);
+    }}
+    disabled={adminFlags[u.id]}
+    className={`w-8 h-8 rounded-lg flex items-center justify-center transition
+    ${adminFlags[u.id]
+        ? 'opacity-40 cursor-not-allowed'
+        : u.status === 'Blocked'
+            ? 'text-gray-400 hover:bg-emerald-50 hover:text-emerald-500'
+            : 'text-gray-400 hover:bg-orange-50 hover:text-orange-500'
+    }`}
+    title={u.status === 'Blocked' ? 'Unblock' : 'Block'}
+>
+    <i className={`fa-solid ${u.status === 'Blocked' ? 'fa-lock-open' : 'fa-ban'} text-xs`} />
+</button>
+
+                                           <button
+    onClick={() => {
+        if (adminFlags[u.id]) return;
+        setModal({ type: 'delete', user: u });
+    }}
+    disabled={adminFlags[u.id]}
+    className={`w-8 h-8 rounded-lg flex items-center justify-center transition
+    ${adminFlags[u.id]
+        ? 'opacity-40 cursor-not-allowed'
+        : 'text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500'
+    }`}
+    title="Delete"
+>
+    <i className="fa-solid fa-trash-can text-xs" />
+</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -311,12 +341,12 @@ const fetchUsers = async () => {
                                 </div>
                                 <div className="space-y-3 text-sm">
                                     {[
-                                        { label: 'Class', value: `Class ${modal.user.classLevel}`, icon: 'fa-solid fa-graduation-cap' },
+                                        { label: 'Class', value: `${modal.user.class_level}`, icon: 'fa-solid fa-graduation-cap' },
                                         { label: 'Board', value: modal.user.board, icon: 'fa-solid fa-building-columns' },
-                                        { label: 'Subject', value: modal.user.subject, icon: 'fa-solid fa-book' },
+                                        { label: 'Weak Subject', value: modal.user.weakSubject, icon: 'fa-solid fa-book' },
                                         { label: 'Quizzes Taken', value: modal.user.quizzes, icon: 'fa-solid fa-clipboard-check' },
                                         { label: 'Average Score', value: `${modal.user.score}%`, icon: 'fa-solid fa-chart-line' },
-                                        { label: 'Joined', value: modal.user.joined, icon: 'fa-solid fa-calendar' },
+                                        { label: 'Joined', value: new Date(modal.user.created_at).toLocaleDateString(), icon: 'fa-solid fa-calendar' },
                                     ].map((r) => (
                                         <div key={r.label} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
                                             <span className="text-gray-500 flex items-center gap-2">
@@ -368,10 +398,10 @@ const fetchUsers = async () => {
                                     <div className="grid grid-cols-2 gap-3">
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Class</label>
-                                            <select value={editForm.classLevel} onChange={(e) => setEditForm({ ...editForm, classLevel: e.target.value })} className={inp}>
-                                                {['9', '10', '11', '12'].map((c) => (
+                                            <select value={editForm.class_level} onChange={(e) => setEditForm({ ...editForm, class_level: e.target.value })} className={inp}>
+                                                {['class_9', 'class_10', 'class_11', 'class_12'].map((c) => (
                                                     <option key={c} value={c}>
-                                                        Class {c}
+                                                         {c}
                                                     </option>
                                                 ))}
                                             </select>
@@ -379,8 +409,8 @@ const fetchUsers = async () => {
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Board</label>
                                             <select value={editForm.board} onChange={(e) => setEditForm({ ...editForm, board: e.target.value })} className={inp}>
-                                                <option value="Federal Board">Federal Board</option>
-                                                <option value="AJK Board">AJK Board</option>
+                                                <option value="federal">Federal Board</option>
+                                                <option value="ajk">AJK Board</option>
                                             </select>
                                         </div>
                                     </div>
@@ -388,7 +418,7 @@ const fetchUsers = async () => {
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Subject</label>
                                             <select value={editForm.subject} onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })} className={inp}>
-                                                {['Physics', 'Chemistry', 'Biology', 'Mathematics', 'English'].map((s) => (
+                                                {['physics', 'chemistry', 'biology', 'mathematics', 'computer','english','urdu'].map((s) => (
                                                     <option key={s} value={s}>
                                                         {s}
                                                     </option>

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+// use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Inertia\Response;
-use Illuminate\Support\Facades\Request;
+// use Illuminate\Support\Facades\Request;
 use App\Models\User;
 
 class UserController extends Controller
@@ -13,16 +15,49 @@ class UserController extends Controller
     {
         return inertia('admin/users');
     }
+
     public function index()
     {
-        $users = User::all();
+        $users = User::with('quizSessions')->get();
+
+        $users->map(function ($user) {
+
+            $sessions = $user->quizSessions;
+
+            // total quizzes
+            $user->quizzes = $sessions->count();
+
+            // average score
+            $user->score = $sessions->count()
+                ? round($sessions->avg('percentage'))
+                : 0;
+
+            // weak subject
+            $user->weakSubject = $sessions
+                ->groupBy('subject')
+                ->map(fn($s) => round($s->avg('percentage')))
+                ->sort()
+                ->keys()
+                ->first() ?? 'N/A';
+
+            return $user;
+        });
+
         return response()->json([
             'data' => $users
         ]);
     }
     public function destroy($id)
     {
-        User::findOrFail($id)->delete();
+        $user = User::findOrFail($id);
+
+        if ($user->role === 'admin') {
+            return response()->json([
+                'message' => 'Admin cannot be deleted'
+            ], 403);
+        }
+
+        $user->delete();
 
         return response()->json([
             'message' => 'User deleted'
@@ -32,33 +67,30 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $user->update($request->all());
+        $data = $request->only([
+            'name',
+            'email',
+            'class_level',
+            'board',
+            'subject',
+            'status'
+        ]);
+
+        $user->update($data);
 
         return response()->json([
             'data' => $user
         ]);
     }
-    // public function update(Request $request, $id)
-    // {
-    //     $user = User::findOrFail($id);
-
-    //     $validated = $request->validate([
-    //         'name' => 'required|string',
-    //         'email' => 'required|email',
-    //         'status' => 'nullable|string',
-    //     ]);
-
-    //     $user->update($validated);
-
-    //     return response()->json([
-    //         'data' => $user
-    //     ]);
-    // }
 
     public function toggleStatus($id)
     {
         $user = User::findOrFail($id);
-
+        if ($user->role === 'admin') {
+            return response()->json([
+                'message' => 'Admin cannot be blocked'
+            ], 403);
+        }
         $user->status = $user->status === 'Active' ? 'Blocked' : 'Active';
         $user->save();
 

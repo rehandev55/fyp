@@ -26,6 +26,8 @@ return new class extends Migration
             DB::update("UPDATE `{$table}` SET `subject` = 'biology' WHERE `subject` = 'Biology'");
             DB::update("UPDATE `{$table}` SET `subject` = 'mathematics' WHERE `subject` = 'Mathematics'");
             DB::update("UPDATE `{$table}` SET `subject` = 'english' WHERE `subject` = 'English'");
+            DB::update("UPDATE `{$table}` SET `subject` = 'computer' WHERE `subject` = 'Computer'");
+            DB::update("UPDATE `{$table}` SET `subject` = 'urdu' WHERE `subject` = 'Urdu'");
         }
     }
 
@@ -47,6 +49,8 @@ return new class extends Migration
             DB::update("UPDATE `{$table}` SET `subject` = 'Biology' WHERE `subject` = 'biology'");
             DB::update("UPDATE `{$table}` SET `subject` = 'Mathematics' WHERE `subject` = 'mathematics'");
             DB::update("UPDATE `{$table}` SET `subject` = 'English' WHERE `subject` = 'english'");
+            DB::update("UPDATE `{$table}` SET `subject` = 'computer' WHERE `subject` = 'Computer'");
+            DB::update("UPDATE `{$table}` SET `subject` = 'urdu' WHERE `subject` = 'Urdu'");
         }
     }
 };
