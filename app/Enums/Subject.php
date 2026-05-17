@@ -9,6 +9,8 @@ enum Subject: string
     case Biology = 'biology';
     case Mathematics = 'mathematics';
     case English = 'english';
+    case Computer = 'computer';
+    case Urdu = 'urdu';
 
     public function label(): string
     {
@@ -18,6 +20,8 @@ enum Subject: string
             self::Biology => 'Biology',
             self::Mathematics => 'Mathematics',
             self::English => 'English',
+            self::Computer => 'Computer',
+            self::Urdu => 'Urdu',
         };
     }
 }
