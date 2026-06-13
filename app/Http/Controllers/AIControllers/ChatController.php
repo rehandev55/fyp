@@ -51,7 +51,12 @@ class ChatController extends Controller
             ?? $user->subject
             ?? Subject::Physics;
         if ($request->session_id) {
-            $session = ChatSession::find($request->session_id);
+            // $session = ChatSession::find($request->session_id);
+            $session = ChatSession::findOrFail($request->session_id);
+
+            $board = $session->board;
+            $classLevel = $session->class_level;
+            $subject = $session->subject;
         } else {
             $session = ChatSession::create([
                 'user_id' => $user->id,
