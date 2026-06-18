@@ -1,5 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import { backendApi } from '@/lib/backendApi';
+
 import {
     AreaChart,
     Area,
@@ -123,7 +125,7 @@ const COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444'];
 }, []);
 const fetchUsers = async () => {
     try {
-        const res = await fetch("https://fyp_backend.test/api/users");
+        const res = await backendApi("/api/users");
 
         if (!res.ok) throw new Error("Users API failed");
 
@@ -137,7 +139,7 @@ const fetchUsers = async () => {
 
 const fetchContent = async () => {
     try {
-        const res = await fetch("https://fyp_backend.test/api/content");
+        const res = await backendApi("/api/content");
 
         if (!res.ok) throw new Error("Content API failed");
 

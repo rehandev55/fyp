@@ -13,6 +13,7 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SelectionController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\Auth\GoogleController;
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -37,3 +38,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__ . '/settings.php';
+
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect']);
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);

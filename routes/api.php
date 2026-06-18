@@ -6,6 +6,7 @@ use App\Http\Controllers\AIControllers\AIController;
 use App\Http\Controllers\AIControllers\ChatController;
 use App\Http\Controllers\AIControllers\QuizController;
 use App\Http\Controllers\Api\AuthController;
+// use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

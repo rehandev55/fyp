@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdminLayout from '@/layouts/admin-layout';
+import { backendApi } from '@/lib/backendApi';
 
 interface User {
     id: number;
@@ -40,7 +41,7 @@ function Users() {
 
     const toggleStatus = async (id: number) => {
     try {
-        const res = await fetch(`https://fyp_backend.test/api/users/toggle/${id}`, {
+        const res = await backendApi(`/api/users/toggle/${id}`, {
             method: "PATCH"
         });
 
@@ -62,16 +63,11 @@ function Users() {
   const saveEdit = async () => {
     try {
         // console.log(editForm.id);
-        await fetch(`https://fyp_backend.test/api/users/${editForm.id}`, {
+        await backendApi(`/api/users/${editForm.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
-            // body: JSON.stringify({
-            //     name: editForm.name,
-            //     email: editForm.email,
-            // }),
-            //  body: JSON.stringify(editForm),
             body: JSON.stringify({
     name: editForm.name,
     email: editForm.email,
@@ -98,7 +94,7 @@ function Users() {
 
     const deleteUser = async (id: number) => {
     try {
-        await fetch(`https://fyp_backend.test/api/users/${id}`, {
+        await backendApi(`/api/users/${id}`, {
             method: "DELETE"
         });
 
@@ -124,7 +120,7 @@ function Users() {
 
 const fetchUsers = async () => {
     try {
-        const res = await fetch("https://fyp_backend.test/api/users");
+        const res = await backendApi("/api/users");
         const data = await res.json();
 
         setUsers(data.data); // Laravel API response
