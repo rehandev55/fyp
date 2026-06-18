@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminLayout from '@/layouts/admin-layout';
 import axios from "axios";
+import { backendApi } from '@/lib/backendApi';
+import { API_URL } from "@/lib/backendApi";
 
 interface ContentItem {
     id: number;
@@ -20,16 +22,6 @@ interface Modal {
     item: ContentItem;
 }
 
-// const initialContent: ContentItem[] = [
-//     { id: 1, title: 'Physics Past Papers 2024', type: 'Past Paper', board: 'Federal Board', class_level: '10', subject: 'Physics', date: '2026-03-15', downloads: 234, size: '2.4 MB' },
-//     { id: 2, title: 'Math Key Book Solutions', type: 'Key Book', board: 'Federal Board', class_level: '10', subject: 'Mathematics', date: '2026-03-10', downloads: 189, size: '5.1 MB' },
-//     { id: 3, title: 'Biology Chapter Notes', type: 'Notes', board: 'Federal Board', class_level: '10', subject: 'Biology', date: '2026-03-08', downloads: 156, size: '1.8 MB' },
-//     { id: 4, title: 'Chemistry Formulas Sheet', type: 'Notes', board: 'AJK Board', class_level: '9', subject: 'Chemistry', date: '2026-02-25', downloads: 312, size: '890 KB' },
-//     { id: 5, title: 'English Grammar Guide', type: 'Book', board: 'AJK Board', class_level: '9', subject: 'English', date: '2026-02-20', downloads: 98, size: '3.2 MB' },
-//     { id: 6, title: 'Physics Solved Numericals', type: 'Solved Paper', board: 'Federal Board', class_level: '12', subject: 'Physics', date: '2026-01-15', downloads: 445, size: '4.7 MB' },
-//     { id: 7, title: 'Bio Diagrams Pack', type: 'Notes', board: 'Federal Board', class_level: '11', subject: 'Biology', date: '2026-01-08', downloads: 267, size: '12.3 MB' },
-//     { id: 8, title: 'Math Worksheets Set A', type: 'Worksheet', board: 'AJK Board', class_level: '10', subject: 'Mathematics', date: '2025-12-20', downloads: 178, size: '1.5 MB' },
-// ];
 
 const contentTypes = ['Book', 'Key Book', 'Past Paper', 'Notes', 'Solved Paper', 'Worksheet'];
 
@@ -64,7 +56,7 @@ const handleUpload = async (e: React.FormEvent) => {
     console.log(key, value);
 });
         const res = await axios.post(
-            "https://fyp_backend.test/api/content",
+             `${API_URL}/api/content`,
             formData,
             {
                 headers: {
@@ -101,7 +93,7 @@ const handleUpload = async (e: React.FormEvent) => {
 
     const saveEdit = async () => {
     try {
-        await fetch(`https://fyp_backend.test/api/content/${editForm.id}`, {
+        await backendApi(`/api/content/${editForm.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -129,7 +121,7 @@ const handleUpload = async (e: React.FormEvent) => {
 
 const deleteContent = async (id: number) => {
     try {
-        await fetch(`https://fyp_backend.test/api/content/${id}`, {
+        await backendApi(`/api/content/${id}`, {
             method: "DELETE",
         });
 
@@ -176,7 +168,7 @@ const [file, setFile] = useState<File | null>(null);
 }, []);
 
 const fetchContent = async () => {
-    const res = await fetch("https://fyp_backend.test/api/content");
+    const res = await backendApi("/api/content");
     const data = await res.json();
 
 
@@ -184,7 +176,7 @@ const fetchContent = async () => {
 };
 
 const downloadFile = (id: number) => {
-    window.open(`https://fyp_backend.test/api/content/download/${id}`);
+    window.open(`${API_URL}/api/content/download/${id}`);
 };
 
     return (

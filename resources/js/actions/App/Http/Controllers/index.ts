@@ -10,6 +10,7 @@ import ProgressController from './ProgressController'
 import ProfileController from './ProfileController'
 import AboutController from './AboutController'
 import Settings from './Settings'
+import Auth from './Auth'
 const Controllers = {
     Api: Object.assign(Api, Api),
 AIControllers: Object.assign(AIControllers, AIControllers),
@@ -23,6 +24,7 @@ ProgressController: Object.assign(ProgressController, ProgressController),
 ProfileController: Object.assign(ProfileController, ProfileController),
 AboutController: Object.assign(AboutController, AboutController),
 Settings: Object.assign(Settings, Settings),
+Auth: Object.assign(Auth, Auth),
 }
 
 export default Controllers
