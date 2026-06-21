@@ -28,6 +28,7 @@ class GoogleController extends Controller
                 'password' => bcrypt('google-auth'), // dummy password
                 'role' => 'user',
                 'status' => 'Active',
+                'email_verified_at' => now(),
             ]);
         }
 
