@@ -58,4 +58,11 @@ const login = {
     store: Object.assign(store, store),
 }
 
+export default login      })
+    
+    store.form = storeForm
+const login = {
+    store: Object.assign(store, store),
+}
+
 export default login
