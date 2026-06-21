@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\ProfileController;
@@ -14,6 +15,9 @@ use App\Http\Controllers\SelectionController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\Auth\GoogleController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+// use Inertia\Inertia;
 
 Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
@@ -41,3 +45,17 @@ require __DIR__ . '/settings.php';
 
 Route::get('/auth/google/redirect', [GoogleController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+
+//verification
+Route::get('/email/verify/{id}/{hash}', function (
+    EmailVerificationRequest $request
+) {
+    $request->fulfill();
+
+    return redirect('/login');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Route::post('/login', [AuthController::class, 'login']);
+// Route::get('/login', function () {
+//     return Inertia::render('Auth/login');
+// })->name('login');
