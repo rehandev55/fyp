@@ -261,7 +261,7 @@ const downloadFile = (id: number) => {
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Subject</label>
                                 <select value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className={sel}>
-                                    {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => (
+                                    {['physics', 'chemistry', 'biology', 'mathematics','computer', 'english'].map((s) => (
                                         <option key={s} value={s}>
                                             {s}
                                         </option>
@@ -504,7 +504,7 @@ disabled:opacity-40 transition-all duration-150 text-sm font-semibold"
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Subject</label>
                                             <select value={editForm.subject} onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })} className={sel}>
-                                                {['physics', 'chemistry', 'biology', 'mathematics', 'english'].map((s) => (
+                                                {['physics', 'chemistry', 'biology', 'mathematics','computer', 'english'].map((s) => (
                                                     <option key={s} value={s}>
                                                         {s}
                                                     </option>

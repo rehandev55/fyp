@@ -9,7 +9,7 @@ interface ResourceCardProps {
   downloads?: number;
 }
 
-const colors: Record<string, string> = { Physics: 'from-blue-500 to-cyan-500', Chemistry: 'from-purple-500 to-pink-500', Biology: 'from-green-500 to-emerald-500', Mathematics: 'from-orange-500 to-amber-500', English: 'from-rose-500 to-red-500' };
+const colors: Record<string, string> = { Physics: 'from-blue-500 to-cyan-500', Chemistry: 'from-purple-500 to-pink-500', Biology: 'from-green-500 to-emerald-500', Mathematics: 'from-orange-500 to-amber-500', Computer: 'from-blue-500 to-cyan-500', English: 'from-rose-500 to-red-500' };
 
 export default function ResourceCard({ id, title, type, subject, classLevel, board, fileSize, downloads }: ResourceCardProps) {
   const handleDownload = () => {
