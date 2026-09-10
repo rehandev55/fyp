@@ -41,10 +41,10 @@ const toggleDark = () => {
     }, []);
 
     return (
-        <header className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-[#1E3A8A] via-[#2563EB] to-[#3B82F6] text-white z-50 shadow-lg">
+        <header className="fixed top-0 left-0 right-0 h-16 bg-gradient-to-r from-[#1E3A8A] via-[#2563EB] to-[#3B82F6] dark:bg-none dark:bg-gray-800 text-white dark:text-gray-100 z-50 shadow-lg dark:shadow-none dark:border-b dark:border-gray-700">
             <div className="flex items-center justify-between h-full px-6 pl-14 md:pl-6">
                 <Link href="/dashboard" className="flex items-center gap-3 cursor-pointer">
-                    <div className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <div className="w-9 h-9 bg-white/20 dark:bg-gray-700 backdrop-blur-sm rounded-xl flex items-center justify-center">
                         <LogoES className="w-6 h-6" />
                     </div>
                     <h1 className="text-xl font-bold tracking-tight hover:text-yellow-200 transition">
@@ -53,20 +53,20 @@ const toggleDark = () => {
                 </Link>
                 <div className="flex items-center gap-2">
                     {isAdmin && (
-                        <Link href="/admin/dashboard" className="bg-purple-500/20 hover:bg-purple-500/30 px-3 py-2 rounded-xl transition text-xs font-medium flex items-center gap-2">
+                        <Link href="/admin/dashboard" className="bg-purple-500/20 hover:bg-purple-500/30 dark:bg-purple-500/25 dark:hover:bg-purple-500/40 px-3 py-2 rounded-xl transition text-xs font-medium flex items-center gap-2">
                             <i className="fa-solid fa-shield-halved text-purple-200" />
                             <span className="hidden sm:inline">Admin</span>
                         </Link>
                     )}
-                    <button onClick={toggleDark} className="bg-white/10 hover:bg-white/20 p-2 rounded-xl transition" title={isDark ? 'Light Mode' : 'Dark Mode'}>
+                    <button onClick={toggleDark} className="bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 p-2 rounded-xl transition" title={isDark ? 'Light Mode' : 'Dark Mode'}>
                         <i className={`${isDark ? 'fa-solid fa-sun text-yellow-300' : 'fa-solid fa-moon text-blue-100'} text-base`} />
                     </button>
                     <div className="relative" ref={menuRef}>
-                        <button onClick={() => setOpen(!open)} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 pl-1.5 pr-2.5 py-1.5 rounded-xl transition">
+                        <button onClick={() => setOpen(!open)} className="flex items-center gap-2 bg-white/10 hover:bg-white/20 dark:bg-gray-700 dark:hover:bg-gray-600 pl-1.5 pr-2.5 py-1.5 rounded-xl transition">
                             <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
                                 {user?.name?.charAt(0) || 'S'}
                             </div>
-                            <i className={`fa-solid fa-chevron-down text-xs text-white/70 transition-transform ${open ? 'rotate-180' : ''}`} />
+                            <i className={`fa-solid fa-chevron-down text-xs text-white/70 dark:text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
                         </button>
                         {open && (
                             <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden py-1 z-50">

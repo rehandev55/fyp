@@ -146,3 +146,15 @@ a, button, [role="button"], select, [type="checkbox"], [type="radio"] {
         @apply bg-background text-foreground;
     }
 }
+
+/* KaTeX maths inside AI chat replies */
+.chat-markdown .katex {
+    font-size: 1.05em;
+}
+
+.chat-markdown .katex-display {
+    margin: 0.75rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.25rem;
+}
