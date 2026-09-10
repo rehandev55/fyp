@@ -1,8 +1,10 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
 import { Head, usePage } from '@inertiajs/react';
-import StudentLayout from '@/layouts/student-layout';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import ChatMarkdown from '@/components/chat-markdown';
 import LogoES from '@/components/logo-es';
+import StudentLayout from '@/layouts/student-layout';
 import { api } from '@/lib/api';
+import { stripForSpeech } from '@/lib/chat-text';
 
 interface User {
     name: string;
@@ -18,17 +20,38 @@ declare global {
         SpeechRecognition: new () => SpeechRecognition;
         webkitSpeechRecognition: new () => SpeechRecognition;
     }
+    interface SpeechRecognitionEvent {
+        readonly resultIndex: number;
+        readonly results: SpeechRecognitionResultList;
+    }
+    interface SpeechRecognitionErrorEvent {
+        readonly error: string;
+        readonly message: string;
+    }
     interface SpeechRecognition extends EventTarget {
         continuous: boolean;
         interimResults: boolean;
+        maxAlternatives: number;
         lang: string;
-        onresult: ((event: { results: { [index: number]: { [index: number]: { transcript: string } } } }) => void) | null;
-        onerror: (() => void) | null;
+        onstart: (() => void) | null;
+        onresult: ((event: SpeechRecognitionEvent) => void) | null;
+        onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
         onend: (() => void) | null;
         start(): void;
         stop(): void;
+        abort(): void;
     }
 }
+
+/** Browser speech-recognition error codes mapped to something a student can act on. */
+const VOICE_ERRORS: Record<string, string> = {
+    'not-allowed': 'Microphone access was blocked. Allow it in your browser settings and try again.',
+    'service-not-allowed': 'Microphone access was blocked. Allow it in your browser settings and try again.',
+    'audio-capture': 'No microphone was found. Plug one in and try again.',
+    'no-speech': "Didn't catch that — try speaking again.",
+    network: 'Speech recognition needs an internet connection.',
+    aborted: '',
+};
 
 interface Message {
     role: 'user' | 'assistant';
@@ -106,8 +129,14 @@ export default function AiChat() {
     const [isListening, setIsListening] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [voiceEnabled, setVoiceEnabled] = useState(false);
+    const [voiceError, setVoiceError] = useState('');
+    const [interimText, setInterimText] = useState('');
+    const [speechSupported] = useState(() => !!(window.SpeechRecognition || window.webkitSpeechRecognition));
     const endRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const recognitionRef = useRef<SpeechRecognition | null>(null);
+    /** Whatever was typed before dictation started, so speech appends instead of overwriting. */
+    const baseInputRef = useRef('');
 
 
     useEffect(() => {
@@ -116,22 +145,66 @@ export default function AiChat() {
 
     useEffect(() => {
         const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognitionAPI) {
-            const recognition = new SpeechRecognitionAPI();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                if (transcript.trim()) {
-                    sendMessage(transcript);
-                }
-                setIsListening(false);
-            };
-            recognition.onerror = () => setIsListening(false);
-            recognition.onend = () => setIsListening(false);
-            recognitionRef.current = recognition;
+
+        if (!SpeechRecognitionAPI) {
+            return;
         }
+
+        const recognition = new SpeechRecognitionAPI();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+            setIsListening(true);
+            setVoiceError('');
+        };
+
+        recognition.onresult = (event) => {
+            let finalChunk = '';
+            let interimChunk = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const result = event.results[i];
+
+                if (result.isFinal) {
+                    finalChunk += result[0].transcript;
+                } else {
+                    interimChunk += result[0].transcript;
+                }
+            }
+
+            if (finalChunk) {
+                baseInputRef.current = `${baseInputRef.current} ${finalChunk.trim()}`.trim();
+                setInput(baseInputRef.current);
+            }
+
+            setInterimText(interimChunk.trim());
+        };
+
+        recognition.onerror = (event) => {
+            setVoiceError(VOICE_ERRORS[event.error] ?? 'Voice input failed. Please try again.');
+            setInterimText('');
+            setIsListening(false);
+        };
+
+        recognition.onend = () => {
+            setInterimText('');
+            setIsListening(false);
+            inputRef.current?.focus();
+        };
+
+        recognitionRef.current = recognition;
+
+        return () => {
+            recognition.onstart = null;
+            recognition.onresult = null;
+            recognition.onerror = null;
+            recognition.onend = null;
+            recognition.abort();
+            recognitionRef.current = null;
+        };
     }, []);
 
     const speakText = useCallback((text: string) => {
@@ -153,14 +226,44 @@ export default function AiChat() {
     };
 
     const toggleListening = () => {
-        if (!recognitionRef.current) return;
-        if (isListening) {
-            recognitionRef.current.stop();
-            setIsListening(false);
-        } else {
-            recognitionRef.current.start();
-            setIsListening(true);
+        const recognition = recognitionRef.current;
+        if (!recognition) {
+            return;
         }
+
+        if (isListening) {
+            recognition.stop();
+            return;
+        }
+
+        if (!window.isSecureContext) {
+            setVoiceError('Voice input needs a secure (https) connection.');
+            return;
+        }
+
+        stopSpeaking();
+        setVoiceError('');
+        baseInputRef.current = input.trim();
+
+        try {
+            recognition.start();
+        } catch {
+            /** start() throws if the engine is still winding down from the previous session. */
+            recognition.abort();
+            setVoiceError('Voice input is still starting up — tap the mic again.');
+        }
+    };
+
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+
+        if (isListening) {
+            recognitionRef.current?.stop();
+        }
+
+        baseInputRef.current = '';
+        setInterimText('');
+        sendMessage(input);
     };
 
     const saveCurrentSession = useCallback(async (msgs: Message[]) => {
@@ -301,7 +404,7 @@ const res = await api('/chat/send', {
         }
     };
 
-    const hasSpeechRecognition = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    const hasSpeechRecognition = speechSupported;
 
     const subjectLabel = activeSubject ? getLabel(subjects, activeSubject) : '';
     const classLabel = activeClassLevel ? getLabel(classes, activeClassLevel) : '';
@@ -598,10 +701,10 @@ useEffect(() => {
                                         <div className={`max-w-[75%] text-sm leading-relaxed ${msg.role === 'user' ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white rounded-2xl rounded-br-md shadow-md shadow-blue-100 dark:shadow-blue-900/20 px-4 py-3' : ''}`}>
                                             {msg.role === 'assistant' ? (
                                                 <div className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-2xl rounded-bl-md shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-                                                    <div className="px-4 py-3 whitespace-pre-wrap">{msg.text}</div>
+                                                    <div className="px-4 py-3"><ChatMarkdown text={msg.text} /></div>
                                                     {voiceEnabled && (
                                                         <div className="px-4 py-2 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
-                                                            <button onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.text)} className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-[#2563EB] transition">
+                                                            <button onClick={() => isSpeaking ? stopSpeaking() : speakText(stripForSpeech(msg.text))} className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-[#2563EB] transition">
                                                                 <i className={`fa-solid ${isSpeaking ? 'fa-stop' : 'fa-volume-high'} text-[10px]`} />
                                                                 {isSpeaking ? 'Stop' : 'Listen'}
                                                             </button>
@@ -640,22 +743,26 @@ useEffect(() => {
                                 </button>
                             ))}
                         </div>
-                        <form onSubmit={(e) => { e.preventDefault(); sendMessage(input); }} className="flex gap-3">
+                        <form onSubmit={handleSubmit} className="flex gap-3">
                             <input
+                                ref={inputRef}
                                 type="text"
                                 value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder={isListening ? 'Listening...' : 'Ask any question...'}
+                                onChange={(e) => { setInput(e.target.value); baseInputRef.current = e.target.value; }}
+                                placeholder={isListening ? 'Listening — start speaking...' : 'Ask any question...'}
                                 className={`flex-1 border rounded-xl px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent bg-gray-50 dark:bg-gray-700 dark:text-white ${isListening ? 'border-red-400 ring-2 ring-red-200 dark:ring-red-800 animate-pulse' : 'border-gray-200 dark:border-gray-600'}`}
                             />
                             {hasSpeechRecognition && (
                                 <button
                                     type="button"
                                     onClick={toggleListening}
-                                    className={`px-4 py-3 rounded-xl transition-all duration-200 text-sm font-semibold ${isListening ? 'bg-red-500 text-white shadow-lg animate-pulse' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
+                                    disabled={loading}
+                                    aria-pressed={isListening}
+                                    aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+                                    className={`px-4 py-3 rounded-xl transition-all duration-200 text-sm font-semibold disabled:opacity-40 ${isListening ? 'bg-red-500 text-white shadow-lg animate-pulse' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
                                     title={isListening ? 'Stop listening' : 'Voice input'}
                                 >
-                                    <i className="fa-solid fa-microphone text-lg" />
+                                    <i className={`fa-solid ${isListening ? 'fa-stop' : 'fa-microphone'} text-lg`} />
                                 </button>
                             )}
                             <button
@@ -667,6 +774,21 @@ useEffect(() => {
                                 Send
                             </button>
                         </form>
+                        {(isListening || voiceError) && (
+                            <div className="mt-2 min-h-[1.25rem] px-1 text-xs">
+                                {voiceError ? (
+                                    <span className="text-red-500 dark:text-red-400">
+                                        <i className="fa-solid fa-triangle-exclamation mr-1.5" />
+                                        {voiceError}
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0" />
+                                        <span className="truncate">{interimText || 'Listening... tap the mic again to stop.'}</span>
+                                    </span>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

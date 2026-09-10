@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Enums\Board;
 use App\Enums\ClassLevel;
 use App\Enums\Subject;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'title',
         'type',
@@ -16,6 +19,7 @@ class Content extends Model
         'class_level',
         'subject',
         'file_path',
+        'file_size',
         'downloads',
     ];
 
