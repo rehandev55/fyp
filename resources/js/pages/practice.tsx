@@ -169,63 +169,109 @@ const subjectChapters = getChapters(activeClass, activeSubject);
     // const [feedbacks, setFeedbacks] = useState<string[]>([]);
 const [checked, setChecked] = useState(false);
 const [loadingEval, setLoadingEval] = useState(false);
+const [overallLoading, setOverallLoading] = useState(false);
 
-const handleNext = async () => {
+const evaluateMcqAndUpdate = async (
+    index: number,
+    isLastQuestion: boolean = false
+) => {
+    const currentQuestion = questions[index];
+    const selectedIndex = mcqAnswers[index];
 
-    let latestFeedbacks = [...feedbacks];
-    let latestScores = [...scores];
-
-    // MCQ evaluation
-    if (mode === 'mcq') {
-
-        const currentQuestion = questions[currentQ];
-        const selectedIndex = mcqAnswers[currentQ];
-
-        const selectedOption =
-            currentQuestion.options[selectedIndex];
-
-        const correctOption =
-            currentQuestion.options[currentQuestion.correctAnswer];
-
-        const result = await evaluateMcq(
-            currentQuestion.question,
-            selectedOption,
-            correctOption
-        );
-
-        // save feedback
-        latestFeedbacks[currentQ] =
-            String(result?.feedback || '');
-
-        setFeedbacks(latestFeedbacks);
-
-        // save score
-        latestScores[currentQ] =
-            result?.score || 0;
-
-        setScores(latestScores);
-
-        // optional frontend display score
-        setScore((prev) => prev + (result?.score || 0));
-    }
-
-    setChecked(false);
-
-    if (currentQ < questions.length - 1) {
-        setCurrentQ(currentQ + 1);
+    if (!currentQuestion || selectedIndex === undefined) {
         return;
     }
 
+    const selectedOption = currentQuestion.options[selectedIndex];
+    const correctOption =
+        currentQuestion.options[currentQuestion.correctAnswer];
+
+    const result = await evaluateMcq(
+        currentQuestion.question,
+        selectedOption,
+        correctOption
+    );
+
+    const scoreValue = result?.score || 0;
+    const feedbackValue = String(result?.feedback || '');
+
+    // Create fresh arrays so the latest MCQ result is included
+    const updatedFeedbacks = [...feedbacks];
+    const updatedScores = [...scores];
+
+    updatedFeedbacks[index] = feedbackValue;
+    updatedScores[index] = scoreValue;
+
+    setFeedbacks(updatedFeedbacks);
+    setScores(updatedScores);
+
+    setScore((prev) => prev + scoreValue);
+
+    // If this was the last question, generate overall result
+    if (isLastQuestion) {
+        setOverallLoading(true);
+
+        try {
+            const overall = await evaluateOverall(
+                updatedFeedbacks,
+                updatedScores
+            );
+
+            setOverallResult(overall);
+        } catch (error) {
+            console.error("Overall evaluation failed:", error);
+        } finally {
+            setOverallLoading(false);
+        }
+    }
+};
+
+const handleNext = async () => {
+    const isLastQuestion = currentQ === questions.length - 1;
+
+    // Reset checked state
+    setChecked(false);
+
+    // MCQ
+    if (mode === 'mcq') {
+        // LAST MCQ
+        if (isLastQuestion) {
+            // Do NOT change currentQ
+            // Finish immediately so the last question cannot appear again
+            setFinished(true);
+
+            // Evaluate last MCQ in background
+            evaluateMcqAndUpdate(currentQ, true);
+
+            return;
+        }
+
+        // NORMAL MCQ
+        // Move to next question immediately
+        setCurrentQ((prev) => prev + 1);
+
+        // Evaluate previous MCQ in background
+        evaluateMcqAndUpdate(currentQ, false);
+
+        return;
+    }
+
+    // Short / Long
+    if (!isLastQuestion) {
+        setCurrentQ((prev) => prev + 1);
+        return;
+    }
+
+    // Last short/long question
     setFinished(true);
 
-    // PASS FRESH DATA HERE
     const overall = await evaluateOverall(
-        latestFeedbacks,
-        latestScores
+        feedbacks,
+        scores
     );
 
     setOverallResult(overall);
-};
+};;
 
 const handleCheckAnswer = async () => {
     const currentQuestion = questions[currentQ];
@@ -605,6 +651,13 @@ try {
 
 
                         </div>
+                        {overallLoading && (
+    <div className="mt-6 text-center border-t pt-5">
+        <p className="text-gray-600">
+            Generating overall performance...
+        </p>
+    </div>
+)}
                         {overallResult && (
     <div className="mt-6 text-left border-t pt-5">
 
