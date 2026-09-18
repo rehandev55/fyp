@@ -1,0 +1,828 @@
+{
+  "config": {
+    "answer_model": "gpt-4o-mini",
+    "judge_model": "gpt-4o",
+    "board": "federal"
+  },
+  "a_grounding": {
+    "summary": {
+      "n": 12,
+      "rag": {
+        "groundedness": 2.75,
+        "curriculum_fit": 4.75,
+        "correctness": 4.833,
+        "hallucinated_claims": 2.083,
+        "mean_prompt_tokens": 1741.4,
+        "mean_latency_s": 3.36
+      },
+      "control": {
+        "groundedness": 1.917,
+        "curriculum_fit": 4.583,
+        "correctness": 4.583,
+        "hallucinated_claims": 2.333,
+        "mean_prompt_tokens": 473.5,
+        "mean_latency_s": 2.38
+      }
+    },
+    "rows": [
+      {
+        "question": "What is cell theory?",
+        "class": "class_11",
+        "subject": "biology",
+        "rag": {
+          "answer": "Cell theory is a fundamental concept in biology that describes the properties and functions of cells. It has three main principles:\n\n1. **All living organisms are composed of one or more cells.** This means that whether an organism is single-celled (like bacteria) or multicellular (like plants and animals), it is made up of cells.\n\n2. **The cell is the basic unit of life.** Cells are the smallest units that can carry out all the processes necessary for life.\n\n3. **All cells arise from pre-existing cells.** This principle, established by Rudolf Virchow, states that new cells are formed only by the division of existing cells.\n\nThese principles highlight the importance of cells in the structure and function of living organisms.",
+          "n_chunks": 5,
+          "prompt_tokens": 1708,
+          "completion_tokens": 149,
+          "latency_s": 7.44,
+          "judge": {
+            "groundedness": 3,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 1,
+            "note": "The answer is mostly correct but lacks full support from excerpts.",
+            "_judge_tokens": 1727
+          }
+        },
+        "control": {
+          "answer": "Cell theory is a fundamental concept in biology that describes the properties and functions of cells. It consists of three main principles:\n\n1. **All living organisms are composed of one or more cells.**\n2. **The cell is the basic unit of life.**\n3. **All cells arise from pre-existing cells.**\n\nIn simple terms, cell theory states that cells are the building blocks of all living things, and they come from other cells. This explanation is not directly available in your class_11 biology textbook, but here is a simple general explanation.",
+          "n_chunks": 0,
+          "prompt_tokens": 471,
+          "completion_tokens": 111,
+          "latency_s": 2.2,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 3,
+            "note": "Answer is correct but not grounded in provided excerpts.",
+            "_judge_tokens": 1687
+          }
+        }
+      },
+      {
+        "question": "Explain the function of mitochondria in a cell",
+        "class": "class_11",
+        "subject": "biology",
+        "rag": {
+          "answer": "Mitochondria are often referred to as the \"powerhouses\" of the cell because their primary function is to produce energy. They do this through a process called cellular respiration, where they convert nutrients, particularly glucose, into adenosine triphosphate (ATP), which is the energy currency of the cell.\n\nKey functions of mitochondria include:\n\n1. **Energy Production**: Mitochondria generate ATP through oxidative phosphorylation, which occurs in the inner membrane of the mitochondria.\n2. **Regulation of Metabolism**: They play a crucial role in various metabolic pathways, including the citric acid cycle (Krebs cycle) and fatty acid oxidation.\n3. **Apoptosis**: Mitochondria are involved in programmed cell death (apoptosis), which is essential for maintaining healthy tissue and development.\n4. **Calcium Storage**: They help regulate calcium levels within the cell, which is important for various cellular functions.\n\nIn summary, mitochondria are vital for energy production and play significant roles in metabolism and cell regulation.",
+          "n_chunks": 5,
+          "prompt_tokens": 1709,
+          "completion_tokens": 217,
+          "latency_s": 2.94,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 4,
+            "correctness": 3,
+            "hallucinated_claims": 4,
+            "note": "Answer includes unsupported claims about mitochondria functions.",
+            "_judge_tokens": 1795
+          }
+        },
+        "control": {
+          "answer": "Mitochondria are often referred to as the \"powerhouses\" of the cell. Their primary function is to produce energy in the form of adenosine triphosphate (ATP) through a process called cellular respiration. \n\nKey functions of mitochondria include:\n\n1. **Energy Production**: Mitochondria convert nutrients from food into ATP, which is used as energy by the cell.\n2. **Regulation of Metabolism**: They play a role in various metabolic pathways, including the breakdown of carbohydrates and fats.\n3. **Apoptosis**: Mitochondria are involved in programmed cell death, which is important for development and maintaining healthy tissues.\n\nIn summary, mitochondria are crucial for energy production and overall cellular function.",
+          "n_chunks": 0,
+          "prompt_tokens": 480,
+          "completion_tokens": 155,
+          "latency_s": 2.33,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 4,
+            "correctness": 3,
+            "hallucinated_claims": 3,
+            "note": "Answer includes unsupported claims about ATP, metabolism, and apoptosis.",
+            "_judge_tokens": 1736
+          }
+        }
+      },
+      {
+        "question": "What is DNA replication?",
+        "class": "class_12",
+        "subject": "biology",
+        "rag": {
+          "answer": "DNA replication is the process by which a DNA molecule makes a copy of itself. This process is essential for cell division, allowing genetic information to be passed from one generation to the next.\n\nKey points about DNA replication:\n1. **Parent and Daughter DNA**: The original DNA strand is called parent DNA, and the new strands formed are called daughter DNA.\n2. **Models of Replication**: There are three models to explain how DNA replicates: semi-conservative, conservative, and dispersive.\n   - **Semi-conservative model**: Each of the two parental strands separates and serves as a template for the synthesis of new strands, resulting in two DNA molecules, each with one parental and one new strand.\n   - **Conservative model**: One daughter molecule contains both parental strands, while the other contains two new strands.\n   - **Dispersive model**: The parental and new DNA are interspersed in both daughter molecules.\n\nThis explanation is based on your class 12 biology textbook content.",
+          "n_chunks": 5,
+          "prompt_tokens": 1551,
+          "completion_tokens": 204,
+          "latency_s": 2.71,
+          "judge": {
+            "groundedness": 5,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 0,
+            "note": "The answer is well-supported, appropriate, and correct.",
+            "_judge_tokens": 1624
+          }
+        },
+        "control": {
+          "answer": "DNA replication is the process by which a cell makes an exact copy of its DNA. This is crucial for cell division, allowing each new cell to have the same genetic information.\n\nKey points about DNA replication:\n1. **Semi-conservative process**: Each new DNA molecule consists of one original strand and one new strand.\n2. **Enzymes involved**: Key enzymes include DNA helicase (which unwinds the DNA) and DNA polymerase (which adds new nucleotides).\n3. **Occurs during the S phase** of the cell cycle before a cell divides.\n\nThis explanation is not directly available in your class_12 biology textbook, but here is a simple general explanation.",
+          "n_chunks": 0,
+          "prompt_tokens": 471,
+          "completion_tokens": 138,
+          "latency_s": 2.17,
+          "judge": {
+            "groundedness": 3,
+            "curriculum_fit": 4,
+            "correctness": 4,
+            "hallucinated_claims": 1,
+            "note": "Explanation mostly aligns with excerpts but lacks direct textbook reference.",
+            "_judge_tokens": 1564
+          }
+        }
+      },
+      {
+        "question": "Explain ionic and covalent bonding",
+        "class": "class_10",
+        "subject": "chemistry",
+        "rag": {
+          "answer": "**Ionic Bonding:**\nIonic bonding occurs when atoms transfer electrons from one to another, resulting in the formation of ions. One atom loses electrons and becomes a positively charged ion (cation), while the other gains electrons and becomes a negatively charged ion (anion). The electrostatic attraction between these oppositely charged ions forms the ionic bond.\n\n**Key Points:**\n- Ionic bonds are formed between metals and non-metals.\n- They result in the creation of ionic compounds, which usually have high melting and boiling points.\n- Ionic compounds conduct electricity when dissolved in water or in molten form.\n\n**Example:**\nIn the reaction between sodium (Na) and chlorine (Cl), sodium loses one electron to become Na⁺, and chlorine gains that electron to become Cl⁻. The resulting compound is sodium chloride (NaCl), commonly known as table salt.\n\n---\n\n**Covalent Bonding:**\nCovalent bonding occurs when two atoms share one or more pairs of electrons. This type of bond typically forms between non-metal atoms. The shared electrons allow each atom to achieve a full outer shell, which is a more stable configuration.\n\n**Key Points:**\n- Covalent bonds are formed between non-metals.\n- They can result in the formation of molecules with lower melting and boiling points compared to ionic compounds.\n- Covalent compounds do not conduct electricity in any state.\n\n**Example:**\nIn a water molecule (H₂O), each hydrogen atom shares one electron with the oxygen atom, allowing oxygen to complete its outer shell and forming covalent bonds.\n\nThis explanation is not directly available in your class_10 chemistry textbook, but here is a simple general explanation.",
+          "n_chunks": 5,
+          "prompt_tokens": 1588,
+          "completion_tokens": 337,
+          "latency_s": 3.94,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 6,
+            "note": "The answer is correct but not supported by the excerpts.",
+            "_judge_tokens": 1793
+          }
+        },
+        "control": {
+          "answer": "Ionic and covalent bonding are two fundamental types of chemical bonds that hold atoms together.\n\n**Ionic Bonding:**\n- **Definition:** Ionic bonding occurs when one atom transfers electrons to another atom, resulting in the formation of positively and negatively charged ions.\n- **Explanation:** In ionic bonding, metals (which lose electrons) form positive ions (cations), while non-metals (which gain electrons) form negative ions (anions). The electrostatic attraction between these oppositely charged ions creates the ionic bond.\n- **Example:** Sodium chloride (NaCl) is a common example, where sodium (Na) donates an electron to chlorine (Cl), forming Na⁺ and Cl⁻ ions.\n\n**Covalent Bonding:**\n- **Definition:** Covalent bonding occurs when two atoms share one or more pairs of electrons.\n- **Explanation:** In covalent bonding, typically between non-metal atoms, the shared electrons allow each atom to attain a stable electron configuration. This sharing can involve single, double, or triple bonds depending on the number of shared electron pairs.\n- **Example:** Water (H₂O) is an example of covalent bonding, where each hydrogen atom shares an electron with the oxygen atom.\n\n**Key Differences:**\n- **Ionic Bonding:** Involves transfer of electrons and formation of ions.\n- **Covalent Bonding:** Involves sharing of electrons between atoms.\n\nThese explanations are based on general knowledge, as specific details may not be available in your class 10 chemistry textbook.",
+          "n_chunks": 0,
+          "prompt_tokens": 474,
+          "completion_tokens": 312,
+          "latency_s": 3.28,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 5,
+            "note": "The answer is correct and fits the curriculum but lacks support from the excerpts.",
+            "_judge_tokens": 1778
+          }
+        }
+      },
+      {
+        "question": "Define oxidation and reduction",
+        "class": "class_12",
+        "subject": "chemistry",
+        "rag": {
+          "answer": "**Oxidation**: Oxidation is defined as an increase in oxidation number, which occurs when a substance loses electrons. In simpler terms, when an atom or ion loses electrons, it is said to be oxidized.\n\n**Reduction**: Reduction is defined as a decrease in oxidation number, which occurs when a substance gains electrons. This means that when an atom or ion gains electrons, it is said to be reduced.\n\n**Key Points**:\n- Oxidation involves the loss of electrons.\n- Reduction involves the gain of electrons.\n- These processes often occur simultaneously in redox (reduction-oxidation) reactions.\n\n**Example**: In the reaction \\(2Na + Cl_2 \\rightarrow 2NaCl\\):\n- Sodium (Na) is oxidized as it loses one electron and its oxidation number increases from 0 to +1.\n- Chlorine (Cl) is reduced as it gains an electron and its oxidation number decreases from 0 to -1.\n\nThis explanation is based on the concepts found in your class_12 chemistry textbook.",
+          "n_chunks": 5,
+          "prompt_tokens": 2023,
+          "completion_tokens": 215,
+          "latency_s": 2.52,
+          "judge": {
+            "groundedness": 5,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 0,
+            "note": "The answer is well-supported, appropriate, and correct.",
+            "_judge_tokens": 2114
+          }
+        },
+        "control": {
+          "answer": "**Oxidation**: Oxidation is the process in which a substance loses electrons or increases its oxidation state. It often involves the addition of oxygen or the removal of hydrogen.\n\n**Reduction**: Reduction is the process in which a substance gains electrons or decreases its oxidation state. It typically involves the addition of hydrogen or the removal of oxygen.\n\n**Key points**:\n- Oxidation involves loss of electrons.\n- Reduction involves gain of electrons.\n- These processes always occur together in a redox reaction.\n\n**Example**: In the reaction between hydrogen and oxygen to form water, hydrogen is oxidized (loses electrons) and oxygen is reduced (gains electrons).\n\nThis explanation is not directly available in your class_12 chemistry textbook, but here is a simple general explanation.",
+          "n_chunks": 0,
+          "prompt_tokens": 470,
+          "completion_tokens": 158,
+          "latency_s": 2.18,
+          "judge": {
+            "groundedness": 3,
+            "curriculum_fit": 5,
+            "correctness": 4,
+            "hallucinated_claims": 2,
+            "note": "Some claims not directly supported by excerpts.",
+            "_judge_tokens": 2048
+          }
+        }
+      },
+      {
+        "question": "State Newton's three laws of motion",
+        "class": "class_9",
+        "subject": "physics",
+        "rag": {
+          "answer": "Newton's three laws of motion are fundamental principles that describe the relationship between the motion of an object and the forces acting on it. Here they are:\n\n1. **Newton's First Law of Motion (Law of Inertia)**: An object at rest will remain at rest, and an object in motion will continue to move in a straight line at constant speed unless acted upon by a net external force.\n\n2. **Newton's Second Law of Motion**: The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass. This can be expressed with the formula: \\( F = ma \\), where \\( F \\) is the net force, \\( m \\) is the mass, and \\( a \\) is the acceleration.\n\n3. **Newton's Third Law of Motion**: For every action, there is an equal and opposite reaction. This means that if one object exerts a force on another object, the second object exerts a force of equal magnitude but in the opposite direction on the first object.\n\nThese laws help us understand how objects move and interact with forces in our everyday lives.",
+          "n_chunks": 5,
+          "prompt_tokens": 1705,
+          "completion_tokens": 229,
+          "latency_s": 2.85,
+          "judge": {
+            "groundedness": 5,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 0,
+            "note": "The answer is fully supported, correct, and appropriate for the curriculum.",
+            "_judge_tokens": 1804
+          }
+        },
+        "control": {
+          "answer": "Newton's three laws of motion are fundamental principles that describe the relationship between the motion of an object and the forces acting on it. Here they are:\n\n1. **First Law (Law of Inertia)**: An object at rest stays at rest, and an object in motion continues in motion with the same speed and in the same direction unless acted upon by a net external force. \n   - **Explanation**: This means that things don't start moving or stop moving unless something pushes or pulls them.\n\n2. **Second Law (Law of Acceleration)**: The acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass. This is often expressed with the formula: \n   \\[ F = ma \\]\n   where \\( F \\) is the net force, \\( m \\) is the mass, and \\( a \\) is the acceleration.\n   - **Explanation**: This means that heavier objects need more force to move them than lighter objects.\n\n3. **Third Law (Action and Reaction)**: For every action, there is an equal and opposite reaction.\n   - **Explanation**: This means that if you push something, it pushes back with the same force in the opposite direction.\n\nThese laws are essential for understanding how objects move and interact in our world.",
+          "n_chunks": 0,
+          "prompt_tokens": 476,
+          "completion_tokens": 265,
+          "latency_s": 2.32,
+          "judge": {
+            "groundedness": 5,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 0,
+            "note": "The answer is fully supported, correct, and well-suited for Class 9.",
+            "_judge_tokens": 1849
+          }
+        }
+      },
+      {
+        "question": "Explain Ohm's law",
+        "class": "class_10",
+        "subject": "physics",
+        "rag": {
+          "answer": "Ohm's Law states that the current (I) flowing through a conductor between two points is directly proportional to the voltage (V) across the two points, provided the temperature remains constant. This relationship can be expressed with the formula:\n\n\\[ V = I \\times R \\]\n\nwhere:\n- \\( V \\) is the voltage in volts (V),\n- \\( I \\) is the current in amperes (A),\n- \\( R \\) is the resistance in ohms (Ω).\n\nKey points about Ohm's Law:\n1. It applies primarily to ohmic devices, which have a constant resistance, such as copper and silver wires.\n2. The relationship is represented graphically by a straight line in the V-I graph for ohmic materials.\n3. It is not applicable to non-ohmic devices like filament bulbs and thermistors, which do not have a constant resistance.\n\nIn summary, Ohm's Law helps us understand how voltage, current, and resistance interact in electrical circuits.",
+          "n_chunks": 5,
+          "prompt_tokens": 1641,
+          "completion_tokens": 200,
+          "latency_s": 3.45,
+          "judge": {
+            "groundedness": 5,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 0,
+            "note": "The answer is well-supported, appropriate, and correct.",
+            "_judge_tokens": 1716
+          }
+        },
+        "control": {
+          "answer": "Ohm's Law states that the current (I) flowing through a conductor between two points is directly proportional to the voltage (V) across the two points, provided the temperature remains constant. This relationship can be expressed with the formula:\n\n\\[ V = I \\times R \\]\n\nwhere:\n- \\( V \\) is the voltage in volts (V),\n- \\( I \\) is the current in amperes (A),\n- \\( R \\) is the resistance in ohms (Ω).\n\n**Key Points:**\n- If the voltage increases, the current also increases, assuming resistance stays the same.\n- If the resistance increases, the current decreases for a given voltage.\n\n**Example:**\nIf a resistor has a resistance of 5 ohms and a voltage of 10 volts is applied across it, the current flowing through the resistor can be calculated as:\n\\[ I = \\frac{V}{R} = \\frac{10V}{5Ω} = 2A \\]\n\nThis explanation is based on general knowledge and is not directly available in your class_10 physics textbook.",
+          "n_chunks": 0,
+          "prompt_tokens": 472,
+          "completion_tokens": 219,
+          "latency_s": 2.34,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 1,
+            "note": "The explanation is correct but not directly supported by the excerpts.",
+            "_judge_tokens": 1736
+          }
+        }
+      },
+      {
+        "question": "Define work, energy and power",
+        "class": "class_11",
+        "subject": "physics",
+        "rag": {
+          "answer": "**Work:**\nWork is defined as the product of the force applied to an object and the displacement of that object in the direction of the force. Mathematically, it is expressed as:\n\\[ W = F \\times d \\]\nwhere \\( W \\) is work, \\( F \\) is the force, and \\( d \\) is the displacement. Work is measured in joules (J).\n\n**Energy:**\nEnergy is the capacity to do work. It exists in various forms, such as kinetic energy (energy of motion), potential energy (stored energy due to position), thermal energy, etc. The total energy of a system is the sum of all forms of energy present.\n\n**Power:**\nPower is the rate at which work is done or energy is transferred over time. It is defined as:\n\\[ P = \\frac{W}{t} \\]\nwhere \\( P \\) is power, \\( W \\) is work, and \\( t \\) is time. Power is measured in watts (W), where 1 watt equals 1 joule per second.\n\nThese definitions are based on general knowledge and are fundamental concepts in physics.",
+          "n_chunks": 5,
+          "prompt_tokens": 1935,
+          "completion_tokens": 233,
+          "latency_s": 3.65,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 3,
+            "note": "The answer is correct but not supported by the excerpts.",
+            "_judge_tokens": 2042
+          }
+        },
+        "control": {
+          "answer": "**Work**: Work is defined as the product of the force applied to an object and the distance over which that force is applied in the direction of the force. Mathematically, it is expressed as:\n\\[ \\text{Work} (W) = \\text{Force} (F) \\times \\text{Distance} (d) \\times \\cos(\\theta) \\]\nwhere \\(\\theta\\) is the angle between the force and the direction of motion. \n\n**Energy**: Energy is the capacity to do work. It exists in various forms, such as kinetic energy (energy of motion) and potential energy (stored energy due to position). The unit of energy is the joule (J).\n\n**Power**: Power is the rate at which work is done or energy is transferred over time. It can be calculated using the formula:\n\\[ \\text{Power} (P) = \\frac{\\text{Work} (W)}{\\text{Time} (t)} \\]\nThe unit of power is the watt (W), where 1 watt equals 1 joule per second.\n\nThese definitions are based on general physics concepts.",
+          "n_chunks": 0,
+          "prompt_tokens": 474,
+          "completion_tokens": 235,
+          "latency_s": 3.58,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 3,
+            "note": "The answer is correct but not supported by the excerpts.",
+            "_judge_tokens": 2044
+          }
+        }
+      },
+      {
+        "question": "What is differentiation in calculus?",
+        "class": "class_12",
+        "subject": "mathematics",
+        "rag": {
+          "answer": "Differentiation in calculus is the process of finding the derivative of a function. The derivative measures how a function changes as its input changes, essentially representing the rate of change or the slope of the function at a given point.\n\nKey points:\n- The derivative of a function at a point gives the slope of the tangent line to the curve at that point.\n- It is denoted as \\( f'(x) \\) or \\( \\frac{dy}{dx} \\).\n- Differentiation is used to find rates of change, such as velocity, temperature, and profit.\n\nFor example, if you have a function \\( f(x) = x^2 \\), the derivative \\( f'(x) = 2x \\) tells you how steep the curve is at any point \\( x \\).\n\nThis explanation is based on general knowledge and is not directly available in your class_12 mathematics textbook.",
+          "n_chunks": 5,
+          "prompt_tokens": 2167,
+          "completion_tokens": 181,
+          "latency_s": 3.35,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 3,
+            "note": "Answer is correct but not grounded in provided excerpts.",
+            "_judge_tokens": 2221
+          }
+        },
+        "control": {
+          "answer": "Differentiation is a fundamental concept in calculus that deals with the rate at which a function changes. \n\n**Definition:** Differentiation is the process of finding the derivative of a function, which represents the slope of the tangent line to the curve of the function at any given point.\n\n**Key Points:**\n- It helps in determining how a function behaves as its input changes.\n- The derivative can be interpreted as the instantaneous rate of change of the function.\n\n**Example:** If you have a function \\( f(x) = x^2 \\), the derivative \\( f'(x) \\) is \\( 2x \\). This means that at any point \\( x \\), the slope of the curve is \\( 2x \\).\n\nThis explanation is not directly available in your class_12 mathematics textbook, but here is a simple general explanation.",
+          "n_chunks": 0,
+          "prompt_tokens": 473,
+          "completion_tokens": 170,
+          "latency_s": 2.28,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 4,
+            "correctness": 4,
+            "hallucinated_claims": 3,
+            "note": "The answer lacks direct support from the excerpts.",
+            "_judge_tokens": 2209
+          }
+        }
+      },
+      {
+        "question": "What is an operating system?",
+        "class": "class_11",
+        "subject": "computer",
+        "rag": {
+          "answer": "An operating system (OS) is a software that acts as an intermediary between computer hardware and the user. It manages hardware resources and provides services for computer programs. The OS controls the execution of programs, manages files, and facilitates user interaction with the computer.\n\nKey points about operating systems:\n1. **Resource Management**: It manages the computer's hardware resources such as the CPU, memory, and storage.\n2. **User Interface**: It provides a user interface, which can be command-line based or graphical.\n3. **File Management**: It organizes and manages files on the computer.\n\nExamples of operating systems include Windows, macOS, Linux, and Android. \n\nThis explanation is not directly available in your class_11 computer textbook, but here is a simple general explanation.",
+          "n_chunks": 5,
+          "prompt_tokens": 1632,
+          "completion_tokens": 157,
+          "latency_s": 2.63,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 4,
+            "correctness": 5,
+            "hallucinated_claims": 4,
+            "note": "The answer is correct but not supported by the provided excerpts.",
+            "_judge_tokens": 1664
+          }
+        },
+        "control": {
+          "answer": "An operating system (OS) is a software that manages computer hardware and software resources and provides common services for computer programs. It acts as an intermediary between users and the computer hardware.\n\nKey points about operating systems:\n1. **Resource Management**: It manages hardware resources like the CPU, memory, and storage.\n2. **User Interface**: It provides a user interface, which can be command-line or graphical.\n3. **File Management**: It handles file operations like creating, deleting, and accessing files.\n\nExamples of operating systems include Windows, macOS, Linux, and Android.\n\nThis explanation is not directly available in your class_11 computer textbook, but here is a simple general explanation.",
+          "n_chunks": 0,
+          "prompt_tokens": 473,
+          "completion_tokens": 140,
+          "latency_s": 1.77,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 4,
+            "correctness": 5,
+            "hallucinated_claims": 4,
+            "note": "The answer is correct but not supported by the excerpts.",
+            "_judge_tokens": 1640
+          }
+        }
+      },
+      {
+        "question": "Explain the difference between RAM and ROM",
+        "class": "class_9",
+        "subject": "computer",
+        "rag": {
+          "answer": "**RAM (Random Access Memory)**: \n- RAM is a type of volatile memory, meaning it loses all stored data when the computer is turned off. \n- It is used for temporarily storing data and instructions that the CPU needs while performing tasks. \n- RAM allows both reading and writing of data, making it fast and suitable for active processes.\n\n**ROM (Read-Only Memory)**: \n- ROM is a type of non-volatile memory, which means it retains its data even when the computer is turned off. \n- It is used to store firmware or permanent instructions necessary for booting the computer and performing hardware initialization. \n- Data in ROM can only be read and not easily modified or written over.\n\n**Key difference**: The main difference is that RAM is volatile and used for temporary data storage, while ROM is non-volatile and used for permanent data storage.",
+          "n_chunks": 5,
+          "prompt_tokens": 1528,
+          "completion_tokens": 177,
+          "latency_s": 2.54,
+          "judge": {
+            "groundedness": 4,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 1,
+            "note": "The explanation of ROM storing firmware is not supported by excerpts.",
+            "_judge_tokens": 1573
+          }
+        },
+        "control": {
+          "answer": "**RAM (Random Access Memory):**\n- RAM is a type of volatile memory, which means it loses its data when the power is turned off.\n- It is used by the computer to store data that is actively being used or processed. \n- RAM allows for quick read and write access, making it essential for running applications and multitasking.\n\n**ROM (Read-Only Memory):**\n- ROM is a type of non-volatile memory, meaning it retains its data even when the power is turned off.\n- It is used to store firmware or software that is not intended to be modified frequently, such as the computer's BIOS.\n- ROM can only be read and not easily written to, which makes it stable and secure for essential system instructions.\n\n**Key difference:**\n- RAM is temporary and volatile, while ROM is permanent and non-volatile. RAM is used for active processes, whereas ROM stores critical system information.",
+          "n_chunks": 0,
+          "prompt_tokens": 476,
+          "completion_tokens": 185,
+          "latency_s": 2.16,
+          "judge": {
+            "groundedness": 4,
+            "curriculum_fit": 5,
+            "correctness": 5,
+            "hallucinated_claims": 1,
+            "note": "The answer is mostly supported but mentions BIOS, which is not in the excerpts.",
+            "_judge_tokens": 1585
+          }
+        }
+      },
+      {
+        "question": "Explain active and passive voice",
+        "class": "class_11",
+        "subject": "english",
+        "rag": {
+          "answer": "Active Voice: In active voice, the subject of the sentence performs the action. The structure typically follows the pattern: Subject + Verb + Object. For example, \"The cat (subject) chased (verb) the mouse (object).\" Here, the cat is doing the action of chasing.\n\nPassive Voice: In passive voice, the subject of the sentence receives the action. The structure usually follows: Subject + form of \"be\" + past participle + (by + agent). For example, \"The mouse (subject) was chased (verb) by the cat (agent).\" In this case, the mouse is receiving the action of being chased.\n\nKey difference: In active voice, the focus is on who is doing the action, while in passive voice, the focus is on who is receiving the action.\n\nThis explanation is not directly available in your class_11 English textbook, but here is a simple general explanation.",
+          "n_chunks": 5,
+          "prompt_tokens": 1710,
+          "completion_tokens": 184,
+          "latency_s": 2.3,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 4,
+            "correctness": 5,
+            "hallucinated_claims": 3,
+            "note": "The answer is correct but not supported by excerpts.",
+            "_judge_tokens": 1762
+          }
+        },
+        "control": {
+          "answer": "Active voice and passive voice are two different ways of expressing actions in sentences.\n\n**Active Voice:**\nIn active voice, the subject of the sentence performs the action. The structure typically follows the pattern: Subject + Verb + Object. \n\n*Example:* \n- \"The teacher (subject) teaches (verb) the students (object).\"\n\n**Passive Voice:**\nIn passive voice, the subject of the sentence receives the action. The structure usually follows the pattern: Subject + Form of \"to be\" + Past Participle + (by + Agent). \n\n*Example:*\n- \"The students (subject) are taught (form of \"to be\" + past participle) by the teacher (agent).\"\n\n**Key Difference:**\n- In active voice, the focus is on who is doing the action, while in passive voice, the focus is on who is receiving the action.\n\nThis explanation is not directly available in your class_11 English textbook, but here is a simple general explanation.",
+          "n_chunks": 0,
+          "prompt_tokens": 472,
+          "completion_tokens": 202,
+          "latency_s": 1.95,
+          "judge": {
+            "groundedness": 1,
+            "curriculum_fit": 4,
+            "correctness": 5,
+            "hallucinated_claims": 2,
+            "note": "The answer is correct but not supported by excerpts.",
+            "_judge_tokens": 1780
+          }
+        }
+      }
+    ]
+  },
+  "b_marking": {
+    "summary": {
+      "n": 15,
+      "exact_agreement": 0.7333,
+      "within_1_mark": 1.0,
+      "mae_marks": 0.267,
+      "normalised_mae": 0.0611,
+      "mean_latency_s": 1.38,
+      "by_type": {
+        "mcq": {
+          "n": 2,
+          "exact": 2,
+          "mae": 0
+        },
+        "short": {
+          "n": 8,
+          "exact": 6,
+          "mae": 0.25
+        },
+        "long": {
+          "n": 5,
+          "exact": 3,
+          "mae": 0.4
+        }
+      }
+    },
+    "rows": [
+      {
+        "question": "What is cell theory?",
+        "answer": "Cell theory states that all living organisms are made of cells, the cell is the basic structural and functional unit of life, and all cells arise from pre-existing cells.",
+        "type": "short",
+        "class": "class_11",
+        "subject": "biology",
+        "expected": 3,
+        "awarded": 3,
+        "error": 0,
+        "feedback": "The student provided a complete and correct definition of cell theory, including all three main tenets. There are no missing points or inaccuracies in the answer.",
+        "latency_s": 1.18
+      },
+      {
+        "question": "What is cell theory?",
+        "answer": "Cell theory says living things are made of cells.",
+        "type": "short",
+        "class": "class_11",
+        "subject": "biology",
+        "expected": 1,
+        "awarded": 1,
+        "error": 0,
+        "feedback": "The student correctly identified that living things are made of cells, which is one aspect of cell theory. However, the answer is incomplete as it does not mention the other two tenets of cell theory, such as that cells are the basic unit of life and that all cells arise from pre-existing cells.",
+        "latency_s": 1.6
+      },
+      {
+        "question": "What is cell theory?",
+        "answer": "Cell theory explains how planets orbit the sun.",
+        "type": "short",
+        "class": "class_11",
+        "subject": "biology",
+        "expected": 0,
+        "awarded": 0,
+        "error": 0,
+        "feedback": "The student's answer is completely incorrect as it does not relate to the concept of cell theory. Cell theory pertains to the fundamental principles regarding the structure and function of cells, not planetary motion.",
+        "latency_s": 1.37
+      },
+      {
+        "question": "State Newton's second law of motion.",
+        "answer": "Newton's second law states that the acceleration of a body is directly proportional to the net force acting on it and inversely proportional to its mass, F = ma.",
+        "type": "short",
+        "class": "class_9",
+        "subject": "physics",
+        "expected": 3,
+        "awarded": 3,
+        "error": 0,
+        "feedback": "The student correctly stated Newton's second law of motion and provided the equation F = ma. There are no missing points or inaccuracies in the answer.",
+        "latency_s": 1.49
+      },
+      {
+        "question": "State Newton's second law of motion.",
+        "answer": "Force equals mass times acceleration.",
+        "type": "short",
+        "class": "class_9",
+        "subject": "physics",
+        "expected": 2,
+        "awarded": 3,
+        "error": 1,
+        "feedback": "The student correctly stated Newton's second law of motion as \"Force equals mass times acceleration.\" There are no missing points or inaccuracies in the answer.",
+        "latency_s": 1.23
+      },
+      {
+        "question": "State Newton's second law of motion.",
+        "answer": "Every action has an equal and opposite reaction.",
+        "type": "short",
+        "class": "class_9",
+        "subject": "physics",
+        "expected": 0,
+        "awarded": 0,
+        "error": 0,
+        "feedback": "The student provided the statement of Newton's third law of motion instead of Newton's second law. Newton's second law states that the acceleration of an object is directly proportional to the net force acting on it and inversely proportional to its mass.",
+        "latency_s": 1.28
+      },
+      {
+        "question": "Define oxidation.",
+        "answer": "Oxidation is the loss of electrons by an atom, ion or molecule, which increases its oxidation number.",
+        "type": "short",
+        "class": "class_12",
+        "subject": "chemistry",
+        "expected": 3,
+        "awarded": 3,
+        "error": 0,
+        "feedback": "The definition of oxidation as the loss of electrons and the increase in oxidation number is complete and correct. No points were missing in the answer.",
+        "latency_s": 1.6
+      },
+      {
+        "question": "Define oxidation.",
+        "answer": "Oxidation is when something gains electrons.",
+        "type": "short",
+        "class": "class_12",
+        "subject": "chemistry",
+        "expected": 0,
+        "awarded": 1,
+        "error": 1,
+        "feedback": "The student incorrectly defined oxidation as gaining electrons, which is actually the definition of reduction. The correct definition of oxidation is the loss of electrons or an increase in oxidation number.",
+        "latency_s": 1.41
+      },
+      {
+        "question": "What does RAM stand for?",
+        "answer": "Random Access Memory",
+        "type": "mcq",
+        "class": "class_9",
+        "subject": "computer",
+        "expected": 1,
+        "awarded": 1,
+        "error": 0,
+        "feedback": "The student correctly identified that RAM stands for Random Access Memory. There are no missing points or errors in the answer.",
+        "latency_s": 1.53
+      },
+      {
+        "question": "What does RAM stand for?",
+        "answer": "Read Access Machine",
+        "type": "mcq",
+        "class": "class_9",
+        "subject": "computer",
+        "expected": 0,
+        "awarded": 0,
+        "error": 0,
+        "feedback": "The student incorrectly answered that RAM stands for \"Read Access Machine.\" The correct answer is \"Random Access Memory.\"",
+        "latency_s": 1.15
+      },
+      {
+        "question": "Explain Ohm's law and its mathematical form.",
+        "answer": "Ohm's law states that the current passing through a conductor is directly proportional to the potential difference across it, provided the physical conditions such as temperature remain constant. It is written as V = IR, where V is the potential difference in volts, I is the current in amperes and R is the resistance in ohms. The law applies to ohmic conductors, and a graph of V against I for such a conductor is a straight line through the origin whose slope gives the resistance.",
+        "type": "long",
+        "class": "class_10",
+        "subject": "physics",
+        "expected": 8,
+        "awarded": 8,
+        "error": 0,
+        "feedback": "The student provided a complete and accurate explanation of Ohm's law, including its mathematical form and the conditions under which it applies. No significant details were missing from the answer.",
+        "latency_s": 1.47
+      },
+      {
+        "question": "Explain Ohm's law and its mathematical form.",
+        "answer": "Ohm's law is V = IR. Current is related to voltage.",
+        "type": "long",
+        "class": "class_10",
+        "subject": "physics",
+        "expected": 3,
+        "awarded": 2,
+        "error": -1,
+        "feedback": "The student correctly stated the mathematical form of Ohm's law as V = IR. However, the explanation lacks detail about the relationship between current, voltage, and resistance, as well as the limitations and examples of ohmic and non-ohmic devices.",
+        "latency_s": 1.24
+      },
+      {
+        "question": "Explain Ohm's law and its mathematical form.",
+        "answer": "Ohm's law describes how light bends when passing through a prism.",
+        "type": "long",
+        "class": "class_10",
+        "subject": "physics",
+        "expected": 0,
+        "awarded": 0,
+        "error": 0,
+        "feedback": "The student's answer is completely incorrect as it does not relate to Ohm's law. Ohm's law describes the relationship between voltage, current, and resistance in electrical circuits, which was not addressed at all.",
+        "latency_s": 1.15
+      },
+      {
+        "question": "Define work, energy and power.",
+        "answer": "Work is done when a force moves a body through a distance in the direction of the force, W = F d cos(theta), measured in joules. Energy is the capacity of a body to do work and is also measured in joules. Power is the rate of doing work, P = W / t, and is measured in watts.",
+        "type": "long",
+        "class": "class_11",
+        "subject": "physics",
+        "expected": 8,
+        "awarded": 8,
+        "error": 0,
+        "feedback": "The definitions of work, energy, and power are complete and accurate, including their formulas and units. No details were missing in the student's answer.",
+        "latency_s": 1.68
+      },
+      {
+        "question": "Define work, energy and power.",
+        "answer": "Work is force. Energy is power. Power is work.",
+        "type": "long",
+        "class": "class_11",
+        "subject": "physics",
+        "expected": 1,
+        "awarded": 0,
+        "error": -1,
+        "feedback": "The definitions provided for work, energy, and power are incorrect. Work is defined as the product of force and displacement, energy is the capacity to do work, and power is the rate at which work is done.",
+        "latency_s": 1.29
+      }
+    ]
+  },
+  "c_generation": {
+    "summary": {
+      "n_sets": 6,
+      "checks_passed": 21,
+      "checks_total": 21,
+      "structural_pass_rate": 1.0,
+      "sets_fully_valid": 6,
+      "mean_latency_s": 4.55
+    },
+    "rows": [
+      {
+        "topic": "cell theory",
+        "class": "class_11",
+        "subject": "biology",
+        "type": "mcq",
+        "requested": 5,
+        "found": 5,
+        "labels": 5,
+        "options": 20,
+        "keys": 5,
+        "checks": {
+          "question_count_correct": true,
+          "every_question_labelled": true,
+          "four_options_each": true,
+          "answer_key_present": true
+        },
+        "checks_passed": 4,
+        "checks_total": 4,
+        "latency_s": 4.78,
+        "raw": "Q1. Who is credited with the formulation of the cell theory along with Schleiden? [⭐ Past Paper]\nA) Rudolf Virchow  \nB) Robert Hooke  \nC) Theodor Schwann  \nD) Anton van Leeuwenhoek  \nCorrect: C  \nExplanation: Theodor Schwann, along with Matthias Schleiden, formulated the cell theory, stating that all living things are composed of cells.\n\nQ2. Which of the following statements is NOT a tenet of the cell theory? [~ Similar]\nA) All living organisms are made up of cells.  \nB) Cells arise from pre-existing cells.  \nC) Cells are the basic unit of life.  \nD) All cells have a nucleus.  \nCorrect: D  \nExplanation: Not all cells have a nucleus; for example, prokaryotic cells lack a nucleus.\n\nQ3. Who observed that new cells develop from pre-existing cells, adding to the cell theory? [⭐ Past Paper]\nA) Robert Hooke  \nB) Theodor Schwann  \nC) Rudolf Virchow  \nD) Matthias Schleiden  \nCorrect: C  \nExplanation: Rudolf Virchow observed that new cells arise from the division of existing cells, which is a key component of the cell theory.\n\nQ4. What did Robert Hooke observe that led him to coin the term \"cell\"? [★ New]\nA) Bacteria under a microscope  \nB) Cork under a microscope  \nC) Plant tissues  \nD) Animal tissues  \nCorrect: B  \nExplanation: Robert Hooke observed the structure of cork under a microscope and described the small compartments as \"cells.\"\n\nQ5. Which of the following best describes the significance of the cell theory in biology? [~ Similar]\nA) It explains the process of photosynthesis.  \nB) It provides a framework for understanding the structure and function of living organisms.  \nC) It describes the genetic makeup of organisms.  \nD) It outlines the process of evolution.  \nCorrect: B  \nExplanation: The cell theory is fundamental in biology as it explains that cells are the basic unit of structure and function in all living organisms."
+      },
+      {
+        "topic": "chemical bonding",
+        "class": "class_10",
+        "subject": "chemistry",
+        "type": "mcq",
+        "requested": 5,
+        "found": 5,
+        "labels": 5,
+        "options": 20,
+        "keys": 5,
+        "checks": {
+          "question_count_correct": true,
+          "every_question_labelled": true,
+          "four_options_each": true,
+          "answer_key_present": true
+        },
+        "checks_passed": 4,
+        "checks_total": 4,
+        "latency_s": 4.26,
+        "raw": "Q1. Which of the following statements best describes ionic bonding? ⭐ Past Paper  \nA) It involves the sharing of electron pairs between atoms.  \nB) It occurs between two non-metals.  \nC) It involves the transfer of electrons from one atom to another.  \nD) It results in the formation of molecules with covalent bonds.  \nCorrect: C  \nExplanation: Ionic bonding involves the transfer of electrons from one atom (usually a metal) to another (usually a non-metal), resulting in the formation of charged ions.\n\nQ2. What type of bond is formed when two carbon atoms share three pairs of electrons? ~ Similar  \nA) Single bond  \nB) Double bond  \nC) Triple bond  \nD) Quadruple bond  \nCorrect: C  \nExplanation: A triple bond is formed when two atoms share three pairs of electrons, as seen in alkynes.\n\nQ3. In which of the following compounds is the bond type primarily covalent? ★ New  \nA) NaCl  \nB) H2O  \nC) MgO  \nD) CaF2  \nCorrect: B  \nExplanation: H2O (water) consists of covalent bonds formed by the sharing of electrons between hydrogen and oxygen atoms.\n\nQ4. Which of the following describes a characteristic of metallic bonding? ~ Similar  \nA) Electrons are transferred from metals to non-metals.  \nB) Electrons are shared equally between two non-metals.  \nC) There is a sea of delocalized electrons around positively charged metal ions.  \nD) It results in the formation of molecular compounds.  \nCorrect: C  \nExplanation: Metallic bonding is characterized by a sea of delocalized electrons that move freely around positively charged metal ions.\n\nQ5. What is the main reason for the high melting and boiling points of ionic compounds? ★ New  \nA) Strong covalent bonds between atoms.  \nB) Weak intermolecular forces.  \nC) Strong electrostatic forces between ions.  \nD) Presence of hydrogen bonds.  \nCorrect: C  \nExplanation: Ionic compounds have high melting and boiling points due to the strong electrostatic forces of attraction between the oppositely charged ions."
+      },
+      {
+        "topic": "laws of motion",
+        "class": "class_9",
+        "subject": "physics",
+        "type": "mcq",
+        "requested": 5,
+        "found": 5,
+        "labels": 5,
+        "options": 20,
+        "keys": 5,
+        "checks": {
+          "question_count_correct": true,
+          "every_question_labelled": true,
+          "four_options_each": true,
+          "answer_key_present": true
+        },
+        "checks_passed": 4,
+        "checks_total": 4,
+        "latency_s": 4.77,
+        "raw": "Q1. According to Newton's third law of motion, when an object A exerts a force on object B, what does object B do? ⭐ Past Paper  \nA) Exerts a greater force on object A  \nB) Exerts an equal and opposite force on object A  \nC) Exerts no force on object A  \nD) Exerts a lesser force on object A  \nCorrect: B  \nExplanation: Object B exerts an equal and opposite force on object A, as stated by Newton's third law.\n\nQ2. Which of the following best describes inertia? ~ Similar  \nA) The tendency of an object to change its state of motion  \nB) The resistance of an object to remain in its state of rest or uniform motion  \nC) The force required to move an object  \nD) The acceleration of an object due to gravity  \nCorrect: B  \nExplanation: Inertia is the resistance of an object to change its state of rest or uniform motion.\n\nQ3. If a car accelerates from rest to a speed of 20 m/s in 5 seconds, what is its acceleration? ★ New  \nA) 2 m/s²  \nB) 4 m/s²  \nC) 5 m/s²  \nD) 10 m/s²  \nCorrect: B  \nExplanation: Acceleration is calculated as (final speed - initial speed) / time = (20 m/s - 0 m/s) / 5 s = 4 m/s².\n\nQ4. What happens to the motion of an object when the net force acting on it is zero? ⭐ Past Paper  \nA) The object will accelerate  \nB) The object will change direction  \nC) The object will remain at rest or continue moving with constant velocity  \nD) The object will stop moving  \nCorrect: C  \nExplanation: When the net force is zero, an object remains at rest or continues moving with constant velocity.\n\nQ5. Which of the following statements is true about action-reaction forces? ~ Similar  \nA) They act on the same object  \nB) They can cancel each other out  \nC) They act on different objects  \nD) They are always unequal  \nCorrect: C  \nExplanation: Action-reaction forces act on different objects, as described by Newton's third law."
+      },
+      {
+        "topic": "matrices",
+        "class": "class_10",
+        "subject": "mathematics",
+        "type": "short",
+        "requested": 3,
+        "found": 3,
+        "labels": 3,
+        "options": 0,
+        "keys": 0,
+        "checks": {
+          "question_count_correct": true,
+          "every_question_labelled": true,
+          "answer_section_present": true
+        },
+        "checks_passed": 3,
+        "checks_total": 3,
+        "latency_s": 4.64,
+        "raw": "Q1. Define a square matrix and give an example. [⭐ Past Paper]  \nAnswer: A square matrix is a matrix that has the same number of rows and columns. For example, the matrix A = \\(\\begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\end{bmatrix}\\) is a square matrix of order 2.\n\nQ2. What is a null matrix? Provide an example. [★ New]  \nAnswer: A null matrix, also known as a zero matrix, is a matrix in which all elements are zero. For example, the matrix O = \\(\\begin{bmatrix} 0 & 0 \\\\ 0 & 0 \\end{bmatrix}\\) is a null matrix of order 2.\n\nQ3. Explain the term 'determinant' in the context of a matrix. [~ Similar]  \nAnswer: The determinant of a matrix is a scalar value that is a function of the entries of a square matrix. It provides important information about the matrix, such as whether it is invertible; a matrix is invertible if its determinant is non-zero. For example, for the matrix A = \\(\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}\\), the determinant is calculated as |A| = ad - bc."
+      },
+      {
+        "topic": "operating systems",
+        "class": "class_11",
+        "subject": "computer",
+        "type": "short",
+        "requested": 3,
+        "found": 3,
+        "labels": 3,
+        "options": 0,
+        "keys": 0,
+        "checks": {
+          "question_count_correct": true,
+          "every_question_labelled": true,
+          "answer_section_present": true
+        },
+        "checks_passed": 3,
+        "checks_total": 3,
+        "latency_s": 3.76,
+        "raw": "Q1. What is the primary purpose of an operating system?  \n⭐ Past Paper  \nAnswer: The primary purpose of an operating system (OS) is to manage computer hardware and software resources and provide common services for computer programs. It acts as an intermediary between users and the computer hardware, enabling efficient execution of applications.\n\nQ2. Define the term \"multitasking\" in the context of operating systems.  \n~ Similar  \nAnswer: Multitasking refers to the ability of an operating system to execute multiple tasks or processes simultaneously. This allows users to run several applications at the same time, improving productivity and resource utilization on the computer.\n\nQ3. What is a \"kernel\" in an operating system?  \n★ New  \nAnswer: The kernel is the core component of an operating system that manages system resources and facilitates communication between hardware and software. It handles tasks such as process management, memory management, and device control, ensuring that applications can operate effectively."
+      },
+      {
+        "topic": "electromagnetic induction",
+        "class": "class_12",
+        "subject": "physics",
+        "type": "long",
+        "requested": 2,
+        "found": 2,
+        "labels": 2,
+        "options": 0,
+        "keys": 0,
+        "checks": {
+          "question_count_correct": true,
+          "every_question_labelled": true,
+          "answer_section_present": true
+        },
+        "checks_passed": 3,
+        "checks_total": 3,
+        "latency_s": 5.07,
+        "raw": "Q1. Explain the phenomenon of electromagnetic induction and derive the expression for induced electromotive force (e.m.f.) in a coil when the magnetic flux linked with it changes. Discuss Faraday's laws of electromagnetic induction. [⭐ Past Paper]\n\nAnswer:\n[Electromagnetic Induction]\nElectromagnetic induction is the process by which a changing magnetic field induces an electromotive force (e.m.f.) in a conductor. This phenomenon is described by Faraday's laws of electromagnetic induction, which state that the induced e.m.f. in a closed loop is directly proportional to the rate of change of magnetic flux through the loop. Mathematically, the induced e.m.f. (ε) can be expressed as ε = -dΦ/dt, where Φ is the magnetic flux.\n\n[Derivation of Induced e.m.f.]\nTo derive the expression for induced e.m.f., consider a coil of wire with N turns placed in a magnetic field. If the magnetic flux (Φ) through the coil changes over time (due to changes in magnetic field strength, area, or orientation), the induced e.m.f. can be calculated using Faraday's law. The negative sign indicates the direction of the induced e.m.f. opposes the change in flux, as per Lenz's law. Thus, the induced e.m.f. is given by ε = -N(dΦ/dt).\n\n---\n\nQ2. Describe Lenz's law and its significance in electromagnetic induction. Provide an example to illustrate the application of Lenz's law in a practical scenario. [~ Similar]\n\nAnswer:\n[Lenz's Law]\nLenz's law states that the direction of the induced current in a closed loop is such that it opposes the change in magnetic flux that produced it. This law is a consequence of the conservation of energy and is crucial in understanding the behavior of induced currents in electromagnetic induction.\n\n[Practical Example]\nFor instance, consider a scenario where a magnet is moved towards a coil of wire. As the magnet approaches, the magnetic flux through the coil increases, inducing a current in the coil. According to Lenz's law, the direction of this induced current will be such that it creates a magnetic field opposing the approach of the magnet. If the magnet is moved away from the coil, the induced current will flow in the opposite direction to oppose the decrease in magnetic flux. This example illustrates how Lenz's law ensures that induced currents work against changes in magnetic flux, maintaining energy conservation in electromagnetic systems."
+      }
+    ]
+  },
+  "d_memory": {
+    "turns": 10,
+    "managed_tokens": [
+      528,
+      630,
+      737,
+      883,
+      912,
+      946,
+      965,
+      929,
+      933,
+      937
+    ],
+    "naive_tokens": [
+      528,
+      630,
+      737,
+      845,
+      951,
+      1060,
+      1166,
+      1270,
+      1382,
+      1493
+    ],
+    "managed_final": 937,
+    "naive_final": 1493,
+    "growth_managed": 409,
+    "growth_naive": 965,
+    "tokens_saved_final_turn": 556,
+    "reduction_final_turn": 0.3724,
+    "final_summary": "The student reiterated their request for a board-style explanation of about eighty words on why mitochondria are called the \"powerhouse of the cell,\" emphasizing their need for clarity and structured responses. The assistant's repeated failure to provide the requested information has not addressed the student's inquiry, leaving open questions about the specific role of mitochondria in cellular functions. The student demonstrates curiosity about cellular processes but still lacks a clear understanding of the topic. There are no identified misconceptions, but the ongoing lack of satisfactory responses indicates a need for further clarification on both plant and animal cell differences and mitochondrial functions."
+  }
+}
