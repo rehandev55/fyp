@@ -1,0 +1,211 @@
+{
+  "index_name": "eternal-sunshine",
+  "stats": {
+    "namespaces": {
+      "": {
+        "vector_count": 8057
+      }
+    },
+    "index_fullness": 0.0,
+    "total_vector_count": 8057,
+    "dimension": 1536,
+    "metric": "cosine",
+    "vector_type": "dense"
+  },
+  "combinations": [
+    {
+      "board": "federal",
+      "class": "class_9",
+      "subject": "chemistry",
+      "chunks": 47
+    },
+    {
+      "board": "federal",
+      "class": "class_9",
+      "subject": "physics",
+      "chunks": 178
+    },
+    {
+      "board": "federal",
+      "class": "class_9",
+      "subject": "mathematics",
+      "chunks": 199
+    },
+    {
+      "board": "federal",
+      "class": "class_9",
+      "subject": "computer",
+      "chunks": 160
+    },
+    {
+      "board": "federal",
+      "class": "class_9",
+      "subject": "english",
+      "chunks": 143
+    },
+    {
+      "board": "federal",
+      "class": "class_9",
+      "subject": "urdu",
+      "chunks": 118
+    },
+    {
+      "board": "federal",
+      "class": "class_10",
+      "subject": "biology",
+      "chunks": 171
+    },
+    {
+      "board": "federal",
+      "class": "class_10",
+      "subject": "chemistry",
+      "chunks": 143
+    },
+    {
+      "board": "federal",
+      "class": "class_10",
+      "subject": "physics",
+      "chunks": 319
+    },
+    {
+      "board": "federal",
+      "class": "class_10",
+      "subject": "mathematics",
+      "chunks": 196
+    },
+    {
+      "board": "federal",
+      "class": "class_10",
+      "subject": "computer",
+      "chunks": 206
+    },
+    {
+      "board": "federal",
+      "class": "class_10",
+      "subject": "english",
+      "chunks": 163
+    },
+    {
+      "board": "federal",
+      "class": "class_10",
+      "subject": "urdu",
+      "chunks": 158
+    },
+    {
+      "board": "federal",
+      "class": "class_11",
+      "subject": "biology",
+      "chunks": 658
+    },
+    {
+      "board": "federal",
+      "class": "class_11",
+      "subject": "chemistry",
+      "chunks": 561
+    },
+    {
+      "board": "federal",
+      "class": "class_11",
+      "subject": "physics",
+      "chunks": 254
+    },
+    {
+      "board": "federal",
+      "class": "class_11",
+      "subject": "mathematics",
+      "chunks": 156
+    },
+    {
+      "board": "federal",
+      "class": "class_11",
+      "subject": "computer",
+      "chunks": 186
+    },
+    {
+      "board": "federal",
+      "class": "class_11",
+      "subject": "english",
+      "chunks": 161
+    },
+    {
+      "board": "federal",
+      "class": "class_11",
+      "subject": "urdu",
+      "chunks": 419
+    },
+    {
+      "board": "federal",
+      "class": "class_12",
+      "subject": "biology",
+      "chunks": 802
+    },
+    {
+      "board": "federal",
+      "class": "class_12",
+      "subject": "chemistry",
+      "chunks": 751
+    },
+    {
+      "board": "federal",
+      "class": "class_12",
+      "subject": "physics",
+      "chunks": 442
+    },
+    {
+      "board": "federal",
+      "class": "class_12",
+      "subject": "mathematics",
+      "chunks": 209
+    },
+    {
+      "board": "federal",
+      "class": "class_12",
+      "subject": "computer",
+      "chunks": 477
+    },
+    {
+      "board": "federal",
+      "class": "class_12",
+      "subject": "english",
+      "chunks": 391
+    },
+    {
+      "board": "federal",
+      "class": "class_12",
+      "subject": "urdu",
+      "chunks": 389
+    }
+  ],
+  "doc_types": [
+    {
+      "type": "textbook",
+      "chunks": 4655
+    },
+    {
+      "type": "keybook",
+      "chunks": 3036
+    },
+    {
+      "type": "past_papers",
+      "chunks": 366
+    }
+  ],
+  "by_board": {
+    "federal": 8057
+  },
+  "by_class": {
+    "class_9": 845,
+    "class_10": 1356,
+    "class_11": 2395,
+    "class_12": 3461
+  },
+  "by_subject": {
+    "chemistry": 1502,
+    "physics": 1193,
+    "mathematics": 760,
+    "computer": 1029,
+    "english": 858,
+    "urdu": 1084,
+    "biology": 1631
+  }
+}
