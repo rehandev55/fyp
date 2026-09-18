@@ -33,7 +33,11 @@ test('email can be verified', function () {
 
     Event::assertDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-    $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+
+    // The application replaces Fortify's default destination: after a link is
+    // fulfilled the user is sent to the login screen, because the link is
+    // commonly opened in a different browser from the one they registered in.
+    $response->assertRedirect('/login');
 });
 
 test('email is not verified with invalid hash', function () {
@@ -93,7 +97,7 @@ test('already verified user visiting verification link is redirected without fir
     );
 
     $this->actingAs($user)->get($verificationUrl)
-        ->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+        ->assertRedirect('/login');
 
     Event::assertNotDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
